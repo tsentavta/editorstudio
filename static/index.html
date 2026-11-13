@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Метафора · API-консоль</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="#" data-tab="upload">
+      <svg class="brand-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+        <path d="M6.5 18.5c-1.6-1.9-2.5-4.2-2.5-6.5a8 8 0 0 1 16 0"/>
+        <path d="M9 20c-1.3-1.8-2-3.8-2-6a5 5 0 0 1 10 0v1"/>
+        <path d="M12 21c-1-1.9-1.5-4-1.5-6.5a1.5 1.5 0 0 1 3 0c0 2.6.7 4.6 2 6.5"/>
+        <path d="M20 15.5c0 1.2-.2 2.4-.6 3.5"/>
+      </svg>
+      <span>Метафора</span><span class="brand-sub">API&nbsp;v2</span>
+    </a>
+    <nav class="tabs" role="tablist">
+      <button class="tab is-active" data-tab="upload" role="tab">Загрузка</button>
+      <button class="tab" data-tab="files" role="tab">Файлы</button>
+      <button class="tab" data-tab="pubs" role="tab">Публикации</button>
+      <button class="tab" data-tab="search" role="tab">Поиск</button>
+    </nav>
+    <div class="nav-right">
+      <span class="key-badge" id="keyBadge"><span class="dot"></span><span id="keyText">ключ…</span></span>
+      <button class="btn btn-ghost btn-sm" id="pingBtn">Проверить связь</button>
+    </div>
+  </div>
+</header>
+
+<main class="page">
+  <section class="hero">
+    <div class="eyebrow eyebrow-brand">ИС «МЕТАФОРА» · РЦНИ · API V2.0.2</div>
+    <h1 id="heroTitle">Загрузка статей в <em>Метафору</em></h1>
+    <p class="lead" id="heroLead">JATS или Journal XML, PDF к статьям, статус обработки и подписание — через официальный API. Ключ хранится на локальном сервере и в браузер не передаётся.</p>
+  </section>
+
+  <div class="layout">
+    <div class="work">
+
+      <!-- ===== ЗАГРУЗКА ===== -->
+      <section class="panel" data-panel="upload">
+        <div class="card">
+          <div class="eyebrow">ФОРМАТ</div>
+          <div class="seg" id="modeSeg">
+            <button class="seg-btn is-on" data-mode="journal">Journal XML</button>
+            <button class="seg-btn" data-mode="jats">JATS XML</button>
+            <button class="seg-btn" data-mode="jats_pdf">JATS XML + PDF</button>
+          </div>
+          <p class="hint" id="modeHint"></p>
+
+          <div class="drops">
+            <label class="drop" id="dropXml">
+              <input type="file" accept=".xml,application/xml,text/xml" id="fXml">
+              <span class="drop-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="m10 13-2 2 2 2M14 13l2 2-2 2"/></svg></span>
+              <span class="drop-title">XML-файл</span>
+              <span class="drop-name mono" data-empty="перетащите или выберите">перетащите или выберите</span>
+            </label>
+            <label class="drop" id="dropPdf" hidden>
+              <input type="file" accept=".pdf,application/pdf" id="fPdf">
+              <span class="drop-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg></span>
+              <span class="drop-title">PDF статьи</span>
+              <span class="drop-name mono" data-empty="перетащите или выберите">перетащите или выберите</span>
+            </label>
+          </div>
+
+          <label class="field">
+            <span class="label">Издательская платформа <span class="opt">необязательно</span></span>
+            <input type="text" id="platform" placeholder="например, ojs" autocomplete="off">
+          </label>
+
+          <div class="actions">
+            <button class="btn btn-primary" id="uploadBtn">Загрузить</button>
+            <button class="btn btn-ghost" id="resetBtn">Очистить</button>
+          </div>
+          <div class="note" id="uploadNote" hidden></div>
+        </div>
+
+        <div class="card" id="procCard" hidden>
+          <div class="card-head">
+            <div>
+              <div class="eyebrow">ОБРАБОТКА</div>
+              <div class="mono uid" id="procUid"></div>
+            </div>
+            <button class="btn btn-ghost btn-sm" id="procOpen">Открыть в «Файлах»</button>
+          </div>
+          <ol class="steps" id="procSteps">
+            <li data-code="1">Загружен</li>
+            <li data-code="2">Обрабатывается</li>
+            <li data-code="3">Обработан</li>
+          </ol>
+          <div id="procBody"></div>
+        </div>
+      </section>
+
+      <!-- ===== ФАЙЛЫ ===== -->
+      <section class="panel" data-panel="files" hidden>
+        <div class="card">
+          <div class="eyebrow">ФАЙЛ</div>
+          <div class="row">
+            <input type="text" id="fileUid" class="mono grow" placeholder="file_uid" list="uidList" autocomplete="off">
+            <datalist id="uidList"></datalist>
+            <button class="btn btn-ghost" id="statusBtn">Статус</button>
+          </div>
+          <div id="fileResult"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <div class="eyebrow">ИСТОРИЯ ЗАГРУЗОК <span class="muted">· в этом браузере</span></div>
+            <button class="btn btn-ghost btn-sm" id="histClear">Очистить</button>
+          </div>
+          <div id="history"></div>
+        </div>
+      </section>
+
+      <!-- ===== ПУБЛИКАЦИИ ===== -->
+      <section class="panel" data-panel="pubs" hidden>
+        <div class="card">
+          <div class="eyebrow">ПУБЛИКАЦИЯ</div>
+          <div class="row">
+            <input type="text" id="artUid" class="mono grow" placeholder="article_uid" autocomplete="off">
+            <button class="btn btn-ghost" id="artBtn">Открыть</button>
+          </div>
+          <div id="pubResult"></div>
+        </div>
+
+        <div class="card">
+          <div class="eyebrow">СТАТУСЫ ПОДПИСАНИЯ · ДО 100 ШТУК</div>
+          <textarea id="batchUids" class="mono" rows="4" placeholder="article_uid — по одному на строку или через запятую"></textarea>
+          <div class="actions"><button class="btn btn-ghost" id="batchBtn">Получить статусы</button></div>
+          <div id="batchResult"></div>
+        </div>
+      </section>
+
+      <!-- ===== ПОИСК ===== -->
+      <section class="panel" data-panel="search" hidden>
+        <div class="card">
+          <div class="eyebrow">ПОИСК ПУБЛИКАЦИИ</div>
+          <div class="seg" id="searchSeg">
+            <button class="seg-btn is-on" data-by="doi">DOI</button>
+            <button class="seg-btn" data-by="edn">EDN</button>
+          </div>
+          <div class="row">
+            <input type="text" id="searchQ" class="mono grow" placeholder="10.18469/1810-3189.2025.28.1.7-15" autocomplete="off">
+            <button class="btn btn-ghost" id="searchBtn">Найти</button>
+          </div>
+          <label class="check"><input type="checkbox" id="searchPublic"><span>искать по всем организациям <span class="mono" style="font-size:12px;color:var(--stone)">public=true</span></span></label>
+          <div id="searchResult"></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ===== ТЕРМИНАЛ ===== -->
+    <aside class="term">
+      <div class="term-bar">
+        <span class="lights"><i></i><i></i><i></i></span>
+        <span class="eyebrow term-eyebrow">ОТВЕТ API</span>
+        <button class="term-copy" id="copyBtn" title="Скопировать JSON">копировать</button>
+      </div>
+      <div class="term-line" id="termLine"><span class="t-dim">// запросов ещё не было</span></div>
+      <pre class="term-body" id="termBody"><span class="t-dim">Здесь появится JSON последнего ответа.
+Нажмите «Проверить связь», чтобы убедиться, что ключ работает.</span></pre>
+      <div class="term-log-head eyebrow term-eyebrow">ЖУРНАЛ</div>
+      <ul class="term-log" id="termLog"></ul>
+    </aside>
+  </div>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
