@@ -599,7 +599,7 @@ function openViewer(i) {
   $(`#bTable tr[data-i="${i}"]`)?.scrollIntoView({ block: "nearest" });
 }
 function closeViewer() {
-  V.row = null; V.shown = null;
+  V.row = null; V.shown = null; V.task++;
   document.body.classList.remove("viewer-open");
   $("#viewer").hidden = true;
   $("#vDoc").innerHTML = "";
@@ -663,16 +663,61 @@ function renderViewer() {
   if (V.shown !== r.pdf) {
     V.shown = r.pdf;
     if (r.pdf) {
-      const url = pdfUrl(r.pdf);
-      $("#vDoc").innerHTML = `<iframe title="PDF ${esc(r.pdf.name)}" src="${url}#view=FitH"></iframe>`;
-      $("#vOpen").href = url; $("#vOpen").hidden = false;
+      $("#vOpen").href = pdfUrl(r.pdf); $("#vOpen").hidden = false;
+      showPdf(r.pdf);
     } else {
+      V.task++;
       $("#vDoc").innerHTML = '<div class="v-empty">У этой статьи нет PDF.<br>Выберите файл в списке выше.</div>';
       $("#vOpen").hidden = true;
     }
   }
   $("#vHint").textContent = "";
 }
+
+/* Страницы PDF рисуются PDF.js на canvas по ширине панели — одинаково
+   во всех браузерах, включая телефоны. Если PDF.js недоступен —
+   встроенный просмотрщик браузера в iframe. */
+V.task = 0;
+async function showPdf(file) {
+  const my = ++V.task;
+  const box = $("#vDoc");
+  box.innerHTML = '<div class="v-pages"><div class="v-empty">Открываю PDF…</div></div>';
+  let doc;
+  try {
+    const lib = await loadPdfJs();
+    doc = await lib.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
+  } catch {
+    if (my === V.task) box.innerHTML = `<iframe title="PDF ${esc(file.name)}" src="${pdfUrl(file)}#view=FitH"></iframe>`;
+    return;
+  }
+  if (my !== V.task) { doc.destroy(); return; }
+  const wrap = box.firstElementChild;
+  wrap.innerHTML = "";
+  try {
+    for (let i = 1; i <= doc.numPages && my === V.task; i++) {
+      const page = await doc.getPage(i);
+      const width = Math.max(200, wrap.clientWidth - 24 - 2 - 2); // поля + рамка + запас
+      const base = page.getViewport({ scale: 1 });
+      const dpr = window.devicePixelRatio || 1;
+      const vp = page.getViewport({ scale: (width / base.width) * dpr });
+      const fig = document.createElement("figure");
+      fig.className = "v-page";
+      const c = document.createElement("canvas");
+      c.width = Math.floor(vp.width); c.height = Math.floor(vp.height);
+      c.style.width = Math.floor(vp.width / dpr) + "px";
+      c.style.height = Math.floor(vp.height / dpr) + "px";
+      fig.appendChild(c);
+      fig.insertAdjacentHTML("beforeend", `<figcaption>стр. ${i} из ${doc.numPages}</figcaption>`);
+      wrap.appendChild(fig);
+      await page.render({ canvasContext: c.getContext("2d"), viewport: vp }).promise;
+    }
+  } finally { doc.destroy(); }
+}
+let vResize = null;
+window.addEventListener("resize", () => {
+  clearTimeout(vResize);
+  vResize = setTimeout(() => { if (V.shown && !$("#viewer").hidden) showPdf(V.shown); }, 250);
+});
 
 function setRowPdf(r, pdf) {
   r.pdf = pdf || null;
