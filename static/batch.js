@@ -31,6 +31,130 @@ const doiTail = (doi) => (doi || "").split("/").pop().toLowerCase();
 const isXml = (f) => /\.xml$/i.test(f.name) || /xml/.test(f.type);
 const isPdf = (f) => /\.pdf$/i.test(f.name) || f.type === "application/pdf";
 
+/* =========================================================
+   Чтение PDF (PDF.js) и сверка с XML.
+   Из первой страницы (при необходимости — второй) берётся текст;
+   в нём ищется DOI статьи, а если его нет — заголовок.
+   Библиотека грузится с CDN только когда выбраны PDF.
+   ========================================================= */
+const PDFJS = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
+let pdfjsReady = null;
+function loadPdfJs() {
+  if (!pdfjsReady) {
+    pdfjsReady = new Promise((resolve, reject) => {
+      if (window.pdfjsLib) return resolve(window.pdfjsLib);
+      const s = document.createElement("script");
+      s.src = PDFJS + "pdf.min.js";
+      s.onload = () => { window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS + "pdf.worker.min.js"; resolve(window.pdfjsLib); };
+      s.onerror = () => { pdfjsReady = null; reject(new Error("не удалось загрузить модуль чтения PDF")); };
+      document.head.appendChild(s);
+    });
+  }
+  return pdfjsReady;
+}
+
+const normTitle = (s) => String(s || "").toLowerCase().replace(/ё/g, "е").replace(/[^a-zа-я0-9]/g, "");
+const pdfMeta = new Map();   // имя PDF → { state, compact, norm, pages, dois, error }
+let pdfReadBusy = false;
+
+async function readPdfText(file) {
+  const lib = await loadPdfJs();
+  const doc = await lib.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
+  let text = "";
+  try {
+    for (let i = 1; i <= Math.min(2, doc.numPages); i++) {
+      const page = await doc.getPage(i);
+      const tc = await page.getTextContent();
+      text += tc.items.map((x) => x.str).join(" ") + "\n";
+      if (/10\.\d{4,9}\//.test(text.replace(/\s+/g, ""))) break;
+    }
+    return { text, pages: doc.numPages };
+  } finally { doc.destroy(); }
+}
+
+async function readAllPdfs() {
+  if (pdfReadBusy) return;
+  pdfReadBusy = true;
+  try {
+    for (const p of B.pdfs.slice()) {
+      const m = pdfMeta.get(p.name);
+      if (m && m.file === p && m.state !== "reading") continue;
+      pdfMeta.set(p.name, { file: p, state: "reading" });
+      renderBatch();
+      try {
+        const { text, pages } = await readPdfText(p);
+        const compact = text.toLowerCase().replace(/\s+/g, "");
+        pdfMeta.set(p.name, {
+          file: p, state: "ok", pages, compact, norm: normTitle(text),
+          // для показа — из текста с пробелами, чтобы DOI не слипся со следующим словом
+          dois: [...new Set((text.match(/10\.\d{4,9}\/[^\s"'<>,;()\[\]]+/g) || []).map((d) => d.replace(/[.\-]+$/, "").slice(0, 80)))],
+        });
+      } catch (e) {
+        pdfMeta.set(p.name, { file: p, state: "error", error: e.message });
+        if (/модуль чтения/.test(e.message)) { bNote(`<div class="note err"><b>Сверка по тексту PDF недоступна:</b> ${esc(e.message)}. Пары подобраны по именам файлов — проверьте их в просмотре.</div>`); break; }
+      }
+      if (B.mode === "jats") pairJats(); else suggestJournalPdfs();
+      renderBatch();
+    }
+  } finally {
+    pdfReadBusy = false;
+  }
+  // за время чтения могли добавить ещё файлы
+  if (B.pdfs.some((p) => !pdfMeta.has(p.name))) readAllPdfs();
+}
+
+// есть ли DOI в тексте PDF (после DOI не должна идти цифра: …7-14 ≠ …7-149)
+function pdfHasDoi(m, doi) {
+  if (!doi || !m?.compact) return false;
+  const d = doi.toLowerCase().replace(/\s+/g, "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(d + "(?![0-9])").test(m.compact);
+}
+function pdfHasTitle(m, title) {
+  const t = normTitle(title).slice(0, 60);
+  return t.length >= 20 && !!m?.norm && m.norm.includes(t);
+}
+/** Результат сверки строки с её PDF: doi | title | other | foreign | unknown | reading | error | null */
+function verifyRow(r) {
+  if (!r.pdf) return null;
+  const m = pdfMeta.get(r.pdf.name);
+  if (!m || m.state === "reading") return { k: "reading" };
+  if (m.state === "error") return { k: "error", msg: m.error };
+  if (pdfHasDoi(m, r.info?.doi)) return { k: "doi" };
+  const other = B.rows.find((x) => x !== r && pdfHasDoi(m, x.info?.doi));
+  if (other) return { k: "other", other };
+  if (pdfHasTitle(m, r.info?.title)) return { k: "title" };
+  if (m.dois.length) return { k: "foreign", doi: m.dois[0] };
+  return { k: "unknown" };
+}
+const VERIFY = {
+  doi: ["✓ DOI в PDF совпадает", "v-ok"],
+  title: ["✓ совпал заголовок", "v-ok"],
+  other: ["⚠ это PDF другой статьи", "v-bad"],
+  foreign: ["⚠ в PDF другой DOI", "v-bad"],
+  unknown: ["? DOI и заголовок в PDF не найдены", "v-warn"],
+  reading: ["читаю PDF…", "v-dim"],
+  error: ["не удалось прочитать PDF", "v-warn"],
+};
+function verifyHtml(r, rows) {
+  const v = verifyRow(r);
+  if (!v) return "";
+  let t = VERIFY[v.k][0];
+  if (v.k === "other") t += ` (#${rows.indexOf(v.other) + 1})`;
+  if (v.k === "foreign") t += `: ${v.doi}`;
+  return `<div class="verify ${VERIFY[v.k][1]}">${esc(t)}</div>`;
+}
+
+/* ---------- URL для просмотра ---------- */
+const pdfUrls = new Map();
+function pdfUrl(file) {
+  const old = pdfUrls.get(file.name);
+  if (old && old.file === file) return old.url;
+  if (old) URL.revokeObjectURL(old.url);
+  const url = URL.createObjectURL(file);
+  pdfUrls.set(file.name, { file, url });
+  return url;
+}
+
 /* ---------- разбор JATS в браузере ---------- */
 function langOf(el) {
   for (let e = el; e && e.getAttribute; e = e.parentElement) {
@@ -54,7 +178,19 @@ function jatsInfo(text) {
   const title = (titles.find((t) => t.lang === "ru") || titles[0] || {}).text || "";
   const txt = (tag) => (meta.getElementsByTagName(tag)[0]?.textContent || "").trim();
   const fp = txt("fpage"), lp = txt("lpage");
+  // авторы: по одному на contrib, предпочтительно на русском
+  const authors = [...meta.getElementsByTagName("contrib")]
+    .filter((c) => (c.getAttribute("contrib-type") || "author") === "author")
+    .map((c) => {
+      const names = [...c.getElementsByTagName("name")];
+      const n = names.find((x) => langOf(x) === "ru") || names[0];
+      if (!n) return "";
+      const sn = (n.getElementsByTagName("surname")[0]?.textContent || "").trim();
+      const gn = (n.getElementsByTagName("given-names")[0]?.textContent || "").trim();
+      return [sn, gn].filter(Boolean).join(" ");
+    }).filter(Boolean);
   return {
+    authors: authors.join(", "),
     doi: idOf("doi"), pid: idOf("publisher-id"), title,
     vol: txt("volume"), iss: txt("issue"),
     pages: fp ? (lp && lp !== fp ? `${fp}-${lp}` : fp) : "",
@@ -89,19 +225,40 @@ async function addFiles(list) {
   if (B.mode === "jats") B.rows.sort((a, b) => a.xml.name.localeCompare(b.xml.name, "ru", { numeric: true }));
   bNote(skipped ? `<div class="note">Пропущено файлов не XML/PDF: ${skipped}</div>` : "");
   renderBatch();
+  renderViewer();
+  if (newPdfs.length) readAllPdfs();
 }
 
+const pairLocked = (r) => r.pdfManual || !["ready", "stopped", "invalid"].includes(r.state);
+
+/* Подбор PDF к статьям. Порядок: DOI в тексте PDF → имя файла
+   (имя XML, publisher-id, хвост DOI) → заголовок в тексте PDF.
+   Ручной выбор и уже отправленные статьи не трогаются. */
 function pairJats() {
-  const used = new Set(B.rows.filter((r) => r.pdfManual && r.pdf).map((r) => r.pdf.name));
-  for (const r of B.rows) {
-    if (r.pdfManual) continue;
+  const used = new Set(B.rows.filter((r) => pairLocked(r) && r.pdf).map((r) => r.pdf.name));
+  const open = B.rows.filter((r) => !pairLocked(r));
+  open.forEach((r) => (r.pdf = null));
+  const take = (r, p) => { r.pdf = p; used.add(p.name); };
+  const free = () => B.pdfs.filter((p) => !used.has(p.name));
+  // 1. DOI в тексте
+  for (const r of open) {
+    const p = free().find((x) => pdfHasDoi(pdfMeta.get(x.name), r.info?.doi));
+    if (p) take(r, p);
+  }
+  // 2. имя файла — только для PDF, у которых в тексте нет DOI другой статьи
+  const foreignByText = (p) => B.rows.some((x) => pdfHasDoi(pdfMeta.get(p.name), x.info?.doi));
+  for (const r of open.filter((x) => !x.pdf)) {
     const keys = [baseName(r.xml.name), (r.info.pid || "").toLowerCase()].filter(Boolean);
     const tail = doiTail(r.info.doi);
-    const free = B.pdfs.filter((p) => !used.has(p.name));
-    const pdf = free.find((p) => keys.includes(baseName(p.name)))
-      || (tail.length > 5 ? free.find((p) => baseName(p.name).includes(tail)) : null);
-    r.pdf = pdf || null;
-    if (pdf) used.add(pdf.name);
+    const cand = free().filter((p) => !foreignByText(p));
+    const p = cand.find((x) => keys.includes(baseName(x.name)))
+      || (tail.length > 5 ? cand.find((x) => baseName(x.name).includes(tail)) : null);
+    if (p) take(r, p);
+  }
+  // 3. заголовок в тексте
+  for (const r of open.filter((x) => !x.pdf)) {
+    const p = free().find((x) => !foreignByText(x) && pdfHasTitle(pdfMeta.get(x.name), r.info?.title));
+    if (p) take(r, p);
   }
 }
 
@@ -136,7 +293,7 @@ function counts() {
 function renderBatch() {
   const jats = B.mode === "jats";
   $("#bHint").textContent = jats
-    ? "Выберите сразу все JATS XML и PDF номера. Пары подбираются по имени файла (719667.xml ↔ 719667.pdf), а если имена разные — по DOI или publisher-id в имени PDF. Пару можно поправить вручную."
+    ? "Выберите сразу все JATS XML и PDF номера. Пары подбираются по DOI на первой странице PDF, затем по имени файла (719667.xml ↔ 719667.pdf) и по заголовку. Нажмите на статью, чтобы сверить её с PDF в панели справа."
     : "Выберите XML выпуска (journal3) и PDF всех статей. Сначала загружается XML; после обработки появится список статей, PDF разложатся по ним по DOI или страницам в имени файла — проверьте и загрузите.";
   $("#bDropTitle").textContent = jats ? "Все XML и PDF разом" : "XML выпуска и все PDF";
 
@@ -164,6 +321,18 @@ function renderBatch() {
   }
   const unpaired = B.pdfs.filter((p) => !B.rows.some((r) => r.pdf === p));
   if (B.rows.length && unpaired.length) parts.push(`<span class="badge b-warn"><span class="dot"></span>PDF без пары <b>${unpaired.length}</b></span>`);
+  // сверка по тексту PDF
+  const reading = B.pdfs.filter((p) => pdfMeta.get(p.name)?.state === "reading" || !pdfMeta.has(p.name)).length;
+  if (B.pdfs.length && reading) parts.push(`<span class="badge b-run"><span class="dot"></span>читаю PDF <b>${B.pdfs.length - reading}/${B.pdfs.length}</b></span>`);
+  if (B.rows.length) {
+    const v = B.rows.map(verifyRow).filter(Boolean);
+    const ok = v.filter((x) => x.k === "doi" || x.k === "title").length;
+    const bad = v.filter((x) => x.k === "other" || x.k === "foreign").length;
+    const unk = v.filter((x) => x.k === "unknown" || x.k === "error").length;
+    if (ok) parts.push(`<span class="badge b-ok"><span class="dot"></span>сверено по PDF <b>${ok}</b></span>`);
+    if (bad) parts.push(`<span class="badge b-bad"><span class="dot"></span>PDF не от той статьи <b>${bad}</b></span>`);
+    if (unk) parts.push(`<span class="badge b-warn"><span class="dot"></span>не удалось сверить <b>${unk}</b></span>`);
+  }
   $("#bSummary").hidden = !parts.length;
   $("#bSummary").innerHTML = parts.join("");
 
@@ -178,12 +347,14 @@ function renderBatch() {
       if (r.pdf && dups.get(r.pdf.name) > 1) warns.push("этот PDF выбран для нескольких статей");
       if (r.info?.doi && dupDoi.get(r.info.doi) > 1) warns.push("DOI повторяется в пакете");
       const link = r.articleUid ? `<button class="link" data-open-art="${esc(r.articleUid)}">открыть →</button>` : "";
-      return `<tr class="${["error", "failed", "invalid"].includes(r.state) ? "row-err" : ""}">
+      const cls = [["error", "failed", "invalid"].includes(r.state) ? "row-err" : "", V.row === i ? "sel" : ""].join(" ");
+      return `<tr class="${cls}" data-i="${i}">
         <td class="num">${i + 1}</td>
-        <td><div class="t">${esc((r.info?.title || "").slice(0, 140) || "—")}</div>
+        <td><button type="button" class="t t-btn" data-view="${i}" title="Открыть в просмотре">${esc((r.info?.title || "").slice(0, 140) || "—")}</button>
           <div class="sub-m">${esc(r.info?.doi || "без DOI")}${r.xml ? " · " + esc(r.xml.name) : ""}</div></td>
         <td class="num">${esc(r.info?.pages || "—")}</td>
-        <td>${pdfSelect(r, i)}</td>
+        <td>${pdfSelect(r, i)}
+          <div class="pdf-tools">${verifyHtml(r, B.rows)}<button type="button" class="link" data-view="${i}">смотреть</button></div></td>
         <td>${stBadge(r)} ${link}
           ${r.msg ? `<div class="msg ${r.msgInfo ? "info" : ""}">${esc(r.msg)}</div>` : ""}
           ${warns.length ? `<div class="msg">${esc(warns.join("; "))}</div>` : ""}</td></tr>`;
@@ -229,12 +400,14 @@ function errText(res) {
 async function runJats(onlyRetry) {
   const queue = B.rows.filter((r) => onlyRetry ? r.state === "error" : ["ready", "stopped"].includes(r.state));
   if (!queue.length) return;
+  const wrong = queue.filter((r) => ["other", "foreign"].includes(verifyRow(r)?.k));
+  if (wrong.length && !confirm(`У ${wrong.length} ${plural(wrong.length, "статьи", "статей", "статей")} PDF, судя по DOI в тексте, от другой статьи: №${wrong.map((r) => B.rows.indexOf(r) + 1).join(", ")}.\n\nПроверьте их в просмотре («смотреть»). Всё равно загрузить?`)) return;
   const noPdf = queue.filter((r) => !r.pdf).length;
   if (noPdf && !confirm(`${noPdf} ${plural(noPdf, "статья уйдёт", "статьи уйдут", "статей уйдут")} без PDF. PDF можно будет догрузить позже. Продолжить?`)) return;
   B.running = true; B.stop = false; renderBatch();
   for (const r of queue) {
     if (B.stop) { r.state = "stopped"; continue; }
-    r.state = "uploading"; r.msg = ""; r.msgInfo = false; renderBatch();
+    r.state = "uploading"; r.msg = ""; r.msgInfo = false; renderBatch(); renderViewer();
     const form = { xml: r.xml };
     if (r.pdf) form.pdf = r.pdf;
     const res = await call("POST", r.pdf ? "/api/v2/files/jats/xml_pdf/" : "/api/v2/files/jats/xml/", { form });
@@ -328,15 +501,25 @@ async function runJournalXml() {
 }
 
 function suggestJournalPdfs() {
-  const used = new Set(B.rows.filter((r) => r.pdf).map((r) => r.pdf.name));
-  for (const r of B.rows) {
-    if (r.pdf || r.pdfManual) continue;
-    const free = B.pdfs.filter((p) => !used.has(p.name));
+  const locked = (r) => r.pdfManual || r.pdfDone || r.state === "signed";
+  const used = new Set(B.rows.filter((r) => locked(r) && r.pdf).map((r) => r.pdf.name));
+  const open = B.rows.filter((r) => !locked(r));
+  open.forEach((r) => (r.pdf = null));
+  const free = () => B.pdfs.filter((p) => !used.has(p.name));
+  const take = (r, p) => { r.pdf = p; used.add(p.name); };
+  for (const r of open) {
+    const p = free().find((x) => pdfHasDoi(pdfMeta.get(x.name), r.info?.doi));
+    if (p) take(r, p);
+  }
+  const foreignByText = (p) => B.rows.some((x) => pdfHasDoi(pdfMeta.get(p.name), x.info?.doi));
+  for (const r of open.filter((x) => !x.pdf)) {
+    const cand = free().filter((p) => !foreignByText(p));
     const tail = doiTail(r.info.doi);
     const pages = r.info.pages;
-    const pick = (tail.length > 5 && free.find((p) => baseName(p.name).includes(tail)))
-      || (pages && free.find((p) => new RegExp(`(^|[^0-9])${pages.replace("-", "[-–_]")}([^0-9]|$)`).test(baseName(p.name))));
-    if (pick) { r.pdf = pick; used.add(pick.name); }
+    const p = (tail.length > 5 && cand.find((x) => baseName(x.name).includes(tail)))
+      || (pages && cand.find((x) => new RegExp(`(^|[^0-9])${pages.replace("-", "[-–_]")}([^0-9]|$)`).test(baseName(x.name))))
+      || cand.find((x) => pdfHasTitle(pdfMeta.get(x.name), r.info?.title));
+    if (p) take(r, p);
   }
 }
 
@@ -399,8 +582,143 @@ function exportCsv() {
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
 
+/* =========================================================
+   Панель просмотра: PDF выбранной статьи справа от таблицы,
+   сверху — данные статьи из XML и результат сверки.
+   PDF показывает встроенный просмотрщик браузера.
+   ========================================================= */
+const V = { row: null, shown: null };
+
+function openViewer(i) {
+  if (!B.rows[i]) return;
+  V.row = i;
+  document.body.classList.add("viewer-open");
+  $("#viewer").hidden = false;
+  renderViewer();
+  renderBatch();
+  $(`#bTable tr[data-i="${i}"]`)?.scrollIntoView({ block: "nearest" });
+}
+function closeViewer() {
+  V.row = null; V.shown = null;
+  document.body.classList.remove("viewer-open");
+  $("#viewer").hidden = true;
+  $("#vDoc").innerHTML = "";
+  renderBatch();
+}
+function stepViewer(d) {
+  if (V.row == null || !B.rows.length) return;
+  openViewer((V.row + d + B.rows.length) % B.rows.length);
+}
+function nextProblem() {
+  const n = B.rows.length;
+  for (let k = 1; k <= n; k++) {
+    const i = ((V.row ?? -1) + k) % n;
+    const r = B.rows[i];
+    const v = verifyRow(r);
+    if (!r.pdf || (v && !["doi", "title"].includes(v.k))) return openViewer(i);
+  }
+  $("#vHint").textContent = "Проблемных пар не осталось.";
+}
+
+function renderViewer() {
+  if (V.row == null || $("#viewer").hidden) return;
+  if (!B.rows[V.row]) return closeViewer();
+  const r = B.rows[V.row], i = V.row, n = B.rows.length;
+  const v = verifyRow(r);
+  const info = r.info || {};
+  $("#vPos").textContent = `СВЕРКА · СТАТЬЯ ${i + 1} ИЗ ${n}`;
+
+  // кто ещё претендует: PDF, в тексте которого DOI этой статьи
+  const ownPdf = B.pdfs.find((p) => p !== r.pdf && pdfHasDoi(pdfMeta.get(p.name), info.doi));
+  const ownHolder = ownPdf ? B.rows.find((x) => x.pdf === ownPdf) : null;
+  let fix = "";
+  if (v?.k === "other") {
+    fix += `<button type="button" class="btn btn-ghost btn-sm" data-fix="give">Отдать этот PDF статье #${B.rows.indexOf(v.other) + 1}${ownPdf && v.other.pdf === ownPdf ? " (обмен)" : ""}</button>`;
+  }
+  if (ownPdf && !(v?.k === "other" && v.other.pdf === ownPdf)) {
+    fix += `<button type="button" class="btn btn-ghost btn-sm" data-fix="take" data-pdf="${esc(ownPdf.name)}">Взять ${esc(ownPdf.name)}${ownHolder ? ` (сейчас у #${B.rows.indexOf(ownHolder) + 1})` : ""}</button>`;
+  }
+  const locked = $(`#bTable select[data-row="${i}"]`)?.disabled;
+
+  $("#vMeta").innerHTML = `
+    <div class="v-title">${esc(info.title || "—")}</div>
+    <dl class="kv v-kv">
+      <dt>DOI</dt><dd>${esc(info.doi || "—")}</dd>
+      <dt>Страницы</dt><dd>${esc(info.pages || "—")}${pdfMeta.get(r.pdf?.name)?.pages ? ` <span class="muted">· в PDF ${pdfMeta.get(r.pdf.name).pages} стр.</span>` : ""}</dd>
+      ${info.authors ? `<dt>Авторы</dt><dd class="sans">${esc(info.authors)}</dd>` : ""}
+      ${r.xml ? `<dt>XML</dt><dd>${esc(r.xml.name)}</dd>` : ""}
+    </dl>
+    ${r.pdf ? verifyHtml(r, B.rows) : '<div class="verify v-warn">у статьи нет PDF</div>'}
+    ${fix && !locked ? `<div class="actions">${fix}</div>` : ""}`;
+
+  const sel = $("#vSelect");
+  sel.disabled = !!locked;
+  sel.innerHTML = [`<option value="">— без PDF —</option>`].concat(B.pdfs.map((p, k) => {
+    const mark = pdfHasDoi(pdfMeta.get(p.name), info.doi) ? "✓ " : "";
+    const holder = B.rows.find((x) => x !== r && x.pdf === p);
+    return `<option value="${k}" ${r.pdf === p ? "selected" : ""}>${mark}${esc(p.name)}${holder ? `  · у #${B.rows.indexOf(holder) + 1}` : ""}</option>`;
+  })).join("");
+
+  // PDF перерисовываем, только если сменился файл
+  if (V.shown !== r.pdf) {
+    V.shown = r.pdf;
+    if (r.pdf) {
+      const url = pdfUrl(r.pdf);
+      $("#vDoc").innerHTML = `<iframe title="PDF ${esc(r.pdf.name)}" src="${url}#view=FitH"></iframe>`;
+      $("#vOpen").href = url; $("#vOpen").hidden = false;
+    } else {
+      $("#vDoc").innerHTML = '<div class="v-empty">У этой статьи нет PDF.<br>Выберите файл в списке выше.</div>';
+      $("#vOpen").hidden = true;
+    }
+  }
+  $("#vHint").textContent = "";
+}
+
+function setRowPdf(r, pdf) {
+  r.pdf = pdf || null;
+  r.pdfManual = true;
+  renderBatch(); renderViewer();
+}
+$("#vSelect").addEventListener("change", (e) => {
+  const r = B.rows[V.row]; if (!r) return;
+  setRowPdf(r, e.target.value === "" ? null : B.pdfs[+e.target.value]);
+});
+$("#vMeta").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-fix]"); if (!b) return;
+  const r = B.rows[V.row];
+  if (b.dataset.fix === "give") {
+    const other = verifyRow(r)?.other; if (!other) return;
+    const mine = r.pdf, theirs = other.pdf;
+    other.pdf = mine; other.pdfManual = true;
+    // обмен, если у той статьи как раз PDF этой
+    r.pdf = theirs && pdfHasDoi(pdfMeta.get(theirs.name), r.info?.doi) ? theirs : null;
+    r.pdfManual = true;
+  } else {
+    const p = B.pdfs.find((x) => x.name === b.dataset.pdf); if (!p) return;
+    const holder = B.rows.find((x) => x !== r && x.pdf === p);
+    if (holder) { holder.pdf = null; holder.pdfManual = true; }
+    r.pdf = p; r.pdfManual = true;
+  }
+  renderBatch(); renderViewer();
+});
+$("#vClose").addEventListener("click", closeViewer);
+$("#vPrev").addEventListener("click", () => stepViewer(-1));
+$("#vNext").addEventListener("click", () => stepViewer(1));
+$("#vNextIssue").addEventListener("click", nextProblem);
+document.addEventListener("keydown", (e) => {
+  if ($("#viewer").hidden || /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
+  if (e.key === "Escape") closeViewer();
+  else if (e.key === "ArrowRight") { e.preventDefault(); stepViewer(1); }
+  else if (e.key === "ArrowLeft") { e.preventDefault(); stepViewer(-1); }
+});
+// на другой вкладке консоли панель не нужна
+$$(".tab").forEach((t) => t.addEventListener("click", () => { if (t.dataset.tab !== "batch" && V.row != null) closeViewer(); }));
+
 /* ---------- события ---------- */
 function resetBatch() {
+  if (V.row != null) closeViewer();
+  pdfUrls.forEach((u) => URL.revokeObjectURL(u.url)); pdfUrls.clear();
+  pdfMeta.clear();
   Object.assign(B, { rows: [], pdfs: [], issueXml: null, issue: null, stop: false });
   $("#bFiles").value = ""; bNote(""); renderBatch();
 }
@@ -422,7 +740,10 @@ $("#bTable").addEventListener("change", (e) => {
   const r = B.rows[+s.dataset.row];
   r.pdf = s.value === "" ? null : B.pdfs[+s.value];
   r.pdfManual = true;
-  renderBatch();
+  renderBatch(); renderViewer();
+});
+$("#bTable").addEventListener("click", (e) => {
+  const b = e.target.closest("[data-view]"); if (b) openViewer(+b.dataset.view);
 });
 $("#bStart").addEventListener("click", () => {
   if (B.mode === "jats") return runJats(false);
