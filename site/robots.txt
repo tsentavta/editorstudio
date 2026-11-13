@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://editorstudio.ru/sitemap.xml

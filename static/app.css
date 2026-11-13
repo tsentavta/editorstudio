@@ -90,6 +90,15 @@ button, input, textarea, select { font: inherit; color: inherit; letter-spacing:
   display: inline-flex; align-items: center; gap: 6px;
   font: 500 11px/1 var(--mono); letter-spacing: .88px; text-transform: uppercase; color: var(--slate);
 }
+button.key-badge { border: 0; background: none; padding: 6px 4px; cursor: default; }
+.is-direct button.key-badge { cursor: pointer; border-radius: 4px; }
+.is-direct button.key-badge:hover { color: var(--ink); background: var(--pebble); }
+.home-link { display: none; font-size: 13px; font-weight: 500; color: var(--slate); text-decoration: none; }
+.home-link:hover { color: var(--ink); }
+.is-direct .home-link { display: inline; }
+.key-panel-wrap { max-width: 1200px; margin: 0 auto; padding: 0 16px; position: relative; z-index: 15; }
+.key-panel { position: absolute; right: 16px; top: 12px; width: min(460px, calc(100% - 32px)); border-color: var(--ash); }
+.key-panel a { color: var(--persimmon); }
 .key-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--fog); }
 .key-badge.ok .dot { background: var(--green); }
 .key-badge.bad .dot { background: var(--coral); }

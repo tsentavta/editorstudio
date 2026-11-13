@@ -29,11 +29,32 @@
       <button class="tab" data-tab="search" role="tab">Поиск</button>
     </nav>
     <div class="nav-right">
-      <span class="key-badge" id="keyBadge"><span class="dot"></span><span id="keyText">ключ…</span></span>
+      <a class="home-link" href="../" title="Все инструменты EditorStudio">EditorStudio</a>
+      <button type="button" class="key-badge" id="keyBadge"><span class="dot"></span><span id="keyText">ключ…</span></button>
       <button class="btn btn-ghost btn-sm" id="pingBtn">Проверить связь</button>
     </div>
   </div>
 </header>
+
+<div class="key-panel-wrap">
+  <div class="card key-panel" id="keyPanel" hidden>
+    <div class="card-head">
+      <div class="eyebrow eyebrow-brand">API-КЛЮЧ «МЕТАФОРЫ»</div>
+      <button type="button" class="link" id="keyClose">закрыть</button>
+    </div>
+    <p class="hint" style="margin:0">Ключ организации из личного кабинета <a href="https://metafora.rcsi.science" target="_blank" rel="noopener">metafora.rcsi.science</a>. Хранится только в этом браузере и отправляется только в «Метафору» — у EditorStudio нет сервера.</p>
+    <div class="row">
+      <input type="password" id="keyInput" class="mono grow" placeholder="вставьте ключ" autocomplete="off" spellcheck="false">
+      <button type="button" class="btn btn-ghost" id="keyToggle">показать</button>
+    </div>
+    <label class="check"><input type="checkbox" id="keyRemember"><span>запомнить на этом компьютере <span class="muted">(иначе — до закрытия вкладки)</span></span></label>
+    <div class="actions">
+      <button type="button" class="btn btn-primary" id="keySave">Сохранить и проверить</button>
+      <button type="button" class="btn btn-ghost btn-danger" id="keyForget">Забыть ключ</button>
+    </div>
+    <div id="keyMsg"></div>
+  </div>
+</div>
 
 <main class="page">
   <section class="hero">

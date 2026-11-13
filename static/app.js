@@ -29,15 +29,58 @@ function patchHistory(uid, patch) {
 }
 
 /* =========================================================
-   Вызов API через локальный прокси + журнал
+   Режим работы и ключ
+   proxy  — страницу отдаёт server.py, ключ лежит в его .env;
+   direct — статический сайт, запросы идут прямо в «Метафору»
+            (её API разрешает CORS), ключ вводит пользователь
+            и он хранится только в этом браузере.
+   ========================================================= */
+const METAFORA = "https://metafora.rcsi.science";
+const KEY_NAME = "metafora.apiKey";
+const MODE = { direct: false, ready: null };
+
+const keyStore = {
+  get() {
+    try { return sessionStorage.getItem(KEY_NAME) || localStorage.getItem(KEY_NAME) || ""; } catch { return ""; }
+  },
+  remembered() { try { return !!localStorage.getItem(KEY_NAME); } catch { return false; } },
+  set(key, remember) {
+    this.clear();
+    try { (remember ? localStorage : sessionStorage).setItem(KEY_NAME, key); } catch { /* хранилище недоступно */ }
+    memKey = key;
+  },
+  clear() {
+    memKey = "";
+    try { sessionStorage.removeItem(KEY_NAME); localStorage.removeItem(KEY_NAME); } catch { /* нет хранилища */ }
+  },
+};
+let memKey = "";
+const currentKey = () => keyStore.get() || memKey;
+
+/* =========================================================
+   Вызов API + журнал
    ========================================================= */
 const log = [];
 let seq = 0;
 
 async function call(method, path, { query, json, form, silent } = {}) {
-  let url = path;
-  if (query) url += "?" + new URLSearchParams(query).toString();
+  await MODE.ready;
+  let shownUrl = path;
+  if (query) shownUrl += "?" + new URLSearchParams(query).toString();
+  const url = (MODE.direct ? METAFORA : "") + shownUrl;
   const opts = { method, headers: {} };
+  if (MODE.direct) {
+    const key = currentKey();
+    if (!key) {
+      openKeyPanel();
+      const entry = { id: ++seq, method, url: shownUrl, status: 0, ms: 0, req: null, at: new Date(),
+        data: { message: "Введите API-ключ «Метафоры»", error: "NO_API_KEY" } };
+      if (!silent) pushLog(entry);
+      return { ok: false, status: 0, data: entry.data, entry };
+    }
+    opts.headers["Api-Key"] = key;
+    opts.headers["Accept"] = "application/json";
+  }
   let req = null;
   if (json) {
     opts.headers["Content-Type"] = "application/json";
@@ -61,9 +104,11 @@ async function call(method, path, { query, json, form, silent } = {}) {
     text = await r.text();
     try { data = text ? JSON.parse(text) : null; } catch { data = text; }
   } catch (e) {
-    data = { message: "Нет связи с локальным сервером: " + e.message, error: "LOCAL_NETWORK" };
+    data = MODE.direct
+      ? { message: "Нет связи с «Метафорой»: " + e.message, error: "NETWORK" }
+      : { message: "Нет связи с локальным сервером: " + e.message, error: "LOCAL_NETWORK" };
   }
-  const entry = { id: ++seq, method, url, status, ms: Math.round(performance.now() - t0), req, data, at: new Date() };
+  const entry = { id: ++seq, method, url: shownUrl, status, ms: Math.round(performance.now() - t0), req, data, at: new Date() };
   if (!silent) pushLog(entry);
   return { ok: status >= 200 && status < 300, status, data, entry };
 }
@@ -173,25 +218,79 @@ document.addEventListener("click", (e) => {
 /* =========================================================
    Ключ и проверка связи
    ========================================================= */
-async function initConfig() {
+function setBadge(state, text) {
+  $("#keyBadge").classList.toggle("ok", state === "ok");
+  $("#keyBadge").classList.toggle("bad", state === "bad");
+  $("#keyText").textContent = text;
+}
+function refreshKeyBadge() {
+  if (!MODE.direct) return;
+  setBadge(currentKey() ? "" : "bad", currentKey() ? "ключ введён" : "нет ключа");
+}
+
+async function detectMode() {
   try {
-    const c = await (await fetch("/local/config")).json();
-    $("#keyText").textContent = c.hasKey ? "ключ задан" : "нет ключа";
-    $("#keyBadge").classList.toggle("bad", !c.hasKey);
-  } catch {
-    $("#keyText").textContent = "сервер недоступен";
-    $("#keyBadge").classList.add("bad");
-  }
+    const r = await fetch("/local/config", { cache: "no-store" });
+    const c = r.ok && (r.headers.get("Content-Type") || "").includes("json") ? await r.json() : null;
+    if (c && "hasKey" in c) {
+      MODE.direct = false;
+      setBadge(c.hasKey ? "" : "bad", c.hasKey ? "ключ на сервере" : "нет ключа в .env");
+      return;
+    }
+  } catch { /* нет локального сервера */ }
+  MODE.direct = true;
+  document.body.classList.add("is-direct");
+  HERO.upload[1] = "JATS или Journal XML, PDF к статьям, статус обработки и подписание — через официальный API. Ключ организации хранится только в вашем браузере и уходит только на metafora.rcsi.science.";
+  if ($("#heroTitle").innerHTML === HERO.upload[0]) $("#heroLead").textContent = HERO.upload[1];
+  refreshKeyBadge();
+  if (!currentKey()) openKeyPanel();
+}
+MODE.ready = detectMode();
+
+async function checkKey() {
+  // Заведомо несуществующий file_uid: 404 = ключ принят, 401/403 = проблема с ключом.
+  const r = await call("GET", "/api/v2/files/status/", { query: { file_uid: "00000000-0000-0000-0000-000000000000" } });
+  if (r.data?.error === "NO_API_KEY") return r;
+  const good = r.status === 404 || r.ok;
+  setBadge(good ? "ok" : "bad", good ? "ключ работает" : r.status === 401 ? "ключ неактивен" : r.status === 403 ? "ключ отклонён" : "нет связи");
+  return r;
 }
 $("#pingBtn").addEventListener("click", async () => {
   const b = $("#pingBtn"); busy(b, true);
-  // Заведомо несуществующий file_uid: 404 = ключ принят, 401/403 = проблема с ключом.
-  const r = await call("GET", "/api/v2/files/status/", { query: { file_uid: "00000000-0000-0000-0000-000000000000" } });
+  await checkKey();
   busy(b, false);
-  const good = r.status === 404 || r.ok;
-  $("#keyBadge").classList.toggle("ok", good);
-  $("#keyBadge").classList.toggle("bad", !good);
-  $("#keyText").textContent = good ? "ключ работает" : r.status === 401 ? "ключ неактивен" : r.status === 403 ? "ключ отклонён" : "нет связи";
+});
+
+/* ---------- панель ключа (только статический режим) ---------- */
+function openKeyPanel() {
+  const p = $("#keyPanel");
+  p.hidden = false;
+  $("#keyInput").value = currentKey();
+  $("#keyRemember").checked = keyStore.remembered();
+  $("#keyMsg").innerHTML = "";
+  setTimeout(() => $("#keyInput").focus(), 0);
+}
+function closeKeyPanel() { $("#keyPanel").hidden = true; }
+$("#keyBadge").addEventListener("click", () => { if (MODE.direct) ($("#keyPanel").hidden ? openKeyPanel() : closeKeyPanel()); });
+$("#keyClose").addEventListener("click", closeKeyPanel);
+$("#keyToggle").addEventListener("click", () => {
+  const i = $("#keyInput"); i.type = i.type === "password" ? "text" : "password";
+  $("#keyToggle").textContent = i.type === "password" ? "показать" : "скрыть";
+});
+$("#keySave").addEventListener("click", async () => {
+  const key = $("#keyInput").value.trim();
+  if (!key) { $("#keyMsg").innerHTML = '<div class="note err"><b>Вставьте ключ</b></div>'; return; }
+  keyStore.set(key, $("#keyRemember").checked);
+  const b = $("#keySave"); busy(b, true);
+  const r = await checkKey();
+  busy(b, false);
+  if (r.status === 404 || r.ok) { $("#keyMsg").innerHTML = okHtml("Ключ работает"); setTimeout(closeKeyPanel, 900); }
+  else $("#keyMsg").innerHTML = errorHtml(r);
+});
+$("#keyInput").addEventListener("keydown", (e) => e.key === "Enter" && $("#keySave").click());
+$("#keyForget").addEventListener("click", () => {
+  keyStore.clear(); $("#keyInput").value = ""; $("#keyRemember").checked = false;
+  refreshKeyBadge(); $("#keyMsg").innerHTML = okHtml("Ключ удалён из браузера");
 });
 
 /* =========================================================
@@ -557,4 +656,4 @@ $("#searchQ").addEventListener("keydown", (e) => e.key === "Enter" && doSearch()
 /* ========================================================= */
 setMode(mode);
 renderHistory();
-initConfig();
+
