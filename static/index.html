@@ -25,6 +25,7 @@
     <nav class="tabs" role="tablist">
       <button class="tab is-active" data-tab="upload" role="tab">Загрузка</button>
       <button class="tab" data-tab="files" role="tab">Файлы</button>
+      <button class="tab" data-tab="batch" role="tab">Пакет</button>
       <button class="tab" data-tab="pubs" role="tab">Публикации</button>
       <button class="tab" data-tab="search" role="tab">Поиск</button>
     </nav>
@@ -142,6 +143,38 @@
         </div>
       </section>
 
+      <!-- ===== ПАКЕТ ===== -->
+      <section class="panel" data-panel="batch" hidden>
+        <div class="card">
+          <div class="eyebrow">РЕЖИМ</div>
+          <div class="seg" id="bModeSeg">
+            <button class="seg-btn is-on" data-bmode="jats">JATS: статьи + PDF</button>
+            <button class="seg-btn" data-bmode="journal">Journal XML: выпуск + PDF</button>
+          </div>
+          <p class="hint" id="bHint"></p>
+
+          <label class="drop drop-wide" id="bDrop">
+            <input type="file" id="bFiles" multiple accept=".xml,.pdf,application/xml,text/xml,application/pdf">
+            <span class="drop-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3h7l4 4v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M15 3v4h4"/><path d="M4 7v12a2 2 0 0 0 2 2h9"/></svg></span>
+            <span class="drop-title" id="bDropTitle">Все XML и PDF разом</span>
+            <span class="drop-name mono" id="bDropName">перетащите или выберите сразу все файлы — пары подберутся по имени</span>
+          </label>
+
+          <div class="bsum" id="bSummary" hidden></div>
+          <div id="bTable"></div>
+
+          <div class="actions" id="bActions" hidden>
+            <button class="btn btn-primary" id="bStart">Загрузить</button>
+            <button class="btn btn-ghost" id="bStop" hidden>Остановить</button>
+            <button class="btn btn-ghost" id="bRetry" hidden>Повторить упавшие</button>
+            <button class="btn btn-ghost" id="bSign" hidden>Подписать обработанные</button>
+            <button class="btn btn-ghost" id="bCsv" hidden>Отчёт CSV</button>
+            <button class="btn btn-ghost" id="bClear">Очистить</button>
+          </div>
+          <div id="bNote"></div>
+        </div>
+      </section>
+
       <!-- ===== ПУБЛИКАЦИИ ===== -->
       <section class="panel" data-panel="pubs" hidden>
         <div class="card">
@@ -196,5 +229,6 @@
 </main>
 
 <script src="app.js"></script>
+<script src="batch.js"></script>
 </body>
 </html>

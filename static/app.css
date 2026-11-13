@@ -174,6 +174,32 @@ button.key-badge { border: 0; background: none; padding: 6px 4px; cursor: defaul
 .drop-name { font-size: 12px; color: var(--stone); word-break: break-all; }
 .drop.has-file .drop-name { color: var(--ink); }
 
+.drop-wide { align-items: center; text-align: center; padding: 28px 20px; }
+
+/* ---------- batch ---------- */
+.bsum { display: flex; flex-wrap: wrap; gap: 8px; }
+.bsum .badge b { font-weight: 600; color: var(--ink); }
+.btable td { font-size: 13px; }
+.btable .t {
+  font-weight: 500; color: var(--ink); line-height: 1.4; min-width: 220px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+/* на вкладке «Пакет» таблица на всю ширину, журнал — под ней */
+body[data-tab="batch"] .layout { grid-template-columns: minmax(0, 1fr); }
+body[data-tab="batch"] .term { position: static; max-height: none; }
+body[data-tab="batch"] .term-body { max-height: 360px; }
+.btable .sub-m { font: 11px/1.5 var(--mono); color: var(--stone); word-break: break-all; }
+.btable .num { font: 12px var(--mono); color: var(--stone); }
+.btable select {
+  width: 100%; min-width: 150px; max-width: 240px;
+  font: 12px var(--mono); padding: 6px 8px; border: 1px solid var(--ash); border-radius: 4px; background: var(--white);
+}
+.btable select.warn { border-color: var(--apricot); }
+.btable .msg { margin-top: 4px; font-size: 12px; color: #b3302d; line-height: 1.4; max-width: 280px; }
+.btable .msg.info { color: var(--slate); }
+.btable tr.row-err td { background: #fffafa; }
+.badge.b-warn .dot { background: var(--apricot); }
+
 /* ---------- fields ---------- */
 .field { display: flex; flex-direction: column; gap: 6px; }
 .label { font-size: 12px; font-weight: 500; color: var(--slate); letter-spacing: .3px; }
