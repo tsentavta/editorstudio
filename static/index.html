@@ -228,6 +228,26 @@
   </div>
 </main>
 
+<aside class="viewer" id="viewer" hidden aria-label="Просмотр PDF">
+  <div class="viewer-head">
+    <div class="eyebrow eyebrow-brand" id="vPos">СВЕРКА</div>
+    <div class="viewer-keys mono">← → листать · Esc закрыть</div>
+    <button type="button" class="viewer-x" id="vClose" title="Закрыть (Esc)" aria-label="Закрыть">✕</button>
+  </div>
+  <div class="viewer-meta" id="vMeta"></div>
+  <div class="viewer-pick">
+    <select id="vSelect" aria-label="PDF статьи"></select>
+    <a id="vOpen" class="link" target="_blank" rel="noopener">в новой вкладке</a>
+  </div>
+  <div class="viewer-doc" id="vDoc"></div>
+  <div class="viewer-nav">
+    <button type="button" class="btn btn-ghost btn-sm" id="vPrev">◂ пред.</button>
+    <button type="button" class="btn btn-ghost btn-sm" id="vNextIssue">к следующей проблеме</button>
+    <button type="button" class="btn btn-ghost btn-sm" id="vNext">след. ▸</button>
+  </div>
+  <div class="hint mono" id="vHint"></div>
+</aside>
+
 <script src="app.js"></script>
 <script src="batch.js"></script>
 </body>
