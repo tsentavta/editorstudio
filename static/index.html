@@ -178,27 +178,22 @@
 
       <section class="panel" data-panel="pdf" hidden>
         <div class="card">
-          <form id="pdfLookup">
-            <div class="row">
-              <select id="pdfIdType" aria-label="Тип идентификатора">
-                <option value="doi">DOI</option>
-                <option value="edn">EDN</option>
-                <option value="uid">article_uid</option>
-              </select>
-              <input type="text" id="pdfId" class="mono grow" placeholder="DOI статьи" aria-label="Идентификатор статьи" autocomplete="off" required>
-              <button class="btn btn-ghost" id="pdfFind">Найти статью</button>
-            </div>
+          <form id="pdfIssueLookup">
+            <label for="pdfIssueDois">DOI статей выпуска</label>
+            <textarea id="pdfIssueDois" class="mono" rows="6" placeholder="По одному DOI на строку" required></textarea>
+            <div class="actions"><button class="btn btn-ghost" id="pdfIssueFind">Найти статьи</button></div>
           </form>
-          <div id="pdfArticle" aria-live="polite"></div>
-        </div>
-        <div class="card" id="pdfAttach" hidden>
-          <label class="drop drop-wide" id="pdfAttachDrop">
-            <input type="file" accept=".pdf,application/pdf" id="pdfAttachFile">
-            <span class="drop-title">PDF статьи</span>
-            <span class="drop-name mono" data-empty="Перетащите PDF или выберите файл">Перетащите PDF или выберите файл</span>
+          <label class="drop drop-wide" id="pdfIssueDrop">
+            <input type="file" accept=".pdf,application/pdf" id="pdfIssueFiles" multiple>
+            <span class="drop-title">PDF статей</span>
+            <span class="drop-name mono" id="pdfIssueFileCount">Перетащите PDF или выберите файлы</span>
           </label>
-          <div class="actions"><button class="btn btn-primary" id="pdfAttachGo">Прикрепить PDF</button></div>
-          <div id="pdfAttachResult" aria-live="polite"></div>
+          <p class="hint">Пары подбираются по DOI в PDF. Если совпадение не найдено, выберите файл в таблице.</p>
+          <div id="pdfIssueStatus" role="status"></div>
+          <div id="pdfIssueRows"></div>
+          <div class="actions" id="pdfIssueActions" hidden>
+            <button type="button" class="btn btn-primary" id="pdfIssueSend" disabled>Прикрепить PDF</button>
+          </div>
         </div>
       </section>
 
@@ -275,7 +270,8 @@
   <div class="hint mono" id="vHint"></div>
 </aside>
 
-<script src="app.js?v=20261126-pdf"></script>
-<script src="batch.js?v=20261126"></script>
+<script src="app.js?v=20261126-pdf-issue"></script>
+<script src="batch.js?v=20261126-pdf-issue"></script>
+<script src="pdf-issue.js?v=20261126"></script>
 </body>
 </html>

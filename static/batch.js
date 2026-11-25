@@ -59,7 +59,7 @@ let pdfReadBusy = false;
 
 async function readPdfText(file) {
   const lib = await loadPdfJs();
-  const doc = await lib.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
+  const doc = await lib.getDocument({ data: new Uint8Array(await file.arrayBuffer()), isEvalSupported: false }).promise;
   let text = "";
   try {
     for (let i = 1; i <= Math.min(2, doc.numPages); i++) {
