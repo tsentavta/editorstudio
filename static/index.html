@@ -26,6 +26,7 @@
       <button class="tab is-active" data-tab="upload" role="tab">Загрузка</button>
       <button class="tab" data-tab="files" role="tab">Файлы</button>
       <button class="tab" data-tab="batch" role="tab">Пакет</button>
+      <button class="tab" data-tab="pdf" role="tab">PDF</button>
       <button class="tab" data-tab="pubs" role="tab">Публикации</button>
       <button class="tab" data-tab="search" role="tab">Поиск</button>
     </nav>
@@ -175,6 +176,32 @@
         </div>
       </section>
 
+      <section class="panel" data-panel="pdf" hidden>
+        <div class="card">
+          <form id="pdfLookup">
+            <div class="row">
+              <select id="pdfIdType" aria-label="Тип идентификатора">
+                <option value="doi">DOI</option>
+                <option value="edn">EDN</option>
+                <option value="uid">article_uid</option>
+              </select>
+              <input type="text" id="pdfId" class="mono grow" placeholder="DOI статьи" aria-label="Идентификатор статьи" autocomplete="off" required>
+              <button class="btn btn-ghost" id="pdfFind">Найти статью</button>
+            </div>
+          </form>
+          <div id="pdfArticle" aria-live="polite"></div>
+        </div>
+        <div class="card" id="pdfAttach" hidden>
+          <label class="drop drop-wide" id="pdfAttachDrop">
+            <input type="file" accept=".pdf,application/pdf" id="pdfAttachFile">
+            <span class="drop-title">PDF статьи</span>
+            <span class="drop-name mono" data-empty="Перетащите PDF или выберите файл">Перетащите PDF или выберите файл</span>
+          </label>
+          <div class="actions"><button class="btn btn-primary" id="pdfAttachGo">Прикрепить PDF</button></div>
+          <div id="pdfAttachResult" aria-live="polite"></div>
+        </div>
+      </section>
+
       <!-- ===== ПУБЛИКАЦИИ ===== -->
       <section class="panel" data-panel="pubs" hidden>
         <div class="card">
@@ -248,7 +275,7 @@
   <div class="hint mono" id="vHint"></div>
 </aside>
 
-<script src="app.js?v=20261126"></script>
+<script src="app.js?v=20261126-pdf"></script>
 <script src="batch.js?v=20261126"></script>
 </body>
 </html>
