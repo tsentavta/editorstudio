@@ -1,0 +1,43 @@
+title: How to export all of a journal’s articles from DOAJ
+description: How to download every article of a journal from DOAJ to Excel (CSV) or JSON, get around the DOAJ API limit of 1000 records, and when you need the full DOAJ data dump.
+updated: 2026-10-28
+---
+<p class="lead">You need the list of a journal’s DOAJ articles to reconcile it with the website, report on it or fix metadata. The DOAJ website has no “download all articles of this journal” button, and the DOAJ API returns at most 1000 records per query. Here is how to get everything.</p>
+
+<h2>The quick way: the “Export &amp; audit” tab</h2>
+<ol>
+  <li>Open the “Export &amp; audit” tab and enter the journal ISSN — print or online.</li>
+  <li>Click “Load”. Progress and a request log appear below the field.</li>
+  <li>Choose an export format:
+    <ul>
+      <li><b>CSV</b> — for Excel; you can choose the delimiter. The file round-trips with bulk upload: fix the data and upload it back.</li>
+      <li><b>JSON (full records)</b> — everything DOAJ stores about the articles, including system fields.</li>
+      <li><b>JSON for re-upload</b> — just the article metadata, in the format the DOAJ API accepts.</li>
+      <li><b>ID list</b> and <b>DOI list</b> — one per line.</li>
+    </ul>
+  </li>
+</ol>
+<p>No API key is needed: the export uses public data. You also get a summary of metadata problems: articles without DOI, duplicates, missing abstracts, ORCIDs and affiliations.</p>
+
+<div class="try">
+  <p>Export the articles of a real journal and see what the summary looks like.</p>
+  <a class="btn" href="/en/?example=export">Run the example</a>
+</div>
+
+<h2>The 1000-record limit and how to get around it</h2>
+<p>The DOAJ API returns results in pages of 100, but never beyond the thousandth: asking for page 11 returns “You cannot access results beyond 1000 records via this API”. Large journals have more articles than that.</p>
+<p>The workaround is simple: split one query into several, each matching fewer than 1000 articles. DOAJ Metadata Studio does this automatically — it halves the query by the DOAJ record creation date (<code>created_date</code>) until every part is under 1000, then merges the results and drops repeats. The same trick works by hand:</p>
+<pre><code>issn:1234-5678 AND created_date:[2018-01-01 TO 2022-01-01}
+issn:1234-5678 AND created_date:[2022-01-01 TO 2026-12-31]</code></pre>
+<p>The curly brace <code>}</code> excludes the upper bound, so no article lands in both parts. DOAJ rejects open ranges like <code>TO *</code>, so give the upper bound as a date.</p>
+<div class="note">
+  <p>The only case where splitting does not help: more than 1000 records created in DOAJ in the same second (one big upload). The app then warns that only the first thousand of that part is available.</p>
+</div>
+
+<h2>Exporting by query instead of by journal</h2>
+<p>Switch the mode to “By query” and enter any DOAJ API query — for example, all of a publisher’s articles, or articles on a topic over several years:</p>
+<pre><code>bibjson.journal.publisher:"Samara" AND bibjson.year:[2023 TO 2024]</code></pre>
+<p>Query syntax is covered in <a href="/en/guides/api-search-syntax/">DOAJ API search: query syntax and fields</a>.</p>
+
+<h2>When you need the full DOAJ data dump</h2>
+<p>If you need all of DOAJ rather than one journal — hundreds of thousands of journals and millions of articles — the API is the wrong tool. DOAJ provides full data dumps on request: access is granted case by case, and you write to the platform manager explaining who you are and what the data is for. The journal list in CSV format can be downloaded straight away, without a request.</p>

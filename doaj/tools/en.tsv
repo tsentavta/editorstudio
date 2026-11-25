@@ -1,0 +1,653 @@
+# Russian UI fragment<TAB>English translation. Used by tools/build_en.py to generate en/index.html.
+DOAJ Metadata Studio — загрузка и проверка метаданных в DOAJ	DOAJ Metadata Studio — upload and audit DOAJ article metadata
+Бесплатный инструмент для редакторов журналов: поиск в DOAJ, загрузка и правка статей через API, массовая загрузка из Excel, проверка DOI и ORCID.	Free tool for journal editors: search DOAJ, create and edit articles via the API, bulk upload from Excel, check DOI and ORCID.
+DOAJ, DOAJ API, Directory of Open Access Journals, метаданные статей, загрузка статей в DOAJ, научный журнал, открытый доступ, DOI, ORCID, open access metadata	DOAJ, DOAJ API, Directory of Open Access Journals, article metadata, upload articles to DOAJ, scholarly journal, open access, DOI, ORCID, open access metadata
+DOAJ Metadata Studio — метаданные статей в DOAJ	DOAJ Metadata Studio — article metadata in DOAJ
+Поиск, загрузка, редактирование и проверка метаданных статей в DOAJ через API v4. Бесплатно, в браузере, без установки.	Search, upload, edit and audit DOAJ article metadata via API v4. Free, in the browser, nothing to install.
+Поиск статей в DOAJ Metadata Studio	Article search in DOAJ Metadata Studio
+Поиск, загрузка, редактирование и проверка метаданных статей в DOAJ через API v4.	Search, upload, edit and audit DOAJ article metadata via API v4.
+Бесплатный браузерный инструмент для поиска, загрузки, редактирования и проверки метаданных статей в DOAJ (Directory of Open Access Journals) через DOAJ API v4.	A free browser-based tool for searching, uploading, editing and auditing article metadata in DOAJ (Directory of Open Access Journals) via DOAJ API v4.
+Любая (работает в браузере)	Any (runs in a browser)
+Современный браузер с поддержкой JavaScript	A modern browser with JavaScript enabled
+Поиск статей и журналов DOAJ по всем полям	Search DOAJ articles and journals by any field
+Создание, изменение и удаление статей через DOAJ API	Create, update and delete articles via the DOAJ API
+Массовая загрузка статей из JSON и CSV/Excel	Bulk upload of articles from JSON and CSV/Excel
+Проверка метаданных: DOI, ORCID, аннотации, ключевые слова, дубли	Metadata audit: DOI, ORCID, abstracts, keywords, duplicates
+Экспорт всех статей журнала в CSV и JSON	Export all articles of a journal to CSV and JSON
+Сверка со списком DOI	Reconciliation against a DOI list
+Поиск	Search
+Редактор статьи	Article editor
+Массовые операции	Bulk operations
+Экспорт и сверка	Export & audit
+Настройки	Settings
+API-ключ нужен для создания, изменения и удаления статей	An API key is required to create, update and delete articles
+Без API-ключа	No API key
+Статьи	Articles
+Журналы	Journals
+DOAJ ID (32 символа) или ссылка	DOAJ ID (32 characters) or link
+Открыть по ID	Open by ID
++ Условие	+ Condition
+Диапазон: год/число	Range: year/number
+, дата	, date
+. Для true/false и Yes/No можно писать «да»/«нет».	. For true/false and Yes/No you can type “yes”/“no”.
+Запрос (Lucene) — собирается из условий, можно править вручную	Query (Lucene) — built from the conditions, can be edited by hand
+например: issn:1810-3189 AND bibjson.year:2024	e.g. issn:1810-3189 AND bibjson.year:2024
+Сортировка	Sort
+На странице	Per page
+Сбросить	Reset
+Найти	Search
+Синтаксис запросов	Query syntax
+Поиск по полю:	Search a field:
+· сокращения:	· short names:
+Логика:	Logic:
+, скобки · диапазон:	, parentheses · range:
+Наличие поля:	Field present:
+, отсутствие:	, missing:
+Статьи без DOI:	Articles without DOI:
+или	or
+— сокращение	— the short name
+работает только для поиска по значению, поля	only works when searching by value; the index has no
+в индексе нет	field
+DOI со слешем заключайте в кавычки:	Quote DOIs that contain a slash:
+Точное совпадение всего значения: суффикс	Exact match of the whole value: suffix
+(только для полей с полным именем, не для сокращений)	(full field names only, not short names)
+Значения: логические поля	Values: boolean fields
+; флаги	; flags
+и	and
+— английские названия (	— English names (
+), а	), while
+— коды (	— codes (
+Диапазоны только закрытые:	Ranges must be closed:
+запрещено. Все записи: запрос	is not allowed. All records: query
+Шаблоны	Wildcards
+внутри слов, нечёткий поиск	inside words, fuzzy search
+и регулярные выражения DOAJ	and regular expressions are
+не разрешает	not allowed
+. По одному запросу доступны только первые 1000 результатов.	 by DOAJ. Only the first 1000 results of a query are available.
+Справочник полей	Field reference
+Щелчок по имени поля вставляет	Click a field name to insert
+поле:	field:
+в запрос, по примеру — готовое условие. Поиск возможен по любому полю из списка.	into the query; click an example to insert a ready-made condition. Any field in the list can be searched.
+Найти поле: «orcid», «лицензия», «дата»…	Find a field: “orcid”, “license”, “date”…
+выбрано	selected
+Копировать ID	Copy IDs
+Скачать JSON	Download JSON
+В массовое удаление	Add to bulk delete
+снять выделение	clear selection
+Выделить все на странице	Select all on page
+Выделить все найденные	Select all results
+Убрать выделение	Clear selection
+DOAJ ID статьи или ссылка doaj.org/article/…	DOAJ article ID or link doaj.org/article/…
+Загрузить	Load
+Новая статья	New article
+Основное	Main
+Название статьи *	Article title *
+Аннотация	Abstract
+Выходные данные	Publication details
+Год	Year
+Месяц	Month
+Том	Volume
+Выпуск	Issue
+Первая стр.	First page
+Последняя стр.	Last page
+Идентификаторы	Identifiers
+Проверить ISSN в DOAJ	Check ISSN in DOAJ
+Авторы	Authors
++ Автор	+ Author
+ФИО · аффилиация · ORCID (можно без https://orcid.org/)	Full name · affiliation · ORCID (https://orcid.org/ prefix optional)
+Ключевые слова	Keywords
+через запятую или точку с запятой; DOAJ хранит не более 6	separated by commas or semicolons; DOAJ keeps up to 6
+Ссылки	Links
++ Ссылка	+ Link
+Обязательна ссылка типа	A link of type
+на полный текст статьи	to the article full text is required
+Проверка	Validation
+Создать в DOAJ	Create in DOAJ
+Сохранить изменения	Save changes
+Удалить	Delete
+Изменение заменяет запись целиком: поля, которых нет в форме (журнал, предметы), берутся из загруженной записи.	An update replaces the whole record: fields not in the form (journal, subjects) are taken from the loaded record.
+JSON для отправки	JSON to send
+Копировать	Copy
+Применить к форме	Apply to form
+Можно вставить JSON статьи и нажать «Применить к форме».	You can paste article JSON and click “Apply to form”.
+Массовая загрузка статей	Bulk article upload
+Скачать шаблон CSV	Download CSV template
+Разобрать и проверить	Parse and validate
+пропускать записи с ошибками	skip records with errors
+Отправить в DOAJ	Send to DOAJ
+Статус загрузок	Upload status
+Проверить	Check
+Массовое удаление	Bulk delete
+DOAJ ID статей — по одному на строку (подойдут и ссылки doaj.org/article/…)	DOAJ article IDs — one per line (doaj.org/article/… links also work)
+Удалить…	Delete…
+Удаление необратимо. Перед отправкой нужно будет ввести число удаляемых статей.	Deletion is irreversible. Before sending you will have to type the number of articles to delete.
+Загрузить все статьи журнала	Load all articles of a journal
+По ISSN	By ISSN
+По запросу	By query
+ISSN журнала, например 1810-3189	Journal ISSN, e.g. 1810-3189
+Остановить	Stop
+Если статей больше 1000 (предел API на один запрос), выборка автоматически делится на части по дате создания записи.	If there are more than 1000 articles (the API limit per query), the query is automatically split by record creation date.
+По годам	By year
+Экспорт (текущий фильтр:	Export (current filter:
+Разделитель CSV	CSV delimiter
+; (Excel, рус.)	; (Excel, European locales)
+, (запятая)	, (comma)
+Табуляция	Tab
+JSON (полные записи)	JSON (full records)
+JSON для повторной загрузки	JSON for re-upload
+Список ID	ID list
+Список DOI	DOI list
+CSV совместим с массовой загрузкой: можно исправить данные в Excel и загрузить обратно.	The CSV is compatible with bulk upload: fix the data in Excel and upload it back.
+Фильтр по названию, автору, DOI…	Filter by title, author, DOI…
+Открыть в редакторе	Open in editor
+Вставьте DOI из любого источника (сайт журнала, Crossref, список литературы) — в любом формате, по одному или вперемешку с текстом.	Paste DOIs from any source (journal website, Crossref, reference list) — in any format, one per line or mixed with text.
+Сверить	Reconcile
+не найденные — дополнительно искать по всему DOAJ	for those not found, also search the whole of DOAJ
+API-ключ DOAJ	DOAJ API key
+Нужен для создания, изменения и удаления статей. Ключ берётся в личном кабинете DOAJ: Dashboard → Settings → «Generate a new API key». Поиск и экспорт работают без ключа.	Required to create, update and delete articles. Get it in your DOAJ account: Dashboard → Settings → “Generate a new API key”. Search and export work without a key.
+API-ключ	API key
+Показать	Show
+запомнить ключ в этом браузере (localStorage)	remember the key in this browser (localStorage)
+Без галочки ключ хранится только до закрытия вкладки. Ключ отправляется только на doaj.org.	Unchecked, the key is kept only until the tab is closed. The key is sent only to doaj.org.
+Сохранить	Save
+Удалить ключ	Remove key
+Работа с API	API usage
+Пауза между запросами, мс	Delay between requests, ms
+DOAJ ограничивает частоту запросов (около 2 в секунду). При ответе 429 приложение повторяет запрос автоматически.	DOAJ rate-limits requests (about 2 per second). On a 429 response the app retries automatically.
+Тема	Theme
+Как в системе	System
+Светлая	Light
+Тёмная	Dark
+DOAJ Metadata Studio — работа с метаданными статей в DOAJ	DOAJ Metadata Studio — work with DOAJ article metadata
+Бесплатный онлайн-инструмент для редакторов и издателей научных журналов открытого доступа. Позволяет искать статьи и журналы в	A free online tool for editors and publishers of open access scholarly journals. Search articles and journals in
+, загружать и исправлять статьи через DOAJ API, проверять полноту метаданных и выгружать данные в Excel — прямо в браузере, без установки и регистрации.	, upload and fix articles via the DOAJ API, audit metadata completeness and export data to Excel — right in the browser, with nothing to install and no sign-up.
+Поиск по всем полям DOAJ	Search by any DOAJ field
+Конструктор запросов по 54 полям статей и 83 полям журналов: название, авторы, ORCID, DOI, ISSN, год, том, выпуск, лицензия, издатель. Встроенный справочник полей с примерами помогает составить запрос без изучения документации API.	A query builder covering 54 article fields and 83 journal fields: title, authors, ORCID, DOI, ISSN, year, volume, issue, license, publisher. A built-in field reference with examples helps you write a query without studying the API docs.
+Загрузка и редактирование статей	Upload and edit articles
+Форма для создания и исправления статьи в DOAJ с проверкой при вводе: контрольные цифры ISSN и ORCID, формат DOI, ссылка на полный текст, число ключевых слов. Массовая загрузка выпуска из CSV или Excel.	A form for creating and fixing an article in DOAJ with live validation: ISSN and ORCID check digits, DOI format, full-text link, number of keywords. Bulk upload of a whole issue from CSV or Excel.
+Проверка метаданных журнала	Journal metadata audit
+Выгрузка всех статей журнала по ISSN и отчёт о проблемах: статьи без DOI, дубли, пропущенные аннотации, ключевые слова, аффилиации и ORCID авторов. Сверка со списком DOI из Crossref или с сайта журнала.	Export every article of a journal by ISSN and get a problem report: articles without DOI, duplicates, missing abstracts, keywords, author affiliations and ORCID iDs. Reconcile against a DOI list from Crossref or the journal website.
+Экспорт в Excel и JSON	Export to Excel and JSON
+Выгрузка в CSV, совместимый с массовой загрузкой: исправьте данные в Excel и загрузите обратно. Ограничение DOAJ API в 1000 записей обходится автоматически.	Export to CSV that round-trips with bulk upload: fix the data in Excel and upload it back. The DOAJ API limit of 1000 records is worked around automatically.
+Как начать	Getting started
+Чтобы найти статьи журнала, выберите на вкладке «Поиск» поле «ISSN журнала» и введите ISSN.	To find a journal’s articles, choose the “Journal ISSN (short)” field on the “Search” tab and enter the ISSN.
+Чтобы проверить метаданные всего журнала, откройте вкладку «Экспорт и сверка» и загрузите статьи по ISSN.	To audit the metadata of a whole journal, open the “Export & audit” tab and load the articles by ISSN.
+Чтобы загружать и исправлять статьи, получите API-ключ в личном кабинете DOAJ (Dashboard → Settings) и введите его во вкладке «Настройки».	To upload and edit articles, get an API key in your DOAJ account (Dashboard → Settings) and enter it on the “Settings” tab.
+Частые вопросы	FAQ
+Это официальный сервис DOAJ?	Is this an official DOAJ service?
+Нет. Это независимый инструмент с открытым исходным кодом, который работает с публичным DOAJ API v4.	No. It is an independent open source tool that works with the public DOAJ API v4.
+Куда отправляется мой API-ключ?	Where is my API key sent?
+Только на doaj.org. Приложение работает целиком в браузере, своего сервера у него нет. По умолчанию ключ хранится до закрытия вкладки.	Only to doaj.org. The app runs entirely in your browser and has no server of its own. By default the key is kept until the tab is closed.
+Как найти статьи журнала без DOI?	How do I find a journal’s articles without a DOI?
+Запрос	Use the query
+на вкладке «Поиск» или карточка «Без DOI» на вкладке «Экспорт и сверка».	on the “Search” tab, or the “No DOI” card on the “Export & audit” tab.
+Сколько это стоит?	How much does it cost?
+Бесплатно. Код открыт под лицензией MIT на	Nothing. The code is open source under the MIT license on
+Карточка	Record
+Неофициальный инструмент, не связан с	Unofficial tool, not affiliated with
+(Directory of Open Access Journals). Данные загружаются напрямую из	(Directory of Open Access Journals). Data is loaded directly from
+Исходный код	Source code
+· Лицензия MIT	· MIT License
+Скопировано	Copied
+Не удалось скопировать в буфер обмена	Could not copy to clipboard
+Нужен API-ключ — укажите его во вкладке «Настройки»	An API key is required — enter it on the “Settings” tab
+Сеть недоступна или запрос заблокирован:	Network unavailable or request blocked:
+Ошибка	Error
+Ключ не принят (401).	Key rejected (401).
+Нет прав на эту запись (403).	No permission for this record (403).
+Не найдено (404)	Not found (404)
+DOAJ ограничил частоту запросов. Попробуйте позже или увеличьте паузу в настройках.	DOAJ rate-limited the requests. Try again later or increase the delay in Settings.
+т.	vol.
+с.	pp.
+Нет названия статьи	No article title
+Нужен pISSN или eISSN журнала	A journal pISSN or eISSN is required
+${n} «${v}» некорректен (формат 0000-0000 и контрольная цифра)	${n} “${v}” is invalid (format 0000-0000 with a check digit)
+Нет DOI	No DOI
+DOI «${doi}» не похож на DOI (ожидается 10.xxxx/…)	DOI “${doi}” does not look like a DOI (expected 10.xxxx/…)
+Нет ссылки на полный текст (fulltext)	No full-text link (fulltext)
+Некорректная ссылка: ${l.url}	Invalid link: ${l.url}
+Нет аннотации	No abstract
+Не указан год	No year
+Год «${b.year}» должен состоять из 4 цифр	Year “${b.year}” must have 4 digits
+Месяц «${b.month}» должен быть числом 1–12	Month “${b.month}” must be a number 1–12
+Нет авторов	No authors
+Автор ${i + 1}: не указано имя	Author ${i + 1}: name is missing
+Автор ${i + 1}: ORCID «${x.orcid_id}» некорректен	Author ${i + 1}: ORCID “${x.orcid_id}” is invalid
+Не у всех авторов указана аффилиация	Not all authors have an affiliation
+Нет ключевых слов	No keywords
+Ключевых слов ${kw.length} — DOAJ сохранит только первые 6	${kw.length} keywords — DOAJ will keep only the first 6
+Последняя страница меньше первой	Last page is lower than the first
+Копировать JSON	Copy JSON
+На doaj.org	On doaj.org
+Редактировать	Edit
+Статьи журнала	Journal articles
+Экспорт	Export
+Замечаний нет	No issues
+Журнал	Journal
+Издатель	Publisher
+Предметы (LCC)	Subjects (LCC)
+Языки журнала	Journal languages
+Создана / изменена	Created / updated
+да	yes
+нет	no
+Организация	Institution
+Сайт	Website
+Языки	Languages
+Предметы	Subjects
+Лицензия	License
+Рецензирование	Peer review
+Авторы сохраняют права	Authors retain copyright
+Архивирование	Preservation
+Открытый доступ с	Open access since
+Срок публикации	Publication time
+нед.	wk
+Последняя проверка	Last full review
+Добавлен / изменён	Added / updated
+Сокращения	Short names
+Название (сокр.)	Title (short)
+Поиск по названию статьи. Сокращение, .exact недоступен	Search the article title. Short name, .exact not available
+Аннотация (сокр.)	Abstract (short)
+Поиск по тексту аннотации	Search the abstract text
+DOI (сокр.)	DOI (short)
+DOI статьи. Значение со слешем берите в кавычки. Для проверки наличия используйте index.doi	Article DOI. Quote values containing a slash. To check presence use index.doi
+ISSN журнала (сокр.)	Journal ISSN (short)
+Любой ISSN журнала статьи (печатный или электронный)	Any ISSN of the article’s journal (print or online)
+Издатель (сокр.)	Publisher (short)
+Издатель журнала, неточное совпадение	Journal publisher, fuzzy match
+Статья	Article
+Название	Title
+Название статьи	Article title
+Текст аннотации	Abstract text
+Ключевые слова статьи (DOAJ хранит до 6)	Article keywords (DOAJ keeps up to 6)
+Год публикации. Диапазон: 2020-2023 или [2020 TO 2023]	Publication year. Range: 2020-2023 or [2020 TO 2023]
+Месяц публикации, число 1–12	Publication month, number 1–12
+Автор	Author
+Имя автора в том виде, как его загрузил издатель	Author name as uploaded by the publisher
+Аффилиация	Affiliation
+Организация автора	Author’s institution
+ORCID автора в виде https://orcid.org/0000-0000-0000-0000	Author ORCID as https://orcid.org/0000-0000-0000-0000
+Идентификатор	Identifier
+Значение любого идентификатора статьи: DOI, pISSN, eISSN	Value of any article identifier: DOI, pISSN, eISSN
+Тип идентификатора	Identifier type
+doi, pissn, eissn. «NOT bibjson.identifier.type:doi» — статьи без DOI	doi, pissn, eissn. “NOT bibjson.identifier.type:doi” — articles without DOI
+ISSN журнала	Journal ISSN
+Все ISSN журнала, к которому относится статья	All ISSNs of the journal the article belongs to
+Номер тома (строка)	Volume number (string)
+Номер выпуска (строка)	Issue number (string)
+Первая страница	First page
+Первая страница статьи. В индексе лежит в bibjson, а не в bibjson.journal (при загрузке — наоборот)	First page of the article. Indexed under bibjson, not bibjson.journal (the reverse of uploads)
+Последняя страница	Last page
+Последняя страница статьи (в индексе — bibjson.end_page)	Last page of the article (indexed as bibjson.end_page)
+Название журнала	Journal title
+Название журнала в том виде, как оно записано в DOAJ (может быть на национальном языке)	Journal title as stored in DOAJ (may be in the national language)
+Физика волновых процессов	Journal of Physics
+Издатель журнала	Journal publisher
+Страна издателя	Publisher country
+Код страны ISO 3166, 2 буквы	ISO 3166 country code, 2 letters
+Язык журнала	Journal language
+Код языка ISO 639-1 заглавными: EN, RU…	ISO 639-1 language code in capitals: EN, RU…
+URL ссылки	Link URL
+Адрес полного текста. Можно искать по домену в кавычках	Full-text address. You can search by domain in quotes
+Тип ссылки	Link type
+Обычно fulltext	Usually fulltext
+Тип содержимого	Content type
+Предмет	Subject
+Предметная рубрика Library of Congress (заполняется DOAJ)	Library of Congress subject heading (filled in by DOAJ)
+Код предмета	Subject code
+Код рубрики LCC	LCC heading code
+Схема	Scheme
+Схема классификации, обычно LCC	Classification scheme, usually LCC
+Служебные	System
+Идентификатор записи в DOAJ, 32 символа	Record ID in DOAJ, 32 characters
+Дата создания записи	Record creation date
+Когда статья появилась в DOAJ. Только закрытые диапазоны, «TO *» запрещено	When the article appeared in DOAJ. Closed ranges only, “TO *” is not allowed
+Дата изменения	Last updated
+Когда запись последний раз менялась	When the record last changed
+Опубликована в DOAJ	Published in DOAJ
+true — видна публично, false — снята	true — publicly visible, false — withdrawn
+ID у издателя	Publisher record ID
+Собственный ID записи издателя (устаревшее поле)	Publisher’s own record ID (deprecated)
+ID пакетной загрузки	Bulk upload ID
+upload_id пакета, которым загружена статья	upload_id of the batch the article was uploaded in
+Тип записи	Record type
+Всегда article	Always article
+Индекс (служебные)	Index (system)
+DOI (индекс)	DOI (index)
+Нормализованный DOI. «NOT _exists_:index.doi» — статьи без DOI	Normalised DOI. “NOT _exists_:index.doi” — articles without DOI
+ISSN (индекс)	ISSN (index)
+Все ISSN журнала статьи	All ISSNs of the article’s journal
+Ссылка на полный текст	Full-text link
+URL полного текста	Full-text URL
+Дата публикации	Publication date
+Дата из года и месяца публикации	Date built from publication year and month
+Дата публикации (месяц)	Publication date (month)
+Дата публикации с точностью до месяца	Publication date to month precision
+Название без пунктуации	Title without punctuation
+Название в нижнем регистре без знаков препинания	Lower-case title without punctuation
+Название ASCII	ASCII title
+Название без пунктуации и диакритики	Title without punctuation and diacritics
+Предмет (индекс)	Subject (index)
+Все предметные рубрики, включая родительские	All subject headings, including parents
+Предмет со схемой	Subject with scheme
+Рубрика с указанием схемы	Heading with its scheme
+Классификация	Classification
+Рубрики классификации	Classification headings
+Код со схемой	Code with scheme
+Код рубрики с префиксом схемы	Heading code with scheme prefix
+Путь в классификации	Classification path
+Полный путь рубрики в дереве LCC	Full path of the heading in the LCC tree
+Дерево кодов	Code tree
+Все коды рубрики и её родителей	All codes of the heading and its parents
+Язык (название)	Language (name)
+Полное английское название языка, не код	Full English language name, not a code
+Страна (название)	Country (name)
+Полное английское название страны, не код	Full English country name, not a code
+Издатель (индекс)	Publisher (index)
+Знак DOAJ Seal	DOAJ Seal
+Yes/No. Seal упразднён, поле заполнено не везде	Yes/No. The Seal has been retired; not filled in everywhere
+Поиск по названию журнала	Search the journal title
+ISSN (сокр.)	ISSN (short)
+Печатный или электронный ISSN	Print or online ISSN
+Описано в документации, но на практике часто ничего не находит — используйте bibjson.publisher.name	Documented, but in practice often finds nothing — use bibjson.publisher.name
+Лицензия (сокр.)	License (short)
+Описано в документации, но работает ненадёжно — используйте index.license или bibjson.license.type	Documented, but unreliable — use index.license or bibjson.license.type
+Логин издателя	Publisher username
+Ваш логин в DOAJ: показывает ваши публичные журналы	Your DOAJ username: shows your public journals
+Основное название журнала (может быть на национальном языке; английское — в alternative_title)	Main journal title (may be in the national language; the English one is in alternative_title)
+Альтернативное название	Alternative title
+Другое название, в том числе перевод	Other title, including a translation
+ISSN печатной версии	Print ISSN
+ISSN электронной версии	Online ISSN
+До 6 ключевых слов на английском	Up to 6 keywords in English
+Языки, на которых принимаются рукописи: коды EN, RU…	Languages in which manuscripts are accepted: codes EN, RU…
+Начало открытого доступа	Open access start
+Год, с которого весь контент под открытой лицензией	Year from which all content is under an open license
+Срок публикации, нед.	Publication time, weeks
+Среднее число недель от подачи до публикации	Average weeks from submission to publication
+Метки	Labels
+Дата прекращения	Discontinued date
+Когда журнал прекратил выход (YYYY-MM-DD)	When the journal ceased publication (YYYY-MM-DD)
+Заменяет	Replaces
+ISSN журнала, который этот журнал продолжает	ISSN of the journal this one continues
+Заменён на	Replaced by
+ISSN журнала-преемника	ISSN of the successor journal
+Название издателя	Publisher name
+Код ISO 3166, 2 буквы	ISO 3166 code, 2 letters
+Учреждение-учредитель / спонсор	Founding institution / sponsor
+Страна организации	Institution country
+Рубрика Library of Congress	Library of Congress heading
+Обычно LCC	Usually LCC
+Лицензия и права	License and rights
+Тип лицензии	License type
+CC BY, CC BY-SA, CC BY-NC… Значение с пробелом — в кавычках	CC BY, CC BY-SA, CC BY-NC… Quote values with spaces
+Лицензия: BY	License: BY
+Требует указания авторства	Requires attribution
+Лицензия: NC	License: NC
+Запрет коммерческого использования	No commercial use
+Лицензия: ND	License: ND
+Запрет производных произведений	No derivative works
+Лицензия: SA	License: SA
+Распространение на тех же условиях	Share alike
+Ссылка на условия лицензии	License terms link
+Где указана лицензия	Where the license is stated
+Лицензия в статьях	License display in articles
+Пример статьи с лицензией	Example article showing the license
+URL статьи, где видна лицензия	URL of an article where the license is visible
+Ссылка: авторские права	Link: copyright
+Где описана политика	Where the policy is described
+Соответствует BOAI	Complies with BOAI
+Соответствует определению открытого доступа DOAJ	Meets the DOAJ definition of open access
+Оплата	Charges
+Есть APC	Has APC
+Берёт ли журнал плату за публикацию	Whether the journal charges article processing charges
+Максимальный APC	Maximum APC
+Сумма (целое число)	Amount (integer)
+Валюта APC	APC currency
+Код валюты: USD, EUR, RUB…	Currency code: USD, EUR, RUB…
+Ссылка: APC	Link: APC
+Где описаны сборы	Where the charges are described
+Другие сборы	Other charges
+Есть ли иные сборы с авторов	Whether there are other charges to authors
+Ссылка: другие сборы	Link: other charges
+Скидки / освобождение	Waivers / discounts
+Предоставляет ли журнал скидки на APC	Whether the journal offers APC waivers or discounts
+Ссылка: скидки	Link: waivers
+Редакционная политика	Editorial policy
+Тип рецензирования	Review process
+Например:	For example:
+Ссылка: рецензирование	Link: peer review
+Ссылка: редколлегия	Link: editorial board
+Проверка на плагиат	Plagiarism screening
+Ссылка: плагиат	Link: plagiarism
+Архивирование и PID	Preservation and PIDs
+Есть постоянные идентификаторы	Has persistent identifiers
+Схема PID	PID scheme
+Есть архивирование	Has preservation
+Служба архивирования	Preservation service
+Национальная библиотека	National library
+Где хранится архив	Where the archive is kept
+Ссылка: архивирование	Link: preservation
+Политика самоархивирования	Self-archiving policy
+Политика зарегистрирована	Policy registered
+Зарегистрирована во внешнем сервисе. На практике не заполняется	Registered with an external service. Not filled in in practice
+Сервис политики	Policy service
+Ссылка: политика	Link: policy
+Сайт журнала	Journal website
+Главная страница журнала	Journal homepage
+Цели и задачи	Aims and scope
+Правила для авторов	Instructions for authors
+Заявление об ОД	OA statement
+Условия лицензии	License terms
+Идентификатор журнала в DOAJ	Journal ID in DOAJ
+Добавлен в DOAJ	Added to DOAJ
+Только закрытые диапазоны	Closed ranges only
+Ручное изменение	Manual update
+Когда запись последний раз правили вручную	When the record was last edited manually
+В DOAJ	In DOAJ
+Журнал виден публично	Journal is publicly visible
+Прошёл повторную подачу	Re-applied successfully
+Журнал успешно переподал заявку	The journal has successfully re-applied
+Последняя полная проверка	Last full review
+Дата YYYY-MM-DD	Date YYYY-MM-DD
+Всегда journal	Always journal
+Все ISSN журнала	All ISSNs of the journal
+Названия	Titles
+Основное и альтернативное названия	Main and alternative titles
+Без пунктуации и диакритики	Without punctuation and diacritics
+Все рубрики, включая родительские	All headings, including parents
+Полное английское название, не код	Full English name, not a code
+Лицензия (индекс)	License (index)
+Есть APC (Yes/No)	Has APC (Yes/No)
+Yes или No	Yes or No
+Продолжает другой журнал	Continues another journal
+текст	text
+код / строка	code / string
+число	number
+дата	date
+сокращение	short name
+По релевантности	By relevance
+По году: новые	By year: newest
+По году: старые	By year: oldest
+Сначала новые в DOAJ	Newest in DOAJ first
+Сначала старые в DOAJ	Oldest in DOAJ first
+Недавно изменённые	Recently updated
+По названию	By title
+Общее	General
+Любое поле (полнотекстовый)	Any field (full text)
+Поле заполнено	Field is present
+Поле не заполнено	Field is missing
+имя поля, например bibjson.abstract	field name, e.g. bibjson.abstract
+например:	e.g.:
+слова для поиска	search terms
+Точное совпадение всего значения (суффикс .exact)	Exact match of the whole value (.exact suffix)
+точно	exact
+Убрать	Remove
++ (/^(да|yes|true|1)$/i.test(v) ?	+ (/^(да|yes|true|1)$/i.test(v) ?
+: /^(нет|no|false|0)$/i.test(v) ?	: /^(нет|no|false|0)$/i.test(v) ?
+статьи	articles
+журналы	journals
+}: ${FC[S.type].length} полей)	}: ${FC[S.type].length} fields)
+Поле	Field
+Описание	Description
+Тип	Type
+Пример	Example
+поддерживает .exact	supports .exact
+Ничего не найдено	Nothing found
+Введите запрос	Enter a query
+Поля doi/issn — это сокращения, _exists_ с ними всегда ложно. Используйте index.doi / index.issn	doi/issn are short names, so _exists_ with them is always false. Use index.doi / index.issn
+Шаблоны * ? ~ DOAJ не поддерживает — запрос, скорее всего, вернёт ошибку	DOAJ does not support * ? ~ wildcards — the query will most likely fail
+API отдаёт только первые 1000 результатов. Уточните запрос.	The API returns only the first 1000 results. Narrow down the query.
+Ищу…	Searching…
+Ошибка поиска:	Search error:
+Задайте условия и нажмите «Найти».	Set conditions and click “Search”.
+Например: поле «ISSN журнала» = 1810-3189, или «Поле не заполнено» = bibjson.abstract.	For example: field “Journal ISSN (short)” = 1810-3189, or “Field is missing” = bibjson.abstract.
+Найдено: ${S.total.toLocaleString(	Found: ${S.total.toLocaleString(
+(через API доступны первые 1000)	(first 1000 available via the API)
+· страница ${S.page} из ${pages}	· page ${S.page} of ${pages}
+без APC	no APC
+|| /DOI|аннот|ключ/i.test(v.msg));	|| /DOI|abstract|keyword/i.test(v.msg));
+и др.	et al.
+Изменить	Edit
+← Назад	← Previous
+стр.	page
+из ${pages}	of ${pages}
+Вперёд →	Next →
+Снять выделение на странице	Clear selection on page
+Выделить все найденные (${n.toLocaleString(	Select all results (${n.toLocaleString(
+из	of
+Убрать выделение (${S.sel.size})	Clear selection (${S.sel.size})
+Выделено: ${S.sel.size}	Selected: ${S.sel.size}
+. API отдаёт только первые 1000 — для полной выборки используйте «Экспорт и сверка»	. The API returns only the first 1000 — use “Export & audit” for a complete set
+Не удалось выделить все:	Could not select all:
+Скопировано ID: ${ids.length}	IDs copied: ${ids.length}
+Не похоже на DOAJ ID (32 шестнадцатеричных символа)	Does not look like a DOAJ ID (32 hex characters)
+Не удалось открыть:	Could not open:
+ФИО *	Full name *
+Выше	Up
+Ниже	Down
+тип файла	file type
+Журнал: ${j.title}	Journal: ${j.title}
+✓ Запись готова к отправке	✓ Record is ready to send
+Редактирование ·	Editing ·
+Новая статья (ISSN сохранены из предыдущей записи)	New article (ISSNs kept from the previous record)
+Укажите DOAJ ID статьи	Enter the DOAJ article ID
+Статья загружена	Article loaded
+Не удалось загрузить:	Could not load:
+нет объекта bibjson	no bibjson object
+JSON применён к форме	JSON applied to the form
+Ошибка в JSON:	JSON error:
+Укажите pISSN или eISSN	Enter a pISSN or eISSN
+⚠ Журнал с таким ISSN в DOAJ не найден	⚠ No journal with this ISSN found in DOAJ
+Эта статья уже есть в DOAJ. Создать её копию как новую запись?\n(Для правки используйте «Сохранить изменения».)	This article is already in DOAJ. Create a copy of it as a new record?\n(To edit it, use “Save changes”.)
+Статья создана	Article created
+DOAJ отклонил запись:	DOAJ rejected the record:
+Изменения сохранены	Changes saved
+Не удалось сохранить:	Could not save:
+Удалить статью из DOAJ безвозвратно?\n\n«${F(	Permanently delete this article from DOAJ?\n\n“${F(
+Статья удалена	Article deleted
+Не удалось удалить:	Could not delete:
+В CSV нет строк с данными	The CSV has no data rows
+Нет столбца title. Скачайте шаблон CSV.	No title column. Download the CSV template.
+Массив объектов статей в формате DOAJ (как в «JSON для повторной загрузки» или в ответе API). Записи с полем id обновят существующие статьи.	An array of article objects in DOAJ format (as in “JSON for re-upload” or an API response). Records with an id field will update existing articles.
+Столбцы:	Columns:
+. Авторы — каждый с новой строки внутри ячейки (или через «;»), внутри автора: ФИО | аффилиация | ORCID. Разделитель (; , табуляция) определяется автоматически. Если заполнен id — статья будет обновлена.	. Authors — one per line inside the cell (or separated by “;”), each as: full name | affiliation | ORCID. The delimiter (; , tab) is detected automatically. If id is filled in, the article will be updated.
+Пример названия статьи	Sample article title
+волновод	waveguide
+антенна	antenna
+Иванов И. И.	Smith J.
+Университет	University
+Петров П. П.	Doe J.
+Институт	Institute
+Вставьте данные или выберите файл	Paste data or choose a file
+Не удалось разобрать:	Could not parse:
+Отправить в DOAJ (${toSend})	Send to DOAJ (${toSend})
+Записей:	Records:
+· с ошибками:	· with errors:
+· обновлений (есть id): ${bItems.filter(x =	· updates (have id): ${bItems.filter(x =
+— исправьте ошибки или включите «пропускать записи с ошибками»	— fix the errors or enable “skip records with errors”
+Замечания	Issues
+ок	ok
+Отправить в DOAJ ${items.length} статей?	Send ${items.length} articles to DOAJ?
+Пакет принят DOAJ	Batch accepted by DOAJ
+DOAJ отклонил пакет:	DOAJ rejected the batch:
+Недавние загрузки:	Recent uploads:
+${esc(u.n)} ст. · ${esc(new Date(u.at).toLocaleString(	${esc(u.n)} art. · ${esc(new Date(u.at).toLocaleString(
+Запрашиваю статус…	Requesting status…
+Ошибка:	Error:
+ID добавлены в список удаления: ${ids.length}	IDs added to the delete list: ${ids.length}
+Нет ни одного DOAJ ID	No DOAJ IDs found
+Будет безвозвратно удалено статей: ${ids.length}.\nДля подтверждения введите это число:	${ids.length} articles will be permanently deleted.\nType this number to confirm:
+Число не совпало — удаление отменено	Number does not match — deletion cancelled
+Удалено: ${ids.length}	Deleted: ${ids.length}
+Всего статей	Total articles
+Без DOI	No DOI
+Дубли DOI	Duplicate DOIs
+Дубли названий	Duplicate titles
+Без аннотации	No abstract
+Без ключевых слов	No keywords
+Без ссылки на полный текст	No full-text link
+Без авторов	No authors
+Не у всех авторов аффилиация	Not all authors have affiliation
+Ни одного ORCID	No ORCID at all
+Некорректный ORCID	Invalid ORCID
+Без страниц	No pages
+Без тома/выпуска	No volume/issue
+Без года	No year
+Lucene-запрос, например bibjson.journal.publisher:	Lucene query, e.g. bibjson.journal.publisher:
+Укажите ISSN или запрос	Enter an ISSN or a query
+Готово: ${recs.length} статей${X.stop ?	Done: ${recs.length} articles${X.stop ?
+(остановлено пользователем)	(stopped by user)
+Ошибка загрузки:	Load error:
+Найдено ${total} статей по запросу ${q}	Found ${total} articles for query ${q}
+Больше 1000 — делю выборку по дате создания записи…	More than 1000 — splitting by record creation date…
+⚠ ${r.total} записей созданы одновременно (${iso(from)}) — доступны только 1000	⚠ ${r.total} records created at the same moment (${iso(from)}) — only 1000 available
+⚠ Получено ${got.size} из ${total}	⚠ Got ${got.size} of ${total}
+Статьи: ${X.label}	Articles: ${X.label}
+Загружено	Loaded
+Показано ${rows.length} из ${X.recs.length}	Showing ${rows.length} of ${X.recs.length}
+· год ${X.year}	· year ${X.year}
+Т.(№)	Vol. (No.)
+Стр.	Pages
+Нет записей	No records
+стр. ${X.page} из ${pages}	page ${X.page} of ${pages}
+Выберите одну статью	Select one article
+Нет записей для экспорта	No records to export
+В тексте не найдено ни одного DOI	No DOIs found in the text
+Ошибка при поиске по DOAJ:	Error searching DOAJ:
+копировать	copy
+DOI в списке: ${list.length}${X.recs.length ?	DOIs in list: ${list.length}${X.recs.length ?
+· сверено с загруженными статьями (${X.recs.length})	· checked against loaded articles (${X.recs.length})
+· статьи журнала не загружены — сверка только по всему DOAJ	· journal articles not loaded — checking against the whole of DOAJ only
+Есть в загруженных статьях	In loaded articles
+Есть в DOAJ, но в другой выборке	In DOAJ, but in another set
+Нет в DOAJ	Not in DOAJ
+Нет в загруженных статьях	Not in loaded articles
+В DOAJ есть, а в вашем списке нет	In DOAJ, but not in your list
+API-ключ задан	API key set
+Скрыть	Hide
+Сохранено	Saved
+Ключ удалён	Key removed
+Введите ключ	Enter a key
+✓ Ключ принят DOAJ	✓ Key accepted by DOAJ
+✕ Ключ не принят	✕ Key rejected
+Не удалось проверить: ${esc(e.message)}	Could not verify: ${esc(e.message)}
+Инструкции	Guides
+Найти статьи журнала «Физика волновых процессов и радиотехнические системы» без DOI	Find articles without DOI in the journal Physics of Wave Processes and Radio Systems
+Загрузить и проверить все статьи журнала «Физика волновых процессов и радиотехнические системы»	Load and audit all articles of the journal Physics of Wave Processes and Radio Systems
+Как загрузить статьи в DOAJ: вручную, XML, CSV и API	How to upload articles to DOAJ: manual entry, XML, CSV and API
+Массовая загрузка статей в DOAJ из Excel и CSV	Bulk upload articles to DOAJ from Excel and CSV
+Как найти статьи без DOI, ORCID и аннотаций в DOAJ	How to find DOAJ articles without DOI, ORCID or abstracts
+Как выгрузить все статьи журнала из DOAJ	How to export all of a journal’s articles from DOAJ
+Поиск в DOAJ API: синтаксис запросов и поля	DOAJ API search: query syntax and fields
+Задайте условия и нажмите «Найти» — или нажмите «Пример», чтобы увидеть поиск в действии.	Set conditions and click “Search” — or click “Example” to see search in action.
+\n(${chunks.length} пакетов до 600 КБ — так рекомендует DOAJ)	\n(${chunks.length} batches of up to 600 KB, as DOAJ recommends)
+DOAJ отклонил пакет ${i + 1} из ${chunks.length}: ${e.message}	DOAJ rejected batch ${i + 1} of ${chunks.length}: ${e.message}
+\nУже отправлено статей: ${sent}	\nArticles already sent: ${sent}
+Принято DOAJ: ${sent} статей	Accepted by DOAJ: ${sent} articles
+, пакетов: ${chunks.length}	, batches: ${chunks.length}
+Lucene-запрос	Lucene query
+Неполная выгрузка.	Incomplete export.
+Получено ${recs.length.toLocaleString(	Received ${recs.length.toLocaleString(
+)} из ${total.toLocaleString(	)} of ${total.toLocaleString(
+)} записей.	)} records.
+Выгрузка остановлена.	Export stopped.

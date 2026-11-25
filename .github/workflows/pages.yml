@@ -4,12 +4,6 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
-  # doajmds живёт в своём репозитории: раз в сутки забираем свежую версию
-  schedule:
-    - cron: "17 3 * * *"
-  # мгновенная пересборка из doajmds (нужен токен там, см. README)
-  repository_dispatch:
-    types: [doajmds-updated]
 
 permissions:
   contents: read
@@ -26,18 +20,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Забрать doajmds
-        uses: actions/checkout@v4
-        with:
-          repository: tsentavta/doajmds
-          path: _doajmds
-
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
       - name: Собрать сайт
-        run: python tools/build_site.py --doaj _doajmds --out _site
+        run: python tools/build_site.py --out _site
 
       - uses: actions/configure-pages@v5
 

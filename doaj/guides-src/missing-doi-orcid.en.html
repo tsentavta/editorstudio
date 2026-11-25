@@ -1,0 +1,50 @@
+title: How to find DOAJ articles without DOI, ORCID or abstracts
+description: Ready-made DOAJ API queries to find a journal’s articles without DOI, ORCID, abstracts or keywords, a one-click audit of the whole journal, and how to fix what you find.
+updated: 2026-10-28
+---
+<p class="lead">DOAJ does not check metadata quality on ingest: what the publisher sends is what gets published. That is why many journals in DOAJ have articles without a DOI, without author ORCIDs or without an abstract. The easiest way to find them is with DOAJ API queries or a single audit of the whole journal.</p>
+
+<h2>Ready-made queries</h2>
+<p>Replace <code>1234-5678</code> with your journal’s ISSN and paste the query into the “Query” field on the “Search” tab.</p>
+<table>
+  <tr><th>What to find</th><th>Query</th></tr>
+  <tr><td>Articles without DOI</td><td><code>issn:1234-5678 AND NOT _exists_:index.doi</code></td></tr>
+  <tr><td>Articles without DOI (alternative)</td><td><code>issn:1234-5678 AND NOT bibjson.identifier.type:doi</code></td></tr>
+  <tr><td>No author has an ORCID</td><td><code>issn:1234-5678 AND NOT _exists_:bibjson.author.orcid_id</code></td></tr>
+  <tr><td>No abstract</td><td><code>issn:1234-5678 AND NOT _exists_:bibjson.abstract</code></td></tr>
+  <tr><td>No keywords</td><td><code>issn:1234-5678 AND NOT _exists_:bibjson.keywords</code></td></tr>
+  <tr><td>No author has an affiliation</td><td><code>issn:1234-5678 AND NOT _exists_:bibjson.author.affiliation</code></td></tr>
+  <tr><td>No DOI, published 2020–2024</td><td><code>issn:1234-5678 AND bibjson.year:[2020 TO 2024] AND NOT _exists_:index.doi</code></td></tr>
+</table>
+
+<div class="note">
+  <p><b>Why <code>NOT _exists_:doi</code> does not work.</b> <code>doi:</code> is a short name that DOAJ understands only when searching by value (<code>doi:10.…</code>). There is no <code>doi</code> field in the index, so <code>_exists_:doi</code> is always false and <code>NOT _exists_:doi</code> returns <i>every</i> article of the journal. To test for a DOI use <code>index.doi</code>.</p>
+</div>
+
+<div class="try">
+  <p>See it in action: a search for articles without DOI in a real journal.</p>
+  <a class="btn" href="/en/?example=search">Run the example search</a>
+</div>
+
+<h2>Audit the whole journal in one click</h2>
+<p>Queries are good for targeted searches, but they have a limit: you cannot query for “one of the authors has no affiliation” — <code>_exists_</code> is true if the field is filled for at least one author. The “Export &amp; audit” tab gives the full picture:</p>
+<ol>
+  <li>Enter the journal ISSN and click “Load” — the app fetches every article, even if there are more than 1000.</li>
+  <li>Read the summary: no DOI, duplicate DOIs and titles, no abstract, keywords, full-text link, authors, pages, volume or year; “not all authors have affiliation”, “no ORCID at all”, invalid ORCIDs.</li>
+  <li>Click a problem card — the table shows only those articles, and the export downloads exactly them.</li>
+</ol>
+
+<div class="try">
+  <p>Audit your journal — no sign-up or API key needed.</p>
+  <a class="btn" href="/en/?tab=export">Audit a journal</a>
+</div>
+
+<h2>How to fix what you find</h2>
+<ul>
+  <li><b>One or two articles</b> — open the article in the editor (the “Edit” button in search results), add the DOI, ORCID or abstract and save. A publisher API key is required.</li>
+  <li><b>Many articles</b> — filter them on the “Export &amp; audit” tab, export to CSV, complete the data in Excel and upload it back. How to do that without creating duplicates: <a href="/en/guides/bulk-upload-csv/">Bulk upload articles to DOAJ from Excel and CSV</a>.</li>
+  <li><b>DOIs are in Crossref but not in DOAJ</b> — paste the journal’s DOI list into “Reconciliation against a DOI list” on the “Export &amp; audit” tab: the app shows which articles are missing from DOAJ and which DOAJ records have no DOI.</li>
+</ul>
+
+<h2>Why it matters</h2>
+<p>DOAJ metadata is freely redistributed to library catalogues, search engines and research discovery services. An article without a DOI is harder to link to its citations, one without ORCIDs to its authors’ profiles, one without an abstract is harder to find. Fix the record in DOAJ and it gets fixed in every service that harvests it.</p>

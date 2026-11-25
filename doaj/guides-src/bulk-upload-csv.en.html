@@ -1,0 +1,64 @@
+title: Bulk upload articles to DOAJ from Excel and CSV
+description: How to upload a journal issue to DOAJ from an Excel sheet: the CSV template, author and keyword format, validation before sending, 600 KB batches and upload status.
+updated: 2026-10-28
+---
+<p class="lead">An issue’s metadata often already lives in a spreadsheet — for the website, indexing services or the printer. Instead of building XML you can upload it to DOAJ straight from Excel, via the DOAJ API and DOAJ Metadata Studio. You need a publisher API key and ten minutes.</p>
+
+<h2>Step 1. Download the template</h2>
+<p>Open the “Bulk operations” tab and click “Download CSV template”. The template has one sample row and all the columns:</p>
+<table>
+  <tr><th>Column</th><th>What to enter</th></tr>
+  <tr><td><code>title</code></td><td>Article title — <b>required</b></td></tr>
+  <tr><td><code>abstract</code></td><td>Abstract</td></tr>
+  <tr><td><code>year</code>, <code>month</code></td><td>Publication year (4 digits) and month (1–12)</td></tr>
+  <tr><td><code>volume</code>, <code>number</code></td><td>Volume and issue</td></tr>
+  <tr><td><code>start_page</code>, <code>end_page</code></td><td>First and last page</td></tr>
+  <tr><td><code>doi</code></td><td>DOI without a prefix, e.g. <code>10.18469/1810-3189.2024.27.1.7-15</code> (a <code>https://doi.org/…</code> link is cleaned up automatically)</td></tr>
+  <tr><td><code>pissn</code>, <code>eissn</code></td><td>Journal ISSNs as in its DOAJ record, both if it has two. At least one is <b>required</b></td></tr>
+  <tr><td><code>fulltext_url</code></td><td>Full-text link — <b>required</b></td></tr>
+  <tr><td><code>fulltext_type</code></td><td><code>html</code> or <code>pdf</code></td></tr>
+  <tr><td><code>keywords</code></td><td>Keywords separated by semicolons; DOAJ keeps up to 6</td></tr>
+  <tr><td><code>authors</code></td><td>Authors — one per line inside the cell (Alt+Enter in Excel) or separated by “;”. Each author: <code>full name | affiliation | ORCID</code></td></tr>
+  <tr><td><code>id</code></td><td>DOAJ article ID — only when correcting an article that is already uploaded</td></tr>
+</table>
+
+<h3>Example authors cell</h3>
+<pre><code>Jane Smith | University of Oxford | 0000-0002-1825-0097
+John Doe | Institute of Radio Engineering</code></pre>
+<p>You can enter an ORCID as a bare number — the app turns it into the <code>https://orcid.org/…</code> URL that DOAJ expects and checks the check digit.</p>
+
+<h2>Step 2. Save as “CSV UTF-8”</h2>
+<div class="note">
+  <p><b>Important for non-Latin text.</b> Excel’s plain “CSV” option saves in your system’s legacy encoding, which garbles accented and non-Latin characters. Choose <b>“CSV UTF-8 (Comma delimited)”</b>.</p>
+</div>
+<p>The app detects the delimiter (semicolon, comma or tab) automatically.</p>
+
+<h2>Step 3. Validate before sending</h2>
+<p>On the “Bulk operations” tab switch to “CSV / Excel”, choose the file and click “Parse and validate”. The app shows a table of articles with issues for each one:</p>
+<ul>
+  <li><b>errors</b> — DOAJ will reject the article: no title, ISSN or full-text link, a wrong ISSN or ORCID check digit, a DOI that does not look like a DOI;</li>
+  <li><b>warnings</b> — the article uploads, but the record is incomplete: no DOI, abstract, keywords or affiliations.</li>
+</ul>
+<p>Fix the errors in Excel and load the file again — or tick “skip records with errors” to send only the valid articles.</p>
+
+<h2>Step 4. Send to DOAJ</h2>
+<p>Enter your API key on the “Settings” tab and click “Send to DOAJ”. The app splits the articles into batches of about 600 KB — the size DOAJ recommends — and sends them one after another. Each batch gets an <code>upload_id</code>; the “Upload status” block shows how DOAJ processed it.</p>
+
+<div class="try">
+  <p>Download the template and validate your file — nothing is sent to DOAJ without your confirmation.</p>
+  <a class="btn" href="/en/?tab=bulk">Open bulk upload</a>
+</div>
+
+<h2>Fixing uploaded articles through Excel</h2>
+<ol>
+  <li>On the “Export &amp; audit” tab load the journal’s articles by ISSN and click “CSV” — you get a sheet in the same format as the template.</li>
+  <li>Fix the data in Excel. <b>Do not change the DOI or the full-text link</b>: DOAJ uses them to recognise an existing article and overwrite it. Change both and DOAJ creates a new record, leaving the old one as a duplicate.</li>
+  <li>Save as “CSV UTF-8” and upload it on the “Bulk operations” tab.</li>
+</ol>
+
+<h2>If something goes wrong</h2>
+<ul>
+  <li><b>Key rejected (401)</b> — check the key in Settings; the “Check” button shows whether DOAJ accepts it.</li>
+  <li><b>DOAJ rejected the batch</b> — the error text appears in the status block. Usually the cause is an ISSN that does not belong to a journal in your account.</li>
+  <li><b>Response 429</b> — DOAJ rate-limits requests (2 per second); the app retries automatically.</li>
+</ul>

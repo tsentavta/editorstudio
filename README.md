@@ -9,7 +9,7 @@
 | **Сайт** | <https://editorstudio.ru/metafora/> | Каждый вводит ключ своей организации на странице. Ключ хранится только в браузере и отправляется только в «Метафору», сервера у сайта нет. |
 | **Локально** | `python server.py` → <http://127.0.0.1:8765> | Ключ лежит в `.env` на вашем компьютере, локальный сервер подставляет его сам, а в браузер ключ не попадает. |
 
-На том же сайте по адресу <https://editorstudio.ru/doaj/> работает [DOAJ Metadata Studio](https://github.com/tsentavta/doajmds). Как устроена сборка, описано в [разделе 14](#14-сайт-editorstudioru).
+На том же сайте по адресу <https://editorstudio.ru/doaj/> работает [DOAJ Metadata Studio](https://editorstudio.ru/doaj/). Как устроена сборка, описано в [разделе 14](#14-сайт-editorstudioru).
 
 ---
 
@@ -340,67 +340,16 @@ editorstudio/
 
 ## 14. Сайт editorstudio.ru
 
-### Структура
+Главная страница расположена в `site/`, консоль «Метафора» в `static/`,
+DOAJ Metadata Studio с русской и английской версиями и справкой в `doaj/`.
+Английская версия и страницы справки собираются командами
+`python doaj/tools/build_en.py` и `python doaj/tools/build_guides.py`.
 
-| Адрес | Что там | Откуда берётся |
-|---|---|---|
-| `/` | стартовая страница | `site/` этого репозитория |
-| `/metafora/` | консоль «Метафоры» | `static/` этого репозитория |
-| `/doaj/` | DOAJ Metadata Studio | репозиторий [tsentavta/doajmds](https://github.com/tsentavta/doajmds) |
-
-Сайт статический и работает на GitHub Pages без сервера. Оба API (DOAJ и «Метафора») принимают запросы прямо из браузера.
-
-### Сборка
-
-`tools/build_site.py` собирает всё в папку `_site/`:
-
-- **Стартовая страница:** копирует `site/` в корень сайта.
-- **Консоль:** копирует `static/` в `/metafora/`.
-- **DOAJ:** копирует doajmds в `/doaj/`. doajmds рассчитан на корень своего домена, поэтому ссылки от корня (`/guides/`, `/en/`, `/favicon.svg`, `start_url` в manifest) переписываются на `/doaj/…`. Исходники (`tools/`, `guides-src/`), README, `robots.txt`, `sitemap.xml` и файл подтверждения Яндекса не копируются.
-- **Проверка:** если после переписывания в doaj осталась ссылка от корня без `/doaj/`, сборка падает с ошибкой.
-
-Собрать и посмотреть локально:
+Собрать и открыть сайт локально:
 
 ```bash
-git clone https://github.com/tsentavta/doajmds.git ../doajmds
-python tools/build_site.py --doaj ../doajmds --out _site
-python -m http.server 8090 --directory _site
+python tools/build_site.py --out _site
+python -m http.server 8000 --directory _site
 ```
 
-После этого откройте <http://127.0.0.1:8090>.
-
-**Канонические адреса DOAJ.** По умолчанию страницы под `/doaj/` сохраняют `canonical` и `hreflang` на `https://doajmds.site/`. Для поисковиков это зеркало, и позиции doajmds.site не страдают. Чтобы основным адресом стал editorstudio.ru, добавьте к сборке ключ `--doaj-canonical` (в `.github/workflows/pages.yml`) и поставьте на doajmds.site ссылку или canonical на новый адрес.
-
-### Публикация
-
-Публикацией занимается `.github/workflows/pages.yml`. Сайт пересобирается:
-
-- при каждом пуше в `main` этого репозитория;
-- раз в сутки (в 03:17 UTC), чтобы подхватить изменения doajmds;
-- вручную: Actions → «Сайт editorstudio.ru» → Run workflow.
-
-Чтобы изменения doajmds попадали на сайт сразу, добавьте в doajmds шаг, который отправляет событие `doajmds-updated`. Для этого нужен токен с правом `repo` на editorstudio, сохранённый в secrets doajmds как `EDITORSTUDIO_TOKEN`:
-
-```yaml
-- run: gh api repos/tsentavta/editorstudio/dispatches -f event_type=doajmds-updated
-  env:
-    GH_TOKEN: ${{ secrets.EDITORSTUDIO_TOKEN }}
-```
-
-### Домен (настраивается один раз)
-
-1. **GitHub.** Settings → Pages: в Source выбрать **GitHub Actions**, в Custom domain указать `editorstudio.ru`. Файл `CNAME` сборка кладёт сама.
-2. **DNS у регистратора editorstudio.ru:**
-
-   | Тип | Имя | Значение |
-   |---|---|---|
-   | A | `@` | `185.199.108.153` |
-   | A | `@` | `185.199.109.153` |
-   | A | `@` | `185.199.110.153` |
-   | A | `@` | `185.199.111.153` |
-   | AAAA | `@` (по желанию) | `2606:50c0:8000::153`, `2606:50c0:8001::153`, `2606:50c0:8002::153`, `2606:50c0:8003::153` |
-   | CNAME | `www` | `tsentavta.github.io.` |
-
-   Старые A-записи (например, `46.243.231.30`) удалите.
-3. **HTTPS.** Когда DNS обновится (от нескольких минут до суток), включите в Settings → Pages галочку **Enforce HTTPS**. Сертификат GitHub выпускает сам.
-4. **Проверка:** <https://editorstudio.ru>, <https://editorstudio.ru/doaj/>, <https://editorstudio.ru/metafora/>.
+GitHub Actions публикует сайт на GitHub Pages из ветки `main`.
