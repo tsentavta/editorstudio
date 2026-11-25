@@ -1,0 +1,13 @@
+{
+  "name": "DOAJ Metadata Studio",
+  "short_name": "DOAJ MDS",
+  "start_url": "/doaj/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#e2502e",
+  "icons": [
+    { "src": "/doaj/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/doaj/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/doaj/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

@@ -1,0 +1,80 @@
+title: DOAJ API search: query syntax and fields
+description: DOAJ API v4 search syntax: article and journal fields, short names, .exact, ranges, _exists_, sorting, limits and non-obvious pitfalls — with tested examples.
+updated: 2026-10-28
+---
+<p class="lead">DOAJ API search runs on Elasticsearch and takes queries in Lucene syntax. The DOAJ documentation covers it briefly, and some behaviour you only discover by trial and error. This page collects everything you need to query articles and journals, with examples tested against the live API.</p>
+
+<h2>Endpoints and parameters</h2>
+<pre><code>GET https://doaj.org/api/v4/search/articles/{query}?page=1&amp;pageSize=100&amp;sort=…
+GET https://doaj.org/api/v4/search/journals/{query}?page=1&amp;pageSize=100&amp;sort=…</code></pre>
+<ul>
+  <li>The query goes in the path and is URL-encoded as a path segment.</li>
+  <li><code>pageSize</code> — up to 100 records per page, 10 by default.</li>
+  <li>Only the first <b>1000</b> results of a query are reachable — the workaround is in <a href="/en/guides/export-articles/">How to export all of a journal’s articles from DOAJ</a>.</li>
+  <li>Searching needs no API key. The rate limit is 2 requests per second.</li>
+</ul>
+
+<h2>Syntax basics</h2>
+<table>
+  <tr><th>What you need</th><th>Example</th></tr>
+  <tr><td>Search all fields</td><td><code>metamaterial</code></td></tr>
+  <tr><td>Search one field</td><td><code>bibjson.title:"phase demodulator"</code></td></tr>
+  <tr><td>Boolean logic and parentheses</td><td><code>bibjson.keywords:"open access" OR bibjson.keywords:"open science"</code></td></tr>
+  <tr><td>Exclusion</td><td><code>issn:1810-3189 AND NOT _exists_:index.doi</code></td></tr>
+  <tr><td>Range</td><td><code>bibjson.year:[2022 TO 2024]</code></td></tr>
+  <tr><td>Field present / missing</td><td><code>_exists_:bibjson.abstract</code>, <code>NOT _exists_:bibjson.keywords</code></td></tr>
+  <tr><td>Exact match of the whole value</td><td><code>bibjson.journal.title.exact:"Journal of Physics"</code></td></tr>
+  <tr><td>All records</td><td><code>*</code></td></tr>
+</table>
+<p>Fields use dot notation, as in the record JSON: <code>bibjson.author.name</code>, <code>bibjson.journal.volume</code>. Without <code>.exact</code> the search matches words: <code>bibjson.journal.title:"Journal of Science"</code> also finds “Journal of Science and Technology”.</p>
+
+<h2>Short names</h2>
+<p>DOAJ accepts short names for common fields — but only for searching by value; <code>.exact</code> and <code>_exists_</code> do not work with them.</p>
+<table>
+  <tr><th>Articles</th><th>Journals</th></tr>
+  <tr><td><code>title:</code> <code>abstract:</code> <code>doi:</code> <code>issn:</code> <code>publisher:</code></td><td><code>title:</code> <code>issn:</code> <code>publisher:</code> <code>license:</code> <code>username:</code></td></tr>
+</table>
+<p>You can search a DOI as is — DOAJ escapes the slash itself — but quoting it is safer: <code>doi:"10.18469/1810-3189.2022.25.4.122-128"</code>.</p>
+
+<h2>Sorting</h2>
+<pre><code>sort=created_date:desc        — newest in DOAJ first
+sort=last_updated:desc        — recently updated
+sort=title:asc                — by title
+sort=bibjson.year.exact:desc  — by publication year
+sort=issn:asc                 — journals by ISSN</code></pre>
+<p>To sort by year you must use <code>bibjson.year.exact</code>: <code>sort=bibjson.year:desc</code> returns an error.</p>
+
+<h2>What is not allowed</h2>
+<p>To protect the server, DOAJ rejects:</p>
+<ul>
+  <li>wildcards <code>*</code> and <code>?</code> inside terms (<code>doi:10.18469*</code> fails with “disallowed Lucene features”);</li>
+  <li>fuzzy <code>~</code> and proximity searches;</li>
+  <li>regular expressions <code>/…/</code>;</li>
+  <li>open-ended ranges: <code>created_date:[2026-01-01 TO *]</code> fails; give both bounds.</li>
+</ul>
+
+<h2>Non-obvious pitfalls</h2>
+<table>
+  <tr><th>Pitfall</th><th>Do this instead</th></tr>
+  <tr><td><code>_exists_:doi</code> is always false — <code>doi</code> is a short name, not a field</td><td><code>_exists_:index.doi</code> or <code>bibjson.identifier.type:doi</code></td></tr>
+  <tr><td>Pages are uploaded as <code>bibjson.journal.start_page</code>, but searching that field finds nothing</td><td>Search <code>bibjson.start_page</code> and <code>bibjson.end_page</code></td></tr>
+  <tr><td><code>index.country:RU</code> and <code>index.language:RU</code> find nothing</td><td><code>index.*</code> fields hold English names: <code>index.country:"Russian Federation"</code>, <code>index.language:Russian</code>. Codes live in <code>bibjson.journal.country</code>, <code>bibjson.language</code></td></tr>
+  <tr><td>Booleans and flags use different formats</td><td><code>bibjson.apc.has_apc:false</code>, but <code>index.has_apc:No</code></td></tr>
+  <tr><td>A journal is not found by its English title</td><td>The main title may be in the national language; the English one is in <code>bibjson.alternative_title</code> (journals)</td></tr>
+  <tr><td><code>publisher:</code> and <code>license:</code> often find nothing for journals</td><td><code>bibjson.publisher.name:…</code> and <code>index.license:"CC BY"</code></td></tr>
+  <tr><td><code>_exists_:bibjson.author.orcid_id</code> is true if at least one author has an ORCID</td><td>“Is any author missing an ORCID” cannot be queried — export the records and check them</td></tr>
+</table>
+
+<h2>Useful queries</h2>
+<pre><code>issn:1234-5678 AND bibjson.year:2024
+issn:1234-5678 AND NOT _exists_:index.doi
+bibjson.abstract:metamaterial AND bibjson.year:[2022 TO 2024]
+bibjson.author.orcid_id:"https://orcid.org/0000-0002-1825-0097"
+bibjson.link.url:"journal.example.org"</code></pre>
+<pre><code>index.country:"Russian Federation" AND index.subject:Physics     (journals)
+bibjson.apc.has_apc:false AND index.language:Russian              (journals)</code></pre>
+
+<div class="try">
+  <p>The query builder has all 54 article fields and 83 journal fields with descriptions and examples — click to insert a condition.</p>
+  <a class="btn" href="/en/?q=index.country%3A%22Russian%20Federation%22%20AND%20index.subject%3APhysics&amp;type=journals">Open an example query</a>
+</div>

@@ -1,0 +1,80 @@
+title: Поиск в DOAJ API: синтаксис запросов и поля
+description: Синтаксис поиска DOAJ API v4: поля статей и журналов, сокращения, .exact, диапазоны, _exists_, сортировка, лимиты и неочевидные ловушки — с проверенными примерами.
+updated: 2026-10-28
+---
+<p class="lead">Поиск DOAJ API работает на Elasticsearch и принимает запросы в синтаксисе Lucene. Документация DOAJ описывает его кратко, а часть особенностей приходится выяснять опытом. Здесь собрано всё нужное для запросов к статьям и журналам, с примерами, проверенными на живом API.</p>
+
+<h2>Адреса и параметры</h2>
+<pre><code>GET https://doaj.org/api/v4/search/articles/{запрос}?page=1&amp;pageSize=100&amp;sort=…
+GET https://doaj.org/api/v4/search/journals/{запрос}?page=1&amp;pageSize=100&amp;sort=…</code></pre>
+<ul>
+  <li>Запрос передаётся в пути и кодируется как часть URL.</li>
+  <li><code>pageSize</code> — до 100 записей на страницу, по умолчанию 10.</li>
+  <li>Доступны только первые <b>1000</b> результатов запроса — как это обойти, описано в инструкции <a href="/guides/export-articles/">Как выгрузить все статьи журнала из DOAJ</a>.</li>
+  <li>Для поиска ключ API не нужен. Ограничение — 2 запроса в секунду.</li>
+</ul>
+
+<h2>Основы синтаксиса</h2>
+<table>
+  <tr><th>Что нужно</th><th>Пример</th></tr>
+  <tr><td>Поиск по всем полям</td><td><code>metamaterial</code></td></tr>
+  <tr><td>Поиск в конкретном поле</td><td><code>bibjson.title:"phase demodulator"</code></td></tr>
+  <tr><td>Логика и скобки</td><td><code>bibjson.keywords:"open access" OR bibjson.keywords:"open science"</code></td></tr>
+  <tr><td>Исключение</td><td><code>issn:1810-3189 AND NOT _exists_:index.doi</code></td></tr>
+  <tr><td>Диапазон</td><td><code>bibjson.year:[2022 TO 2024]</code></td></tr>
+  <tr><td>Поле заполнено / не заполнено</td><td><code>_exists_:bibjson.abstract</code>, <code>NOT _exists_:bibjson.keywords</code></td></tr>
+  <tr><td>Точное совпадение всего значения</td><td><code>bibjson.journal.title.exact:"Journal of Physics"</code></td></tr>
+  <tr><td>Все записи</td><td><code>*</code></td></tr>
+</table>
+<p>Поля указываются через точку, как в JSON записи: <code>bibjson.author.name</code>, <code>bibjson.journal.volume</code>. Без <code>.exact</code> поиск идёт по словам: <code>bibjson.journal.title:"Journal of Science"</code> найдёт и «Journal of Science and Technology».</p>
+
+<h2>Сокращения</h2>
+<p>Для частых полей DOAJ принимает короткие имена — но только для поиска по значению, а <code>.exact</code> и <code>_exists_</code> с ними не работают.</p>
+<table>
+  <tr><th>Статьи</th><th>Журналы</th></tr>
+  <tr><td><code>title:</code> <code>abstract:</code> <code>doi:</code> <code>issn:</code> <code>publisher:</code></td><td><code>title:</code> <code>issn:</code> <code>publisher:</code> <code>license:</code> <code>username:</code></td></tr>
+</table>
+<p>DOI можно искать как есть — DOAJ сам экранирует слеш, — но надёжнее брать его в кавычки: <code>doi:"10.18469/1810-3189.2022.25.4.122-128"</code>.</p>
+
+<h2>Сортировка</h2>
+<pre><code>sort=created_date:desc        — сначала новые в DOAJ
+sort=last_updated:desc        — недавно изменённые
+sort=title:asc                — по названию
+sort=bibjson.year.exact:desc  — по году публикации
+sort=issn:asc                 — журналы по ISSN</code></pre>
+<p>По году нужно сортировать именно через <code>bibjson.year.exact</code>: <code>sort=bibjson.year:desc</code> возвращает ошибку.</p>
+
+<h2>Что запрещено</h2>
+<p>Чтобы запросы не перегружали сервер, DOAJ отклоняет:</p>
+<ul>
+  <li>шаблоны <code>*</code> и <code>?</code> внутри слов (<code>doi:10.18469*</code> — ошибка «disallowed Lucene features»);</li>
+  <li>нечёткий поиск <code>~</code> и поиск по близости слов;</li>
+  <li>регулярные выражения <code>/…/</code>;</li>
+  <li>открытые диапазоны: <code>created_date:[2026-01-01 TO *]</code> — ошибка; задавайте обе границы.</li>
+</ul>
+
+<h2>Неочевидные ловушки</h2>
+<table>
+  <tr><th>Ловушка</th><th>Как правильно</th></tr>
+  <tr><td><code>_exists_:doi</code> всегда ложно — поля <code>doi</code> нет, это сокращение</td><td><code>_exists_:index.doi</code> или <code>bibjson.identifier.type:doi</code></td></tr>
+  <tr><td>Страницы при загрузке лежат в <code>bibjson.journal.start_page</code>, а поиск по этому полю ничего не находит</td><td>Искать по <code>bibjson.start_page</code> и <code>bibjson.end_page</code></td></tr>
+  <tr><td><code>index.country:RU</code> и <code>index.language:RU</code> ничего не находят</td><td>В <code>index.*</code> — английские названия: <code>index.country:"Russian Federation"</code>, <code>index.language:Russian</code>. Коды — в <code>bibjson.journal.country</code>, <code>bibjson.language</code></td></tr>
+  <tr><td>Логические поля и флаги в разном формате</td><td><code>bibjson.apc.has_apc:false</code>, но <code>index.has_apc:No</code></td></tr>
+  <tr><td>Название журнала не находится по-английски</td><td>Основное название может быть на национальном языке; английское — в <code>bibjson.alternative_title</code> (у журналов)</td></tr>
+  <tr><td><code>publisher:</code> и <code>license:</code> для журналов часто ничего не находят</td><td><code>bibjson.publisher.name:…</code> и <code>index.license:"CC BY"</code></td></tr>
+  <tr><td><code>_exists_:bibjson.author.orcid_id</code> истинно, если ORCID есть хотя бы у одного автора</td><td>«Есть ли автор без ORCID» запросом не проверить — нужна выгрузка и проверка записей</td></tr>
+</table>
+
+<h2>Полезные запросы</h2>
+<pre><code>issn:1234-5678 AND bibjson.year:2024
+issn:1234-5678 AND NOT _exists_:index.doi
+bibjson.abstract:metamaterial AND bibjson.year:[2022 TO 2024]
+bibjson.author.orcid_id:"https://orcid.org/0000-0002-1825-0097"
+bibjson.link.url:"journal.example.org"</code></pre>
+<pre><code>index.country:"Russian Federation" AND index.subject:Physics     (журналы)
+bibjson.apc.has_apc:false AND index.language:Russian              (журналы)</code></pre>
+
+<div class="try">
+  <p>В конструкторе запросов есть все 54 поля статей и 83 поля журналов с описаниями и примерами — щелчок вставляет условие в запрос.</p>
+  <a class="btn" href="/?q=index.country%3A%22Russian%20Federation%22%20AND%20index.subject%3APhysics&amp;type=journals">Открыть пример запроса</a>
+</div>

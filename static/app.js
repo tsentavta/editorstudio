@@ -495,7 +495,9 @@ function pubHtml(uid, article, sig) {
   if (!pubLocale || !article[pubLocale]) pubLocale = locales.includes("RUS") ? "RUS" : locales[0];
   const l = article[pubLocale];
   const signed = sig && sig.signed_at;
-  const sigBadge = signed
+  const sigBadge = !sig || sig.signed_at === undefined
+    ? `<span class="badge"><span class="dot"></span>статус подписи неизвестен</span>`
+    : signed
     ? `<span class="badge b-ok"><span class="dot"></span>подписана ${fmtDate(sig.signed_at)}</span>`
     : `<span class="badge"><span class="dot"></span>не подписана${sig && sig.unsigned_at ? " · отозвана " + fmtDate(sig.unsigned_at) : ""}</span>`;
 
@@ -590,7 +592,7 @@ function renderPub() {
     busy(sign, true);
     const r = await call("PUT", `/api/v2/publications/${encodeURIComponent(uid)}/sign/`);
     busy(sign, false);
-    if (r.ok) { pubCache.sig = { article_uid: uid, signed_at: r.data?.data?.signed_at || new Date().toISOString() }; renderPub(); $("[data-role=pmsg]").innerHTML = okHtml("Публикация подписана"); }
+    if (r.ok) { pubCache.sig = r.data?.data?.signed_at ? { signed_at: r.data.data.signed_at } : null; renderPub(); $("[data-role=pmsg]").innerHTML = okHtml("Публикация подписана"); }
     else msg.innerHTML = errorHtml(r);
   });
   if (unsign) unsign.addEventListener("click", async () => {
@@ -598,7 +600,7 @@ function renderPub() {
     busy(unsign, true);
     const r = await call("PUT", `/api/v2/publications/${encodeURIComponent(uid)}/unsign/`);
     busy(unsign, false);
-    if (r.ok) { pubCache.sig = { article_uid: uid, signed_at: null, unsigned_at: new Date().toISOString() }; renderPub(); $("[data-role=pmsg]").innerHTML = okHtml("Подпись отозвана"); }
+    if (r.ok) { pubCache.sig = { article_uid: uid, signed_at: null, unsigned_at: r.data?.data?.unsigned_at || null }; renderPub(); $("[data-role=pmsg]").innerHTML = okHtml("Подпись отозвана"); }
     else msg.innerHTML = errorHtml(r);
   });
 }

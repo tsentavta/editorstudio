@@ -1,0 +1,1801 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DOAJ Metadata Studio — upload and audit DOAJ article metadata</title>
+<meta name="description" content="Free tool for journal editors: search DOAJ, create and edit articles via the API, bulk upload from Excel, check DOI and ORCID.">
+<meta name="keywords" content="DOAJ, DOAJ API, Directory of Open Access Journals, article metadata, upload articles to DOAJ, scholarly journal, open access, DOI, ORCID, open access metadata">
+<meta name="author" content="tsentavta">
+<meta name="robots" content="index, follow">
+<meta name="google-site-verification" content="SPH2DkBFM3aeQhf7RyHebt_uMjyGfTej6i1yuReF3QQ">
+<link rel="canonical" href="https://editorstudio.ru/doaj/en/">
+<link rel="alternate" hreflang="ru" href="https://editorstudio.ru/doaj/">
+<link rel="alternate" hreflang="en" href="https://editorstudio.ru/doaj/en/">
+<link rel="alternate" hreflang="x-default" href="https://editorstudio.ru/doaj/en/">
+<meta name="theme-color" content="#f35b22">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="DOAJ Metadata Studio">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="https://editorstudio.ru/doaj/en/">
+<meta property="og:title" content="DOAJ Metadata Studio — article metadata in DOAJ">
+<meta property="og:description" content="Search, upload, edit and audit DOAJ article metadata via API v4. Free, in the browser, nothing to install.">
+<meta property="og:image" content="https://editorstudio.ru/doaj/docs/screenshot-search-en.jpg">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="506">
+<meta property="og:image:alt" content="Article search in DOAJ Metadata Studio">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DOAJ Metadata Studio — article metadata in DOAJ">
+<meta name="twitter:description" content="Search, upload, edit and audit DOAJ article metadata via API v4.">
+<meta name="twitter:image" content="https://editorstudio.ru/doaj/docs/screenshot-search-en.jpg">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "DOAJ Metadata Studio",
+  "url": "https://editorstudio.ru/doaj/en/",
+  "description": "A free browser-based tool for searching, uploading, editing and auditing article metadata in DOAJ (Directory of Open Access Journals) via DOAJ API v4.",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Any (runs in a browser)",
+  "browserRequirements": "A modern browser with JavaScript enabled",
+  "inLanguage": "en",
+  "isAccessibleForFree": true,
+  "license": "https://opensource.org/licenses/MIT",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "screenshot": "https://editorstudio.ru/doaj/docs/screenshot-search-en.jpg",
+  "codeRepository": "https://github.com/tsentavta/editorstudio",
+  "author": { "@type": "Person", "name": "tsentavta", "url": "https://github.com/tsentavta" },
+  "featureList": [
+    "Search DOAJ articles and journals by any field",
+    "Create, update and delete articles via the DOAJ API",
+    "Bulk upload of articles from JSON and CSV/Excel",
+    "Metadata audit: DOI, ORCID, abstracts, keywords, duplicates",
+    "Export all articles of a journal to CSV and JSON",
+    "Reconciliation against a DOI list"
+  ]
+}
+</script>
+<link rel="icon" href="/doaj/favicon.ico" sizes="48x48">
+<link rel="icon" href="/doaj/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/doaj/favicon-96.png" type="image/png" sizes="96x96">
+<link rel="apple-touch-icon" href="/doaj/apple-touch-icon.png">
+<link rel="manifest" href="/doaj/site.webmanifest">
+<style>
+:root{
+  --bg:#f6f7f9; --panel:#fff; --panel2:#f1f3f6; --text:#1c2230; --muted:#5e6878; --border:#dde1e8;
+  --accent:#e2502e; --accent-ink:#fff; --accent-soft:#fdebe6;
+  --ok:#1f8a4c; --ok-soft:#e3f4ea; --warn:#a86a00; --warn-soft:#fbf1dc; --err:#c62f2f; --err-soft:#fbe5e5;
+  --link:#2459c4; --shadow:0 1px 2px rgba(20,25,40,.06),0 4px 16px rgba(20,25,40,.06);
+  --mono:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#14171d; --panel:#1c2028; --panel2:#232833; --text:#e6e9ef; --muted:#9aa3b2; --border:#2f3542;
+    --accent:#ff6a47; --accent-ink:#1a0d08; --accent-soft:#3a221b;
+    --ok:#4cc483; --ok-soft:#173326; --warn:#e3a94a; --warn-soft:#3a2e17; --err:#ff7a7a; --err-soft:#3d1e20;
+    --link:#7ea6ff; --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#14171d; --panel:#1c2028; --panel2:#232833; --text:#e6e9ef; --muted:#9aa3b2; --border:#2f3542;
+  --accent:#ff6a47; --accent-ink:#1a0d08; --accent-soft:#3a221b;
+  --ok:#4cc483; --ok-soft:#173326; --warn:#e3a94a; --warn-soft:#3a2e17; --err:#ff7a7a; --err-soft:#3d1e20;
+  --link:#7ea6ff; --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--link)}
+h2{font-size:17px;margin:0 0 12px}
+h3{font-size:14px;margin:18px 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+header{position:sticky;top:0;z-index:20;background:var(--panel);border-bottom:1px solid var(--border)}
+.bar{max-width:1280px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{font-weight:700;font-size:16px;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.brand .dot{width:22px;height:22px;border-radius:6px;background:var(--accent);display:grid;place-items:center;color:var(--accent-ink);font-size:12px}
+nav{display:flex;gap:4px;flex-wrap:wrap;flex:1}
+nav button{border:0;background:none;color:var(--muted);padding:7px 12px;border-radius:8px;font:inherit;cursor:pointer}
+nav button:hover{background:var(--panel2);color:var(--text)}
+nav button.active{background:var(--accent-soft);color:var(--accent);font-weight:600}
+@media (max-width:760px){
+  .bar{gap:8px;padding:8px 16px}
+  nav{order:3;flex:1 0 100%;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  nav button{white-space:nowrap}
+  .brand{flex:1}
+  .selbar{top:96px}
+}
+.navlink{font-size:13px;color:var(--muted);text-decoration:none;white-space:nowrap}
+.navlink:hover{color:var(--accent)}
+.langsw{font-size:12px;font-weight:600;padding:4px 9px;border-radius:99px;border:1px solid var(--border);color:var(--muted);text-decoration:none;white-space:nowrap}
+.langsw:hover{color:var(--accent);border-color:var(--accent)}
+.keypill{font-size:12px;padding:4px 10px;border-radius:99px;border:1px solid var(--border);color:var(--muted);cursor:pointer;white-space:nowrap}
+.keypill.on{background:var(--ok-soft);color:var(--ok);border-color:transparent}
+main{max-width:1280px;margin:0 auto;padding:16px}
+.about{margin-top:32px;padding:24px 4px 8px;border-top:1px solid var(--border);color:var(--text)}
+.about h1{font-size:20px;margin:0 0 8px}
+.about h2{font-size:15px;margin:18px 0 6px}
+.about p,.about li,.about dd{color:var(--muted);line-height:1.6;max-width:80ch}
+.about .lead{font-size:15px;margin:0 0 4px}
+.about-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:4px 24px}
+.about-grid p{margin:0}
+.about ol,.about ul.guides{padding-left:20px;margin:0}
+.about ul.guides li{line-height:1.8}
+.about .faq{margin:0}
+.about .faq dt{font-weight:600;margin-top:10px}
+.about .faq dd{margin:2px 0 0}
+.about code{font-family:var(--mono);font-size:12px;background:var(--panel2);padding:1px 5px;border-radius:4px}
+footer{max-width:1280px;margin:0 auto;padding:8px 16px 28px;font-size:12px;color:var(--muted);text-align:center}
+.tab{display:none}.tab.active{display:block}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px;box-shadow:var(--shadow);margin-bottom:16px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.grow{flex:1;min-width:160px}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);min-width:0}
+input,select,textarea{font:inherit;color:var(--text);background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:7px 10px;min-width:0}
+textarea{resize:vertical;width:100%}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:transparent}
+.mono,textarea.mono{font-family:var(--mono);font-size:12.5px}
+button.b{font:inherit;border:1px solid var(--border);background:var(--panel);color:var(--text);padding:7px 14px;border-radius:8px;cursor:pointer;white-space:nowrap}
+button.b:hover:not(:disabled){background:var(--panel2)}
+button.b:disabled{opacity:.5;cursor:not-allowed}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:transparent;font-weight:600}
+button.primary:hover:not(:disabled){background:var(--accent);filter:brightness(1.07)}
+button.danger{color:var(--err);border-color:var(--err)}
+button.danger:hover:not(:disabled){background:var(--err-soft)}
+button.sm{padding:4px 10px;font-size:12.5px}
+button.link{border:0;background:none;color:var(--link);cursor:pointer;padding:0;font:inherit}
+.seg{display:inline-flex;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.seg button{border:0;background:var(--panel);padding:7px 14px;font:inherit;color:var(--muted);cursor:pointer}
+.seg button.on{background:var(--accent);color:var(--accent-ink);font-weight:600}
+.muted{color:var(--muted)}.small{font-size:12px}
+.hint{font-size:12px;color:var(--muted);margin-top:6px}
+.qrow{display:grid;grid-template-columns:90px minmax(0,300px) 1fr auto 32px;gap:6px;margin-bottom:6px;align-items:center}
+.qrow .first{visibility:hidden}
+@media (max-width:700px){.qrow{grid-template-columns:80px 1fr 32px}.qrow .val{grid-column:1/-2}.qrow .ex{grid-column:-2/-1}}
+.ref td{font-size:12.5px}
+.ref td.fn{font-family:var(--mono);font-size:12px;white-space:nowrap;color:var(--link);cursor:pointer}
+.ref td.ex{font-family:var(--mono);font-size:12px;cursor:pointer;color:var(--muted)}
+.ref td.fn:hover,.ref td.ex:hover{text-decoration:underline}
+.ref tr.grp td{background:var(--panel2);font-weight:600;color:var(--muted);font-size:11.5px;text-transform:uppercase;letter-spacing:.04em}
+.result{border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px;display:flex;gap:10px;background:var(--panel)}
+.result:hover{border-color:var(--muted)}
+.result .t{font-weight:600;cursor:pointer}
+.result .t:hover{color:var(--accent)}
+.result .meta{font-size:12.5px;color:var(--muted);margin-top:2px}
+.badge{display:inline-block;font-size:11px;padding:1px 7px;border-radius:99px;background:var(--panel2);color:var(--muted);margin:2px 3px 0 0;white-space:nowrap}
+.badge.err{background:var(--err-soft);color:var(--err)}
+.badge.warn{background:var(--warn-soft);color:var(--warn)}
+.badge.ok{background:var(--ok-soft);color:var(--ok)}
+.pager{display:flex;align-items:center;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.selbar{position:sticky;top:56px;z-index:5;background:var(--accent-soft);color:var(--text);border-radius:10px;padding:8px 12px;margin-bottom:10px;display:none;gap:8px;align-items:center;flex-wrap:wrap}
+.selbar.show{display:flex}
+/* drawer */
+.drawer-bg{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:40;display:none}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(760px,100%);background:var(--panel);z-index:41;transform:translateX(100%);transition:transform .2s;display:flex;flex-direction:column;box-shadow:-8px 0 30px rgba(0,0,0,.2)}
+.drawer.open{transform:none}.drawer-bg.open{display:block}
+.drawer .dh{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.drawer .db{padding:16px;overflow:auto;flex:1}
+dl.kv{display:grid;grid-template-columns:170px 1fr;gap:6px 12px;margin:0}
+dl.kv dt{color:var(--muted);font-size:12.5px}
+dl.kv dd{margin:0;word-break:break-word}
+@media (max-width:600px){dl.kv{grid-template-columns:1fr}dl.kv dt{margin-top:6px}}
+pre.json{background:var(--panel2);border-radius:8px;padding:12px;overflow:auto;font-family:var(--mono);font-size:12px;margin:0;white-space:pre-wrap;word-break:break-word}
+/* editor */
+.ed{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px}
+@media (max-width:980px){.ed{grid-template-columns:1fr}}
+.g2{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.g3{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.authors .arow{display:grid;grid-template-columns:1.1fr 1.4fr 1fr auto auto auto;gap:6px;margin-bottom:6px;align-items:center}
+@media (max-width:700px){.authors .arow{grid-template-columns:1fr 1fr}.authors .arow input{grid-column:1/-1}}
+.links .lrow{display:grid;grid-template-columns:1fr 120px 110px auto;gap:6px;margin-bottom:6px}
+@media (max-width:600px){.links .lrow{grid-template-columns:1fr 1fr}.links .lrow input:first-child{grid-column:1/-1}}
+.vlist{list-style:none;padding:0;margin:0}
+.vlist li{padding:5px 8px;border-radius:6px;margin-bottom:4px;font-size:13px}
+.vlist li.err{background:var(--err-soft);color:var(--err)}
+.vlist li.warn{background:var(--warn-soft);color:var(--warn)}
+.vlist li.ok{background:var(--ok-soft);color:var(--ok)}
+.sticky{position:sticky;top:70px}
+/* tables */
+.tw{overflow:auto;border:1px solid var(--border);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--border);vertical-align:top}
+th{background:var(--panel2);font-weight:600;position:sticky;top:0;z-index:1;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.t{min-width:260px}
+td .title{cursor:pointer}td .title:hover{color:var(--accent)}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.stat{border:1px solid var(--border);border-radius:10px;padding:10px 12px;cursor:pointer;background:var(--panel)}
+.stat:hover{border-color:var(--muted)}
+.stat.on{outline:2px solid var(--accent);border-color:transparent}
+.stat .n{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+.stat .l{font-size:12px;color:var(--muted)}
+.stat.bad .n{color:var(--err)}.stat.good .n{color:var(--ok)}
+.years{display:flex;flex-direction:column;gap:3px;max-height:260px;overflow:auto}
+.yr{display:grid;grid-template-columns:48px 1fr 48px;gap:8px;align-items:center;font-size:12.5px;cursor:pointer;padding:1px 4px;border-radius:4px}
+.yr:hover{background:var(--panel2)}.yr.on{background:var(--accent-soft)}
+.yr .bar2{height:10px;background:var(--accent);border-radius:3px;opacity:.75}
+.yr .c{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted)}
+.progress{height:8px;background:var(--panel2);border-radius:99px;overflow:hidden}
+.progress>div{height:100%;background:var(--accent);width:0;transition:width .2s}
+.log{font-family:var(--mono);font-size:12px;color:var(--muted);max-height:120px;overflow:auto;margin-top:8px;white-space:pre-wrap}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:900px){.cols2{grid-template-columns:1fr}}
+#toasts{position:fixed;bottom:16px;right:16px;z-index:60;display:flex;flex-direction:column;gap:8px;max-width:min(420px,calc(100% - 32px))}
+.toast{background:var(--text);color:var(--bg);padding:10px 14px;border-radius:10px;box-shadow:var(--shadow);font-size:13px;white-space:pre-wrap;word-break:break-word}
+.toast.err{background:var(--err);color:#fff}.toast.ok{background:var(--ok);color:#fff}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.empty{padding:30px;text-align:center;color:var(--muted)}
+details.help summary{cursor:pointer;color:var(--link);font-size:13px}
+details.help{margin-top:10px}
+details.help code{font-family:var(--mono);font-size:12px;background:var(--panel2);padding:1px 5px;border-radius:4px}
+.chk{display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer}
+</style>
+<link rel="stylesheet" href="/doaj/editorstudio.css">
+</head>
+<body>
+<header>
+  <div class="bar">
+    <a class="brand" href="/"><img width="24" height="24" src="/favicon.svg" alt="">EditorStudio</a><span class="module-name">DOAJ</span>
+    <nav id="nav">
+      <button data-tab="search" class="active">Search</button>
+      <button data-tab="editor">Article editor</button>
+      <button data-tab="bulk">Bulk operations</button>
+      <button data-tab="export">Export & audit</button>
+      <button data-tab="settings">Settings</button>
+    </nav>
+    <span id="keyPill" class="keypill" title="An API key is required to create, update and delete articles">No API key</span>
+    <a class="navlink" href="/doaj/en/guides/">Guides</a>
+    <a class="langsw" href="/doaj/" hreflang="ru" lang="ru" title="Русская версия">RU</a>
+  </div>
+</header>
+
+<main>
+<!-- ============ SEARCH ============ -->
+<section class="tab active" id="tab-search">
+  <div class="card">
+    <div class="row" style="justify-content:space-between;margin-bottom:12px">
+      <div class="seg" id="sType"><button data-v="articles" class="on">Articles</button><button data-v="journals">Journals</button></div>
+      <div class="row">
+        <input id="byId" class="mono" placeholder="DOAJ ID (32 characters) or link" style="width:300px">
+        <button class="b" id="byIdBtn">Open by ID</button>
+      </div>
+    </div>
+    <div id="qRows"></div>
+    <datalist id="fieldList"></datalist>
+    <div class="row" style="margin:4px 0 10px"><button class="b sm" id="addRow">+ Condition</button><span class="hint" style="margin:0">Range: year/number <code>2020-2023</code>, date <code>2024-01-01..2024-12-31</code>. For true/false and Yes/No you can type “yes”/“no”.</span></div>
+    <label class="f">Query (Lucene) — built from the conditions, can be edited by hand
+      <textarea id="qText" class="mono" rows="2" placeholder="e.g. issn:1810-3189 AND bibjson.year:2024"></textarea>
+    </label>
+    <div class="row" style="margin-top:10px">
+      <label class="f">Sort<select id="sSort"></select></label>
+      <label class="f">Per page<select id="sSize"><option>10</option><option selected>25</option><option>50</option><option>100</option></select></label>
+      <div class="grow"></div>
+      <button class="b" id="sExample" title="Find articles without DOI in the journal Physics of Wave Processes and Radio Systems">Example</button>
+      <button class="b" id="sClear">Reset</button>
+      <button class="b primary" id="sGo">Search</button>
+    </div>
+    <details class="help"><summary>Query syntax</summary>
+      <div class="small" style="margin-top:8px;line-height:1.8">
+        Search a field: <code>bibjson.title:"wave propagation"</code> · short names: <code>doi:</code> <code>issn:</code> <code>title:</code> <code>license:CC-BY</code><br>
+        Logic: <code>AND</code>, <code>OR</code>, <code>NOT</code>, parentheses · range: <code>bibjson.year:[2020 TO 2023]</code><br>
+        Field present: <code>_exists_:bibjson.abstract</code>, missing: <code>NOT _exists_:bibjson.author.orcid_id</code><br>
+        Articles without DOI: <code>NOT _exists_:index.doi</code> or <code>NOT bibjson.identifier.type:doi</code> — the short name <code>doi:</code> only works when searching by value; the index has no <code>doi</code> field<br>
+        Quote DOIs that contain a slash: <code>doi:"10.18469/1810-3189.2022.25.4.122-128"</code><br>
+        Exact match of the whole value: suffix <code>.exact</code> — <code>bibjson.journal.title.exact:"Journal of Science"</code> (full field names only, not short names)<br>
+        Values: boolean fields <code>bibjson.*</code> — <code>true</code>/<code>false</code>; flags <code>index.*</code> — <code>Yes</code>/<code>No</code>; <code>index.country</code> and <code>index.language</code> — English names (<code>"Russian Federation"</code>, <code>Russian</code>), while <code>bibjson.*.country</code>/<code>language</code> — codes (<code>RU</code>)<br>
+        Ranges must be closed: <code>created_date:[2026-01-01 TO 2026-06-30]</code>; <code>TO *</code> is not allowed. All records: query <code>*</code><br>
+        Wildcards <code>*</code> and <code>?</code> inside words, fuzzy search <code>~</code> and regular expressions are <b>not allowed</b> by DOAJ. Only the first 1000 results of a query are available.
+      </div>
+    </details>
+  </div>
+  <div class="card ref">
+    <details id="refBox">
+      <summary style="cursor:pointer"><b>Field reference</b> <span class="small muted" id="refCount"></span></summary>
+      <div class="small muted" style="margin:8px 0">Click a field name to insert <code>field:</code> into the query; click an example to insert a ready-made condition. Any field in the list can be searched.</div>
+      <input id="refFilter" placeholder="Find a field: “orcid”, “license”, “date”…" style="width:100%;margin-bottom:8px">
+      <div class="tw" style="max-height:460px"><table id="refTable"></table></div>
+    </details>
+  </div>
+  <div class="selbar" id="sSel">
+    <b id="sSelN">0</b> selected
+    <button class="b sm" data-act="copy">Copy IDs</button>
+    <button class="b sm" data-act="json">Download JSON</button>
+    <button class="b sm danger" data-act="del">Add to bulk delete</button>
+    <button class="link small" data-act="clear">clear selection</button>
+  </div>
+  <div class="row" style="margin-bottom:8px;justify-content:space-between">
+    <div id="sInfo" class="muted small"></div>
+    <div class="row" id="sTools" style="display:none">
+      <button class="b sm" id="sSelPage">Select all on page</button>
+      <button class="b sm" id="sSelAll">Select all results</button>
+      <button class="b sm" id="sSelNone">Clear selection</button>
+    </div>
+  </div>
+  <div id="sResults"></div>
+  <div class="pager" id="sPager"></div>
+</section>
+
+<!-- ============ EDITOR ============ -->
+<section class="tab" id="tab-editor">
+  <div class="card">
+    <div class="row">
+      <input id="eLoadId" class="mono grow" placeholder="DOAJ article ID or link doaj.org/article/…">
+      <button class="b" id="eLoad">Load</button>
+      <button class="b" id="eNew">New article</button>
+      <div class="grow"></div>
+      <span id="eMode" class="badge">New article</span>
+    </div>
+  </div>
+  <div class="ed">
+    <div>
+      <div class="card">
+        <h2>Main</h2>
+        <label class="f">Article title *<textarea id="e_title" rows="2"></textarea></label>
+        <label class="f" style="margin-top:8px">Abstract<textarea id="e_abstract" rows="6"></textarea></label>
+        <h3>Publication details</h3>
+        <div class="g2">
+          <label class="f">Year<input id="e_year" inputmode="numeric" maxlength="4"></label>
+          <label class="f">Month<input id="e_month" inputmode="numeric" maxlength="2"></label>
+          <label class="f">Volume<input id="e_volume"></label>
+          <label class="f">Issue<input id="e_number"></label>
+          <label class="f">First page<input id="e_start_page"></label>
+          <label class="f">Last page<input id="e_end_page"></label>
+        </div>
+        <h3>Identifiers</h3>
+        <div class="g3">
+          <label class="f">DOI<input id="e_doi" class="mono" placeholder="10.xxxx/…"></label>
+          <label class="f">pISSN<input id="e_pissn" class="mono" placeholder="0000-0000"></label>
+          <label class="f">eISSN<input id="e_eissn" class="mono" placeholder="0000-0000"></label>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <button class="b sm" id="eFillIssn">Check ISSN in DOAJ</button>
+          <span class="small muted" id="eJournalInfo"></span>
+        </div>
+      </div>
+      <div class="card authors">
+        <div class="row" style="justify-content:space-between"><h2 style="margin:0">Authors</h2><button class="b sm" id="eAddAuthor">+ Author</button></div>
+        <div class="small muted" style="margin:6px 0 10px">Full name · affiliation · ORCID (https://orcid.org/ prefix optional)</div>
+        <div id="eAuthors"></div>
+      </div>
+      <div class="card">
+        <h2>Keywords <span class="small muted" id="eKwCount"></span></h2>
+        <input id="e_keywords" style="width:100%" placeholder="separated by commas or semicolons; DOAJ keeps up to 6">
+      </div>
+      <div class="card links">
+        <div class="row" style="justify-content:space-between"><h2 style="margin:0">Links</h2><button class="b sm" id="eAddLink">+ Link</button></div>
+        <div class="small muted" style="margin:6px 0 10px">A link of type <b>fulltext</b> to the article full text is required</div>
+        <div id="eLinks"></div>
+      </div>
+    </div>
+    <div>
+      <div class="sticky">
+        <div class="card">
+          <h2>Validation</h2>
+          <ul class="vlist" id="eValid"></ul>
+          <div class="row" style="margin-top:12px">
+            <button class="b primary" id="eCreate">Create in DOAJ</button>
+            <button class="b primary" id="eUpdate" disabled>Save changes</button>
+            <button class="b danger" id="eDelete" disabled>Delete</button>
+          </div>
+          <div class="hint">An update replaces the whole record: fields not in the form (journal, subjects) are taken from the loaded record.</div>
+        </div>
+        <div class="card">
+          <div class="row" style="justify-content:space-between;margin-bottom:8px">
+            <h2 style="margin:0">JSON to send</h2>
+            <div class="row"><button class="b sm" id="eCopyJson">Copy</button><button class="b sm" id="eApplyJson">Apply to form</button></div>
+          </div>
+          <textarea id="eJson" class="mono" rows="18" spellcheck="false"></textarea>
+          <div class="hint">You can paste article JSON and click “Apply to form”.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BULK ============ -->
+<section class="tab" id="tab-bulk">
+  <div class="card">
+    <h2>Bulk article upload</h2>
+    <div class="row" style="margin-bottom:10px">
+      <div class="seg" id="bSrc"><button data-v="json" class="on">JSON</button><button data-v="csv">CSV / Excel</button></div>
+      <input type="file" id="bFile" accept=".json,.csv,.txt">
+      <button class="b sm" id="bTpl">Download CSV template</button>
+    </div>
+    <textarea id="bText" class="mono" rows="9" spellcheck="false" placeholder='[{"bibjson": {"title": "…", "identifier": [{"type":"eissn","id":"…"}], …}}, …]'></textarea>
+    <div class="hint" id="bSrcHint"></div>
+    <div class="row" style="margin-top:10px">
+      <button class="b" id="bParse">Parse and validate</button>
+      <label class="chk"><input type="checkbox" id="bSkipBad"> skip records with errors</label>
+      <div class="grow"></div>
+      <button class="b primary" id="bSend" disabled>Send to DOAJ</button>
+    </div>
+    <div id="bPreview" style="margin-top:12px"></div>
+  </div>
+  <div class="cols2">
+    <div class="card">
+      <h2>Upload status</h2>
+      <div class="row"><input id="bUpId" class="mono grow" placeholder="upload_id"><button class="b" id="bCheck">Check</button></div>
+      <div id="bUploads" style="margin-top:10px"></div>
+      <pre class="json" id="bStatus" style="margin-top:10px;display:none"></pre>
+    </div>
+    <div class="card">
+      <h2>Bulk delete</h2>
+      <textarea id="dIds" class="mono" rows="7" placeholder="DOAJ article IDs — one per line (doaj.org/article/… links also work)"></textarea>
+      <div class="row" style="margin-top:8px">
+        <span class="small muted" id="dCount">0 ID</span>
+        <div class="grow"></div>
+        <button class="b danger" id="dGo">Delete…</button>
+      </div>
+      <div class="hint">Deletion is irreversible. Before sending you will have to type the number of articles to delete.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ EXPORT ============ -->
+<section class="tab" id="tab-export">
+  <div class="card">
+    <h2>Load all articles of a journal</h2>
+    <div class="row">
+      <div class="seg" id="xMode"><button data-v="issn" class="on">By ISSN</button><button data-v="query">By query</button></div>
+      <input id="xQ" class="mono grow" placeholder="Journal ISSN, e.g. 1810-3189">
+      <button class="b" id="xExample" title="Load and audit all articles of the journal Physics of Wave Processes and Radio Systems">Example</button>
+      <button class="b primary" id="xGo">Load</button>
+      <button class="b" id="xStop" style="display:none">Stop</button>
+    </div>
+    <div class="hint">If there are more than 1000 articles (the API limit per query), the query is automatically split by record creation date.</div>
+    <div id="xProg" style="display:none;margin-top:12px">
+      <div class="progress"><div id="xBar"></div></div>
+      <div class="log" id="xLog"></div>
+    </div>
+  </div>
+
+  <div id="xResult" style="display:none">
+    <div class="card">
+      <div class="row" style="justify-content:space-between;margin-bottom:10px">
+        <h2 style="margin:0" id="xTitle">Articles</h2>
+        <span class="small muted" id="xLoadedAt"></span>
+        <p id="xSummary" class="export-summary" role="status" aria-atomic="true"></p>
+      </div>
+      <div class="stats" id="xStats"></div>
+      <div class="cols2" style="margin-top:16px">
+        <div><h3 style="margin-top:0">By year</h3><div class="years" id="xYears"></div></div>
+        <div>
+          <h3 style="margin-top:0">Export (current filter: <span id="xFN">0</span>)</h3>
+          <div class="row">
+            <label class="f">CSV delimiter<select id="xDelim"><option value=";">; (Excel, European locales)</option><option value="," selected>, (comma)</option><option value="\t">Tab</option></select></label>
+          </div>
+          <div class="row" style="margin-top:8px">
+            <button class="b" data-x="csv">CSV</button>
+            <button class="b" data-x="json">JSON (full records)</button>
+            <button class="b" data-x="bulk">JSON for re-upload</button>
+            <button class="b" data-x="ids">ID list</button>
+            <button class="b" data-x="dois">DOI list</button>
+          </div>
+          <div class="hint">The CSV is compatible with bulk upload: fix the data in Excel and upload it back.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row" style="margin-bottom:10px">
+        <input id="xFilter" class="grow" placeholder="Filter by title, author, DOI…">
+        <span class="small muted" id="xShown"></span>
+      </div>
+      <div class="selbar" id="xSel" style="top:56px">
+        <b id="xSelN">0</b> selected
+        <button class="b sm" data-act="edit">Open in editor</button>
+        <button class="b sm" data-act="copy">Copy IDs</button>
+        <button class="b sm danger" data-act="del">Add to bulk delete</button>
+        <button class="link small" data-act="clear">clear selection</button>
+      </div>
+      <div class="tw"><table id="xTable"></table></div>
+      <div class="pager" id="xPager"></div>
+    </div>
+
+    <div class="card">
+      <h2>Reconciliation against a DOI list</h2>
+      <div class="small muted" style="margin-bottom:8px">Paste DOIs from any source (journal website, Crossref, reference list) — in any format, one per line or mixed with text.</div>
+      <textarea id="rText" class="mono" rows="6"></textarea>
+      <div class="row" style="margin-top:8px">
+        <button class="b primary" id="rGo">Reconcile</button>
+        <label class="chk"><input type="checkbox" id="rRemote" checked> for those not found, also search the whole of DOAJ</label>
+      </div>
+      <div id="rOut" style="margin-top:12px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SETTINGS ============ -->
+<section class="tab" id="tab-settings">
+  <div class="card" style="max-width:720px">
+    <h2>DOAJ API key</h2>
+    <div class="small muted" style="margin-bottom:10px">Required to create, update and delete articles. Get it in your DOAJ account: Dashboard → Settings → “Generate a new API key”. Search and export work without a key.</div>
+    <div class="row">
+      <input id="kVal" type="password" class="mono grow" autocomplete="off" placeholder="API key">
+      <button class="b" id="kShow">Show</button>
+      <button class="b" id="kTest">Check</button>
+    </div>
+    <label class="chk" style="margin-top:10px"><input type="checkbox" id="kRemember"> remember the key in this browser (localStorage)</label>
+    <div class="hint">Unchecked, the key is kept only until the tab is closed. The key is sent only to doaj.org.</div>
+    <div class="row" style="margin-top:12px"><button class="b primary" id="kSave">Save</button><button class="b" id="kClear">Remove key</button><span id="kMsg" class="small"></span></div>
+  </div>
+  <div class="card" style="max-width:720px">
+    <h2>API usage</h2>
+    <label class="f" style="max-width:320px">Delay between requests, ms<input id="sDelay" type="number" min="0" step="50"></label>
+    <div class="hint">DOAJ rate-limits requests (about 2 per second). On a 429 response the app retries automatically.</div>
+    <h3>Theme</h3>
+    <div class="seg" id="sTheme"><button data-v="auto">System</button><button data-v="light">Light</button><button data-v="dark">Dark</button></div>
+  </div>
+</section>
+
+<section class="about" id="about" aria-labelledby="aboutTitle">
+  <h1 id="aboutTitle">DOAJ Metadata Studio — work with DOAJ article metadata</h1>
+  <p class="lead">A free online tool for editors and publishers of open access scholarly journals. Search articles and journals in <a href="https://doaj.org" target="_blank" rel="noopener">DOAJ (Directory of Open Access Journals)</a>, upload and fix articles via the DOAJ API, audit metadata completeness and export data to Excel — right in the browser, with nothing to install and no sign-up.</p>
+  <div class="about-grid">
+    <div>
+      <h2>Search by any DOAJ field</h2>
+      <p>A query builder covering 54 article fields and 83 journal fields: title, authors, ORCID, DOI, ISSN, year, volume, issue, license, publisher. A built-in field reference with examples helps you write a query without studying the API docs.</p>
+    </div>
+    <div>
+      <h2>Upload and edit articles</h2>
+      <p>A form for creating and fixing an article in DOAJ with live validation: ISSN and ORCID check digits, DOI format, full-text link, number of keywords. Bulk upload of a whole issue from CSV or Excel.</p>
+    </div>
+    <div>
+      <h2>Journal metadata audit</h2>
+      <p>Export every article of a journal by ISSN and get a problem report: articles without DOI, duplicates, missing abstracts, keywords, author affiliations and ORCID iDs. Reconcile against a DOI list from Crossref or the journal website.</p>
+    </div>
+    <div>
+      <h2>Export to Excel and JSON</h2>
+      <p>Export to CSV that round-trips with bulk upload: fix the data in Excel and upload it back. The DOAJ API limit of 1000 records is worked around automatically.</p>
+    </div>
+  </div>
+  <h2>Guides</h2>
+  <ul class="guides">
+    <li><a href="/doaj/en/guides/upload-articles/">How to upload articles to DOAJ: manual entry, XML, CSV and API</a></li>
+    <li><a href="/doaj/en/guides/bulk-upload-csv/">Bulk upload articles to DOAJ from Excel and CSV</a></li>
+    <li><a href="/doaj/en/guides/missing-doi-orcid/">How to find DOAJ articles without DOI, ORCID or abstracts</a></li>
+    <li><a href="/doaj/en/guides/export-articles/">How to export all of a journal’s articles from DOAJ</a></li>
+    <li><a href="/doaj/en/guides/api-search-syntax/">DOAJ API search: query syntax and fields</a></li>
+  </ul>
+  <h2>Getting started</h2>
+  <ol>
+    <li>To find a journal’s articles, choose the “Journal ISSN (short)” field on the “Search” tab and enter the ISSN.</li>
+    <li>To audit the metadata of a whole journal, open the “Export & audit” tab and load the articles by ISSN.</li>
+    <li>To upload and edit articles, get an API key in your DOAJ account (Dashboard → Settings) and enter it on the “Settings” tab.</li>
+  </ol>
+  <h2>FAQ</h2>
+  <dl class="faq">
+    <dt>Is this an official DOAJ service?</dt>
+    <dd>No. It is an independent open source tool that works with the public DOAJ API v4.</dd>
+    <dt>Where is my API key sent?</dt>
+    <dd>Only to doaj.org. The app runs entirely in your browser and has no server of its own. By default the key is kept until the tab is closed.</dd>
+    <dt>How do I find a journal’s articles without a DOI?</dt>
+    <dd>Use the query <code>issn:1234-5678 AND NOT _exists_:index.doi</code> on the “Search” tab, or the “No DOI” card on the “Export & audit” tab.</dd>
+    <dt>How much does it cost?</dt>
+    <dd>Nothing. The code is open source under the MIT license on <a href="https://github.com/tsentavta/editorstudio" target="_blank" rel="noopener">GitHub</a>.</dd>
+  </dl>
+</section>
+</main>
+
+<div class="drawer-bg" id="dBg"></div>
+<aside class="drawer" id="drawer">
+  <div class="dh">
+    <div class="seg" id="dTabs"><button data-v="card" class="on">Record</button><button data-v="json">JSON</button></div>
+    <div class="grow"></div>
+    <span id="dActions" class="row"></span>
+    <button class="b sm" id="dClose">✕</button>
+  </div>
+  <div class="db" id="dBody"></div>
+</aside>
+<footer>
+  Unofficial tool, not affiliated with <a href="https://doaj.org" target="_blank" rel="noopener">DOAJ</a> (Directory of Open Access Journals). Data is loaded directly from <a href="https://doaj.org/api/v4/docs" target="_blank" rel="noopener">DOAJ API v4</a>.
+  · <a href="https://github.com/tsentavta/editorstudio" target="_blank" rel="noopener">Source code</a> · MIT License
+</footer>
+<div id="toasts"></div>
+
+<script>
+'use strict';
+const API = 'https://doaj.org/api/v4';
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('doajs.' + k); return v === null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem('doajs.' + k, JSON.stringify(v)); } catch {} },
+  del(k) { try { localStorage.removeItem('doajs.' + k); } catch {} },
+};
+const sess = {
+  get(k) { try { return sessionStorage.getItem('doajs.' + k); } catch { return null; } },
+  set(k, v) { try { sessionStorage.setItem('doajs.' + k, v); } catch {} },
+  del(k) { try { sessionStorage.removeItem('doajs.' + k); } catch {} },
+};
+
+function toast(msg, kind = '', ms = 4500) {
+  const t = document.createElement('div');
+  t.className = 'toast ' + kind; t.textContent = msg;
+  $('#toasts').appendChild(t);
+  setTimeout(() => t.remove(), ms);
+}
+function download(name, text, type = 'application/json') {
+  const blob = new Blob([text], { type: type + ';charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = name; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+async function copy(text, label = 'Copied') {
+  try { await navigator.clipboard.writeText(text); toast(label, 'ok', 2000); }
+  catch { toast('Could not copy to clipboard', 'err'); }
+}
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+async function busy(btn, fn) {
+  const html = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<span class="spin"></span> ' + html;
+  try { return await fn(); } finally { btn.disabled = false; btn.innerHTML = html; }
+}
+
+/* ---------------- API layer ---------------- */
+let apiKey = store.get('key', null) || sess.get('key') || '';
+let delay = store.get('delay', 550);
+let lastCall = 0;
+let chain = Promise.resolve();
+
+class ApiError extends Error {
+  constructor(status, msg, body) { super(msg); this.status = status; this.body = body; }
+}
+function throttle() {
+  const p = chain.then(async () => {
+    const wait = lastCall + delay - Date.now();
+    if (wait > 0) await sleep(wait);
+    lastCall = Date.now();
+  });
+  chain = p.catch(() => {});
+  return p;
+}
+async function api(method, path, { params = {}, body, auth = false } = {}) {
+  const url = new URL(API + path);
+  for (const [k, v] of Object.entries(params)) if (v !== undefined && v !== '') url.searchParams.set(k, v);
+  if (auth) {
+    if (!apiKey) throw new ApiError(0, 'An API key is required — enter it on the “Settings” tab');
+    url.searchParams.set('api_key', apiKey);
+  }
+  for (let attempt = 0; attempt < 4; attempt++) {
+    await throttle();
+    let res;
+    try {
+      res = await fetch(url, {
+        method,
+        headers: body !== undefined ? { 'Content-Type': 'application/json', Accept: 'application/json' } : { Accept: 'application/json' },
+        body: body !== undefined ? JSON.stringify(body) : undefined,
+      });
+    } catch (e) { throw new ApiError(0, 'Network unavailable or request blocked: ' + e.message); }
+    if (res.status === 429) { await sleep(1500 * (attempt + 1)); continue; }
+    const text = await res.text();
+    let data = null;
+    try { data = text ? JSON.parse(text) : null; } catch { data = text; }
+    if (!res.ok) {
+      let msg = (data && (data.error || data.message)) || res.statusText || 'Error';
+      if (res.status === 401) msg = 'Key rejected (401). ' + (typeof msg === 'string' ? msg : '');
+      if (res.status === 403) msg = 'No permission for this record (403). ' + msg;
+      if (res.status === 404) msg = 'Not found (404)';
+      throw new ApiError(res.status, String(msg).replace(/\s+/g, ' ').trim(), data);
+    }
+    return data;
+  }
+  throw new ApiError(429, 'DOAJ rate-limited the requests. Try again later or increase the delay in Settings.');
+}
+const doaj = {
+  search: (type, q, page = 1, pageSize = 25, sort) =>
+    api('GET', `/search/${type}/${encodeURIComponent(q)}`, { params: { page, pageSize, sort } }),
+  article: id => api('GET', `/articles/${id}`, { params: apiKey ? { api_key: apiKey } : {} }),
+  journal: id => api('GET', `/journals/${id}`),
+  create: a => api('POST', '/articles', { body: a, auth: true }),
+  update: (id, a) => api('PUT', `/articles/${id}`, { body: a, auth: true }),
+  remove: id => api('DELETE', `/articles/${id}`, { auth: true }),
+  bulkCreate: arr => api('POST', '/bulk/articles', { body: arr, auth: true }),
+  bulkStatus: id => api('GET', `/bulk/articles/${encodeURIComponent(id)}`, { auth: true }),
+  bulkDelete: ids => api('DELETE', '/bulk/articles', { body: ids, auth: true }),
+};
+
+/* ---------------- helpers for records ---------------- */
+const ident = (r, type) => ((r.bibjson || {}).identifier || []).find(i => (i.type || '').toLowerCase() === type)?.id || '';
+const fulltext = r => ((r.bibjson || {}).link || []).find(l => l.type === 'fulltext')?.url || '';
+const extractIds = text => [...new Set((String(text).toLowerCase().match(/\b[0-9a-f]{32}\b/g) || []))];
+const normDoi = s => String(s || '').trim().replace(/^https?:\/\/(dx\.)?doi\.org\//i, '').replace(/^doi:\s*/i, '').trim();
+const extractDois = text => [...new Set((String(text).match(/10\.\d{4,9}\/[^\s"'<>,;]+/g) || []).map(d => d.replace(/[.)\]]+$/, '').toLowerCase()))];
+function lq(v) { // quote a value for Lucene if needed
+  v = String(v).trim();
+  if (/^".*"$/.test(v)) return v;
+  if (/[\s\/:()\[\]{}"+\-!^~\\&|]/.test(v)) return '"' + v.replace(/(["\\])/g, '\\$1') + '"';
+  return v;
+}
+function citation(b) {
+  const j = b.journal || {};
+  const parts = [];
+  if (b.year) parts.push(b.year);
+  if (j.volume) parts.push('vol. ' + j.volume);
+  if (j.number) parts.push('no. ' + j.number);
+  if (j.start_page) parts.push('pp. ' + j.start_page + (j.end_page ? '–' + j.end_page : ''));
+  return parts.join(', ');
+}
+function orcidOk(o) {
+  const m = /^https:\/\/orcid\.org\/(\d{4})-(\d{4})-(\d{4})-(\d{3}[\dX])$/.exec(o);
+  if (!m) return false;
+  const d = (m[1] + m[2] + m[3] + m[4]).split('');
+  let t = 0; for (let i = 0; i < 15; i++) t = (t + +d[i]) * 2;
+  const c = (12 - t % 11) % 11;
+  return d[15] === (c === 10 ? 'X' : String(c));
+}
+const normOrcid = s => { s = String(s || '').trim(); if (!s) return ''; const m = /(\d{4}-\d{4}-\d{4}-\d{3}[\dXx])/.exec(s); return m ? 'https://orcid.org/' + m[1].toUpperCase() : s; };
+const issnOk = s => { const m = /^(\d{4})-(\d{3})([\dX])$/.exec(s); if (!m) return false; const d = (m[1] + m[2]).split('').map(Number); const sum = d.reduce((a, x, i) => a + x * (8 - i), 0); const c = (11 - sum % 11) % 11; return m[3] === (c === 10 ? 'X' : String(c)); };
+
+/* Validation of an article object; returns [{lvl,msg}] */
+function validateArticle(a) {
+  const out = [], b = (a && a.bibjson) || {};
+  const E = m => out.push({ lvl: 'err', msg: m }), W = m => out.push({ lvl: 'warn', msg: m });
+  if (!b.title || !String(b.title).trim()) E('No article title');
+  const ids = b.identifier || [];
+  const pissn = ids.find(i => i.type === 'pissn')?.id, eissn = ids.find(i => i.type === 'eissn')?.id, doi = ids.find(i => i.type === 'doi')?.id;
+  if (!pissn && !eissn) E('A journal pISSN or eISSN is required');
+  for (const [n, v] of [['pISSN', pissn], ['eISSN', eissn]]) if (v && !issnOk(v)) E(`${n} “${v}” is invalid (format 0000-0000 with a check digit)`);
+  if (!doi) W('No DOI');
+  else if (!/^10\.\d{4,9}\/\S+$/.test(doi)) E(`DOI “${doi}” does not look like a DOI (expected 10.xxxx/…)`);
+  const links = b.link || [];
+  if (!links.some(l => l.type === 'fulltext' && l.url)) E('No full-text link (fulltext)');
+  for (const l of links) if (l.url && !/^https?:\/\/\S+$/i.test(l.url)) E(`Invalid link: ${l.url}`);
+  if (!b.abstract) W('No abstract');
+  if (!b.year) W('No year');
+  else if (!/^\d{4}$/.test(b.year)) E(`Year “${b.year}” must have 4 digits`);
+  if (b.month && !/^(0?[1-9]|1[0-2])$/.test(b.month)) E(`Month “${b.month}” must be a number 1–12`);
+  const au = b.author || [];
+  if (!au.length) W('No authors');
+  au.forEach((x, i) => {
+    if (!x.name) E(`Author ${i + 1}: name is missing`);
+    if (x.orcid_id && !orcidOk(x.orcid_id)) E(`Author ${i + 1}: ORCID “${x.orcid_id}” is invalid`);
+  });
+  if (au.length && au.some(x => !x.affiliation)) W('Not all authors have an affiliation');
+  const kw = b.keywords || [];
+  if (!kw.length) W('No keywords');
+  if (kw.length > 6) W(`${kw.length} keywords — DOAJ will keep only the first 6`);
+  const j = b.journal || {};
+  if (j.start_page && j.end_page && /^\d+$/.test(j.start_page) && /^\d+$/.test(j.end_page) && +j.end_page < +j.start_page) E('Last page is lower than the first');
+  return out;
+}
+function clean(o) { // drop empty strings/arrays/objects recursively
+  if (Array.isArray(o)) { const a = o.map(clean).filter(v => v !== undefined); return a.length ? a : undefined; }
+  if (o && typeof o === 'object') {
+    const r = {}; for (const [k, v] of Object.entries(o)) { const c = clean(v); if (c !== undefined) r[k] = c; }
+    return Object.keys(r).length ? r : undefined;
+  }
+  if (typeof o === 'string') { const t = o.trim(); return t ? t : undefined; }
+  return o === null ? undefined : o;
+}
+// what we send to DOAJ: bibjson only (+id for bulk updates); server-managed fields are ignored by DOAJ anyway
+const toPayload = (rec, withId = false) => { const p = { bibjson: clean(rec.bibjson) || {} }; if (withId && rec.id) p.id = rec.id; return p; };
+
+/* ---------------- navigation ---------------- */
+function showTab(name) {
+  $$('#nav button').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  $$('.tab').forEach(t => t.classList.toggle('active', t.id === 'tab-' + name));
+  try { sessionStorage.setItem('doajs.tab', name); } catch {}
+  window.scrollTo(0, 0);
+}
+$('#nav').addEventListener('click', e => { const b = e.target.closest('button'); if (b) showTab(b.dataset.tab); });
+$('#keyPill').onclick = () => showTab('settings');
+function seg(el, cb) {
+  el.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    $$('button', el).forEach(x => x.classList.toggle('on', x === b)); cb(b.dataset.v);
+  });
+}
+const segVal = el => $('button.on', el).dataset.v;
+function setSeg(el, v) { $$('button', el).forEach(x => x.classList.toggle('on', x.dataset.v === v)); }
+
+/* ---------------- drawer ---------------- */
+let drawerRec = null, drawerKind = null;
+function openDrawer(rec, kind) {
+  drawerRec = rec; drawerKind = kind;
+  setSeg($('#dTabs'), 'card'); renderDrawer();
+  $('#drawer').classList.add('open'); $('#dBg').classList.add('open');
+}
+function closeDrawer() { $('#drawer').classList.remove('open'); $('#dBg').classList.remove('open'); }
+$('#dClose').onclick = closeDrawer; $('#dBg').onclick = closeDrawer;
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+seg($('#dTabs'), renderDrawer);
+function kv(rows) { return '<dl class="kv">' + rows.filter(r => r[1] !== '' && r[1] != null).map(([k, v]) => `<dt>${esc(k)}</dt><dd>${v}</dd>`).join('') + '</dl>'; }
+function renderDrawer() {
+  const r = drawerRec, b = r.bibjson || {}, mode = segVal($('#dTabs'));
+  const act = $('#dActions'); act.innerHTML = '';
+  const addBtn = (label, fn, cls = '') => { const x = document.createElement('button'); x.className = 'b sm ' + cls; x.textContent = label; x.onclick = fn; act.appendChild(x); };
+  addBtn('Copy JSON', () => copy(JSON.stringify(r, null, 2)));
+  if (drawerKind === 'article') {
+    addBtn('On doaj.org', () => window.open('https://doaj.org/article/' + r.id, '_blank', 'noopener'));
+    addBtn('Edit', () => { closeDrawer(); editorLoadRecord(r); showTab('editor'); }, 'primary');
+  } else {
+    const issn = b.eissn || b.pissn;
+    addBtn('On doaj.org', () => window.open('https://doaj.org/toc/' + (issn || r.id), '_blank', 'noopener'));
+    addBtn('Journal articles', () => { closeDrawer(); searchFor('articles', [{ op: 'AND', f: 'issn', v: issn }]); }, 'primary');
+    addBtn('Export', () => { closeDrawer(); setSeg($('#xMode'), 'issn'); $('#xQ').value = issn; showTab('export'); });
+  }
+  const body = $('#dBody');
+  if (mode === 'json') { body.innerHTML = `<pre class="json">${esc(JSON.stringify(r, null, 2))}</pre>`; return; }
+  if (drawerKind === 'article') {
+    const j = b.journal || {}, doi = ident(r, 'doi');
+    const authors = (b.author || []).map(a => `<div>${esc(a.name)}${a.orcid_id ? ` <a href="${esc(a.orcid_id)}" target="_blank" rel="noopener" class="small">ORCID</a>` : ''}${a.affiliation ? `<div class="small muted">${esc(a.affiliation)}</div>` : ''}</div>`).join('');
+    const issues = validateArticle(r).map(v => `<span class="badge ${v.lvl}">${esc(v.msg)}</span>`).join('') || '<span class="badge ok">No issues</span>';
+    body.innerHTML = `<h2>${esc(b.title)}</h2><div style="margin-bottom:14px">${issues}</div>` + kv([
+      ['Journal', esc(j.title)], ['Publisher', esc(j.publisher)], ['Publication details', esc(citation(b))],
+      ['Month', esc(b.month)],
+      ['DOI', doi ? `<a href="https://doi.org/${esc(doi)}" target="_blank" rel="noopener" class="mono">${esc(doi)}</a>` : ''],
+      ['pISSN / eISSN', esc([ident(r, 'pissn'), ident(r, 'eissn')].filter(Boolean).join(' / '))],
+      ['Authors', authors],
+      ['Keywords', (b.keywords || []).map(k => `<span class="badge">${esc(k)}</span>`).join('')],
+      ['Links', (b.link || []).map(l => `<div><span class="badge">${esc(l.type)}${l.content_type ? ' · ' + esc(l.content_type) : ''}</span> <a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.url)}</a></div>`).join('')],
+      ['Subjects (LCC)', (b.subject || []).map(s => esc(s.term) + ` <span class="muted small">${esc(s.code)}</span>`).join('<br>')],
+      ['Journal languages', esc((j.language || []).join(', '))],
+      ['Abstract', `<div style="white-space:pre-wrap">${esc(b.abstract)}</div>`],
+      ['DOAJ ID', `<span class="mono">${esc(r.id)}</span>`],
+      ['Created / updated', esc((r.created_date || '').slice(0, 10) + ' / ' + (r.last_updated || '').slice(0, 10))],
+    ]);
+  } else {
+    const yn = v => v === true ? 'yes' : v === false ? 'no' : '';
+    body.innerHTML = `<h2>${esc(b.title)}</h2>${b.alternative_title ? `<div class="muted" style="margin:-6px 0 12px">${esc(b.alternative_title)}</div>` : ''}` + kv([
+      ['pISSN / eISSN', esc([b.pissn, b.eissn].filter(Boolean).join(' / '))],
+      ['Publisher', esc((b.publisher || {}).name) + ((b.publisher || {}).country ? ` (${esc(b.publisher.country)})` : '')],
+      ['Institution', esc((b.institution || {}).name)],
+      ['Website', (b.ref || {}).journal ? `<a href="${esc(b.ref.journal)}" target="_blank" rel="noopener">${esc(b.ref.journal)}</a>` : ''],
+      ['Languages', esc((b.language || []).join(', '))],
+      ['Subjects', (b.subject || []).map(s => esc(s.term)).join(', ')],
+      ['Keywords', (b.keywords || []).map(k => `<span class="badge">${esc(k)}</span>`).join('')],
+      ['License', esc((b.license || []).map(l => l.type).join(', '))],
+      ['Peer review', esc(((b.editorial || {}).review_process || []).join(', '))],
+      ['APC', yn((b.apc || {}).has_apc)],
+      ['Authors retain copyright', yn((b.copyright || {}).author_retains)],
+      ['Preservation', esc(((b.preservation || {}).service || []).join(', '))],
+      ['PID', esc(((b.pid_scheme || {}).scheme || []).join(', '))],
+      ['Open access since', esc(b.oa_start)],
+      ['Publication time', b.publication_time_weeks ? esc(b.publication_time_weeks) + ' wk' : ''],
+      ['DOAJ Seal', (r.admin || {}).seal ? 'yes' : ''],
+      ['Last full review', esc((r.admin || {}).last_full_review)],
+      ['DOAJ ID', `<span class="mono">${esc(r.id)}</span>`],
+      ['Added / updated', esc((r.created_date || '').slice(0, 10) + ' / ' + (r.last_updated || '').slice(0, 10))],
+    ]);
+  }
+}
+
+/* ---------------- SEARCH ---------------- */
+/* Field catalog. Types: s — text (analysed, .exact available), k — code/identifier (.exact available), u — URL,
+   n — number, d — date (UTC ISO), b — boolean true/false, y — Yes/No (index.* flags), a — short alias (no .exact).
+   [field, group, label, description, type, example] */
+const FC = {
+  articles: [
+    ['title', 'Short names', 'Title (short)', 'Search the article title. Short name, .exact not available', 'a', 'antenna'],
+    ['abstract', 'Short names', 'Abstract (short)', 'Search the abstract text', 'a', 'metamaterial'],
+    ['doi', 'Short names', 'DOI (short)', 'Article DOI. Quote values containing a slash. To check presence use index.doi', 'a', '"10.18469/1810-3189.2022.25.4.122-128"'],
+    ['issn', 'Short names', 'Journal ISSN (short)', 'Any ISSN of the article’s journal (print or online)', 'a', '1810-3189'],
+    ['publisher', 'Short names', 'Publisher (short)', 'Journal publisher, fuzzy match', 'a', 'Povolzhskiy'],
+    ['bibjson.title', 'Article', 'Title', 'Article title', 's', '"phase demodulator"'],
+    ['bibjson.abstract', 'Article', 'Abstract', 'Abstract text', 's', 'waveguide'],
+    ['bibjson.keywords', 'Article', 'Keywords', 'Article keywords (DOAJ keeps up to 6)', 's', '"kerr nonlinearity"'],
+    ['bibjson.year', 'Article', 'Year', 'Publication year. Range: 2020-2023 or [2020 TO 2023]', 'k', '2024'],
+    ['bibjson.month', 'Article', 'Month', 'Publication month, number 1–12', 'k', '4'],
+    ['bibjson.author.name', 'Authors', 'Author', 'Author name as uploaded by the publisher', 's', 'Lerner'],
+    ['bibjson.author.affiliation', 'Authors', 'Affiliation', 'Author’s institution', 's', '"Samara University"'],
+    ['bibjson.author.orcid_id', 'Authors', 'ORCID', 'Author ORCID as https://orcid.org/0000-0000-0000-0000', 'k', '"https://orcid.org/0000-0002-1825-0097"'],
+    ['bibjson.identifier.id', 'Identifiers', 'Identifier', 'Value of any article identifier: DOI, pISSN, eISSN', 'k', '2782-294X'],
+    ['bibjson.identifier.type', 'Identifiers', 'Identifier type', 'doi, pissn, eissn. “NOT bibjson.identifier.type:doi” — articles without DOI', 'k', 'doi'],
+    ['bibjson.journal.issns', 'Identifiers', 'Journal ISSN', 'All ISSNs of the journal the article belongs to', 'k', '1810-3189'],
+    ['bibjson.journal.volume', 'Publication details', 'Volume', 'Volume number (string)', 'k', '25'],
+    ['bibjson.journal.number', 'Publication details', 'Issue', 'Issue number (string)', 'k', '4'],
+    ['bibjson.start_page', 'Publication details', 'First page', 'First page of the article. Indexed under bibjson, not bibjson.journal (the reverse of uploads)', 'k', '7'],
+    ['bibjson.end_page', 'Publication details', 'Last page', 'Last page of the article (indexed as bibjson.end_page)', 'k', '15'],
+    ['bibjson.journal.title', 'Journal', 'Journal title', 'Journal title as stored in DOAJ (may be in the national language)', 's', '"Journal of Physics"'],
+    ['bibjson.journal.publisher', 'Journal', 'Publisher', 'Journal publisher', 's', 'Povolzhskiy'],
+    ['bibjson.journal.country', 'Journal', 'Publisher country', 'ISO 3166 country code, 2 letters', 'k', 'RU'],
+    ['bibjson.journal.language', 'Journal', 'Journal language', 'ISO 639-1 language code in capitals: EN, RU…', 'k', 'EN'],
+    ['bibjson.link.url', 'Links', 'Link URL', 'Full-text address. You can search by domain in quotes', 'u', '"journals.ssau.ru"'],
+    ['bibjson.link.type', 'Links', 'Link type', 'Usually fulltext', 'k', 'fulltext'],
+    ['bibjson.link.content_type', 'Links', 'Content type', 'html, pdf, epub, xml…', 'k', 'pdf'],
+    ['bibjson.subject.term', 'Subjects (LCC)', 'Subject', 'Library of Congress subject heading (filled in by DOAJ)', 's', 'Physics'],
+    ['bibjson.subject.code', 'Subjects (LCC)', 'Subject code', 'LCC heading code', 'k', 'QC1-999'],
+    ['bibjson.subject.scheme', 'Subjects (LCC)', 'Scheme', 'Classification scheme, usually LCC', 'k', 'LCC'],
+    ['id', 'System', 'DOAJ ID', 'Record ID in DOAJ, 32 characters', 'k', '0033bd95b3c2468d94d72bf9f68d1232'],
+    ['created_date', 'System', 'Record creation date', 'When the article appeared in DOAJ. Closed ranges only, “TO *” is not allowed', 'd', '[2026-10-01 TO 2026-11-01]'],
+    ['last_updated', 'System', 'Last updated', 'When the record last changed', 'd', '[2026-10-01 TO 2026-11-01]'],
+    ['admin.in_doaj', 'System', 'Published in DOAJ', 'true — publicly visible, false — withdrawn', 'b', 'true'],
+    ['admin.publisher_record_id', 'System', 'Publisher record ID', 'Publisher’s own record ID (deprecated)', 'k', ''],
+    ['admin.upload_id', 'System', 'Bulk upload ID', 'upload_id of the batch the article was uploaded in', 'k', ''],
+    ['es_type', 'System', 'Record type', 'Always article', 'k', 'article'],
+    ['index.doi', 'Index (system)', 'DOI (index)', 'Normalised DOI. “NOT _exists_:index.doi” — articles without DOI', 'k', ''],
+    ['index.issn', 'Index (system)', 'ISSN (index)', 'All ISSNs of the article’s journal', 'k', '2782-294X'],
+    ['index.fulltext', 'Index (system)', 'Full-text link', 'Full-text URL', 'u', '"pwp.psuti.ru"'],
+    ['index.date', 'Index (system)', 'Publication date', 'Date built from publication year and month', 'd', '[2024-01-01 TO 2024-12-31]'],
+    ['index.date_toc_fv_month', 'Index (system)', 'Publication date (month)', 'Publication date to month precision', 'd', '[2024-01-01 TO 2024-12-31]'],
+    ['index.unpunctitle', 'Index (system)', 'Title without punctuation', 'Lower-case title without punctuation', 's', 'antenna'],
+    ['index.asciiunpunctitle', 'Index (system)', 'ASCII title', 'Title without punctuation and diacritics', 's', 'antenna'],
+    ['index.subject', 'Index (system)', 'Subject (index)', 'All subject headings, including parents', 's', 'Physics'],
+    ['index.schema_subject', 'Index (system)', 'Subject with scheme', 'Heading with its scheme', 's', '"LCC:Physics"'],
+    ['index.classification', 'Index (system)', 'Classification', 'Classification headings', 's', 'Physics'],
+    ['index.schema_code', 'Index (system)', 'Code with scheme', 'Heading code with scheme prefix', 'k', '"LCC:QC1-999"'],
+    ['index.classification_paths', 'Index (system)', 'Classification path', 'Full path of the heading in the LCC tree', 's', 'Electronics'],
+    ['index.schema_codes_tree', 'Index (system)', 'Code tree', 'All codes of the heading and its parents', 'k', '"LCC:QC1-999"'],
+    ['index.language', 'Index (system)', 'Language (name)', 'Full English language name, not a code', 's', 'Russian'],
+    ['index.country', 'Index (system)', 'Country (name)', 'Full English country name, not a code', 's', '"Russian Federation"'],
+    ['index.publisher', 'Index (system)', 'Publisher (index)', 'Journal publisher', 's', 'Povolzhskiy'],
+    ['index.has_seal', 'Index (system)', 'DOAJ Seal', 'Yes/No. The Seal has been retired; not filled in everywhere', 'y', 'No'],
+  ],
+  journals: [
+    ['title', 'Short names', 'Title (short)', 'Search the journal title', 'a', 'radio'],
+    ['issn', 'Short names', 'ISSN (short)', 'Print or online ISSN', 'a', '1810-3189'],
+    ['publisher', 'Short names', 'Publisher (short)', 'Documented, but in practice often finds nothing — use bibjson.publisher.name', 'a', 'dove'],
+    ['license', 'Short names', 'License (short)', 'Documented, but unreliable — use index.license or bibjson.license.type', 'a', 'CC-BY'],
+    ['username', 'Short names', 'Publisher username', 'Your DOAJ username: shows your public journals', 'a', ''],
+    ['bibjson.title', 'Main', 'Title', 'Main journal title (may be in the national language; the English one is in alternative_title)', 's', '"Journal of Physics"'],
+    ['bibjson.alternative_title', 'Main', 'Alternative title', 'Other title, including a translation', 's', '"Physics of Wave Processes"'],
+    ['bibjson.pissn', 'Main', 'pISSN', 'Print ISSN', 'k', '1810-3189'],
+    ['bibjson.eissn', 'Main', 'eISSN', 'Online ISSN', 'k', '2782-294X'],
+    ['bibjson.keywords', 'Main', 'Keywords', 'Up to 6 keywords in English', 's', 'metamaterial'],
+    ['bibjson.language', 'Main', 'Languages', 'Languages in which manuscripts are accepted: codes EN, RU…', 'k', 'RU'],
+    ['bibjson.oa_start', 'Main', 'Open access start', 'Year from which all content is under an open license', 'n', '[2000 TO 2005]'],
+    ['bibjson.publication_time_weeks', 'Main', 'Publication time, weeks', 'Average weeks from submission to publication', 'n', '[1 TO 8]'],
+    ['bibjson.labels', 'Main', 'Labels', 's2o, mirror, ojc', 'k', 's2o'],
+    ['bibjson.discontinued_date', 'Main', 'Discontinued date', 'When the journal ceased publication (YYYY-MM-DD)', 'd', ''],
+    ['bibjson.replaces', 'Main', 'Replaces', 'ISSN of the journal this one continues', 'k', ''],
+    ['bibjson.is_replaced_by', 'Main', 'Replaced by', 'ISSN of the successor journal', 'k', ''],
+    ['bibjson.publisher.name', 'Publisher', 'Publisher', 'Publisher name', 's', 'Samara'],
+    ['bibjson.publisher.country', 'Publisher', 'Publisher country', 'ISO 3166 code, 2 letters', 'k', 'RU'],
+    ['bibjson.institution.name', 'Publisher', 'Institution', 'Founding institution / sponsor', 's', 'University'],
+    ['bibjson.institution.country', 'Publisher', 'Institution country', 'ISO 3166 code, 2 letters', 'k', 'RU'],
+    ['bibjson.subject.term', 'Subjects (LCC)', 'Subject', 'Library of Congress heading', 's', 'Physics'],
+    ['bibjson.subject.code', 'Subjects (LCC)', 'Subject code', 'LCC heading code', 'k', 'QC1-999'],
+    ['bibjson.subject.scheme', 'Subjects (LCC)', 'Scheme', 'Usually LCC', 'k', 'LCC'],
+    ['bibjson.license.type', 'License and rights', 'License type', 'CC BY, CC BY-SA, CC BY-NC… Quote values with spaces', 'k', '"CC BY"'],
+    ['bibjson.license.BY', 'License and rights', 'License: BY', 'Requires attribution', 'b', 'true'],
+    ['bibjson.license.NC', 'License and rights', 'License: NC', 'No commercial use', 'b', 'true'],
+    ['bibjson.license.ND', 'License and rights', 'License: ND', 'No derivative works', 'b', 'true'],
+    ['bibjson.license.SA', 'License and rights', 'License: SA', 'Share alike', 'b', 'true'],
+    ['bibjson.license.url', 'License and rights', 'License terms link', 'Where the license is stated', 'u', ''],
+    ['bibjson.article.license_display', 'License and rights', 'License display in articles', 'Embed, Display, No', 'k', 'Embed'],
+    ['bibjson.article.license_display_example_url', 'License and rights', 'Example article showing the license', 'URL of an article where the license is visible', 'u', ''],
+    ['bibjson.copyright.author_retains', 'License and rights', 'Authors retain copyright', 'true / false', 'b', 'true'],
+    ['bibjson.copyright.url', 'License and rights', 'Link: copyright', 'Where the policy is described', 'u', ''],
+    ['bibjson.boai', 'License and rights', 'Complies with BOAI', 'Meets the DOAJ definition of open access', 'b', 'true'],
+    ['bibjson.apc.has_apc', 'Charges', 'Has APC', 'Whether the journal charges article processing charges', 'b', 'false'],
+    ['bibjson.apc.max.price', 'Charges', 'Maximum APC', 'Amount (integer)', 'n', '[0 TO 100]'],
+    ['bibjson.apc.max.currency', 'Charges', 'APC currency', 'Currency code: USD, EUR, RUB…', 'k', 'RUB'],
+    ['bibjson.apc.url', 'Charges', 'Link: APC', 'Where the charges are described', 'u', ''],
+    ['bibjson.other_charges.has_other_charges', 'Charges', 'Other charges', 'Whether there are other charges to authors', 'b', 'false'],
+    ['bibjson.other_charges.url', 'Charges', 'Link: other charges', '', 'u', ''],
+    ['bibjson.waiver.has_waiver', 'Charges', 'Waivers / discounts', 'Whether the journal offers APC waivers or discounts', 'b', 'true'],
+    ['bibjson.waiver.url', 'Charges', 'Link: waivers', '', 'u', ''],
+    ['bibjson.editorial.review_process', 'Editorial policy', 'Review process', 'For example: "Double anonymous peer review"', 's', '"Double anonymous peer review"'],
+    ['bibjson.editorial.review_url', 'Editorial policy', 'Link: peer review', '', 'u', ''],
+    ['bibjson.editorial.board_url', 'Editorial policy', 'Link: editorial board', '', 'u', ''],
+    ['bibjson.plagiarism.detection', 'Editorial policy', 'Plagiarism screening', 'true / false', 'b', 'true'],
+    ['bibjson.plagiarism.url', 'Editorial policy', 'Link: plagiarism', '', 'u', ''],
+    ['bibjson.pid_scheme.has_pid_scheme', 'Preservation and PIDs', 'Has persistent identifiers', 'true / false', 'b', 'true'],
+    ['bibjson.pid_scheme.scheme', 'Preservation and PIDs', 'PID scheme', 'DOI, Handle, ARK…', 'k', 'DOI'],
+    ['bibjson.preservation.has_preservation', 'Preservation and PIDs', 'Has preservation', 'true / false', 'b', 'true'],
+    ['bibjson.preservation.service', 'Preservation and PIDs', 'Preservation service', 'CLOCKSS, LOCKSS, PKP PN, Portico…', 's', '"PKP PN"'],
+    ['bibjson.preservation.national_library', 'Preservation and PIDs', 'National library', 'Where the archive is kept', 's', '"Russian State Library"'],
+    ['bibjson.preservation.url', 'Preservation and PIDs', 'Link: preservation', '', 'u', ''],
+    ['bibjson.deposit_policy.has_policy', 'Preservation and PIDs', 'Self-archiving policy', 'true / false', 'b', 'true'],
+    ['bibjson.deposit_policy.is_registered', 'Preservation and PIDs', 'Policy registered', 'Registered with an external service. Not filled in in practice', 'b', ''],
+    ['bibjson.deposit_policy.service', 'Preservation and PIDs', 'Policy service', 'Sherpa Romeo, Journal\'s homepage…', 's', '"Sherpa/Romeo"'],
+    ['bibjson.deposit_policy.url', 'Preservation and PIDs', 'Link: policy', '', 'u', ''],
+    ['bibjson.ref.journal', 'Links', 'Journal website', 'Journal homepage', 'u', '"journals.ssau.ru"'],
+    ['bibjson.ref.aims_scope', 'Links', 'Aims and scope', '', 'u', ''],
+    ['bibjson.ref.author_instructions', 'Links', 'Instructions for authors', '', 'u', ''],
+    ['bibjson.ref.oa_statement', 'Links', 'OA statement', '', 'u', ''],
+    ['bibjson.ref.license_terms', 'Links', 'License terms', '', 'u', ''],
+    ['id', 'System', 'DOAJ ID', 'Journal ID in DOAJ', 'k', ''],
+    ['created_date', 'System', 'Added to DOAJ', 'Closed ranges only', 'd', '[2025-01-01 TO 2026-01-01]'],
+    ['last_updated', 'System', 'Last updated', 'When the record last changed', 'd', '[2026-01-01 TO 2026-12-31]'],
+    ['last_manual_update', 'System', 'Manual update', 'When the record was last edited manually', 'd', ''],
+    ['admin.in_doaj', 'System', 'In DOAJ', 'Journal is publicly visible', 'b', 'true'],
+    ['admin.ticked', 'System', 'Re-applied successfully', 'The journal has successfully re-applied', 'b', 'true'],
+    ['admin.last_full_review', 'System', 'Last full review', 'Date YYYY-MM-DD', 'd', '[2023-01-01 TO 2023-12-31]'],
+    ['es_type', 'System', 'Record type', 'Always journal', 'k', 'journal'],
+    ['index.issn', 'Index (system)', 'ISSN (index)', 'All ISSNs of the journal', 'k', '1810-3189'],
+    ['index.title', 'Index (system)', 'Titles', 'Main and alternative titles', 's', 'radio'],
+    ['index.unpunctitle', 'Index (system)', 'Title without punctuation', '', 's', 'radio'],
+    ['index.asciiunpunctitle', 'Index (system)', 'ASCII title', 'Without punctuation and diacritics', 's', 'radio'],
+    ['index.subject', 'Index (system)', 'Subject (index)', 'All headings, including parents', 's', 'Physics'],
+    ['index.schema_subject', 'Index (system)', 'Subject with scheme', '', 's', '"LCC:Physics"'],
+    ['index.classification', 'Index (system)', 'Classification', '', 's', 'Physics'],
+    ['index.language', 'Index (system)', 'Language (name)', 'Full English name, not a code', 's', 'Russian'],
+    ['index.country', 'Index (system)', 'Country (name)', 'Full English name, not a code', 's', '"Russian Federation"'],
+    ['index.license', 'Index (system)', 'License (index)', 'License type', 'k', '"CC BY"'],
+    ['index.has_apc', 'Index (system)', 'Has APC (Yes/No)', 'Yes or No', 'y', 'No'],
+    ['index.continued', 'Index (system)', 'Continues another journal', 'Yes or No', 'y', 'Yes'],
+  ],
+};
+const TYPE_LABEL = { s: 'text', k: 'code / string', u: 'URL', n: 'number', d: 'date', b: 'true / false', y: 'Yes / No', a: 'short name' };
+const fmeta = (type, f) => FC[type].find(x => x[0] === f);
+const SORTS = {
+  articles: [['', 'By relevance'], ['bibjson.year.exact:desc', 'By year: newest'], ['bibjson.year.exact:asc', 'By year: oldest'], ['created_date:desc', 'Newest in DOAJ first'], ['created_date:asc', 'Oldest in DOAJ first'], ['last_updated:desc', 'Recently updated'], ['title:asc', 'By title']],
+  journals: [['', 'By relevance'], ['created_date:desc', 'Newest in DOAJ first'], ['last_updated:desc', 'Recently updated'], ['title:asc', 'By title'], ['issn:asc', 'By ISSN']],
+};
+const S = { type: 'articles', page: 1, total: 0, results: [], sel: new Map(), q: '' }; // sel: id → record (spans pages)
+let qTouched = false;
+
+function fieldOpts(type, sel) {
+  const o = (v, l) => `<option value="${esc(v)}"${v === sel ? ' selected' : ''}>${esc(l)}</option>`;
+  let h = '<optgroup label="General">' + o('', 'Any field (full text)') + o('_exists_', 'Field is present') + o('!_exists_', 'Field is missing') + '</optgroup>';
+  let g = null;
+  for (const [f, grp, label] of FC[type]) {
+    if (grp !== g) { if (g) h += '</optgroup>'; h += `<optgroup label="${esc(grp)}">`; g = grp; }
+    h += o(f, `${label} — ${f}`);
+  }
+  return h + '</optgroup>';
+}
+function syncRow(d) {
+  const f = $('.fld', d).value, m = fmeta(S.type, f), x = $('.ex', d);
+  const exactOk = m && 'sku'.includes(m[4]);
+  x.disabled = !exactOk; if (!exactOk) $('input', x).checked = false;
+  x.style.opacity = exactOk ? 1 : .4;
+  const val = $('.val', d);
+  val.placeholder = f === '_exists_' || f === '!_exists_' ? 'field name, e.g. bibjson.abstract' : m ? (m[5] ? 'e.g.: ' + m[5] : TYPE_LABEL[m[4]]) : 'search terms';
+  val.setAttribute('list', f === '_exists_' || f === '!_exists_' ? 'fieldList' : '');
+  val.title = m ? `${m[0]} · ${TYPE_LABEL[m[4]]}${m[3] ? ' — ' + m[3] : ''}` : '';
+}
+function addQRow(r = { op: 'AND', f: '', v: '' }) {
+  const d = document.createElement('div'); d.className = 'qrow';
+  d.innerHTML = `<select class="op"><option>AND</option><option>OR</option><option value="NOT">AND NOT</option></select>
+    <select class="fld">${fieldOpts(S.type, r.f)}</select><input class="val">
+    <fieldset class="ex" style="border:0;margin:0;padding:0"><label class="chk small" title="Exact match of the whole value (.exact suffix)"><input type="checkbox">exact</label></fieldset>
+    <button class="b sm del" title="Remove">✕</button>`;
+  $('.op', d).value = r.op; $('.val', d).value = r.v || '';
+  if (r.exact) $('.ex input', d).checked = true;
+  $('#qRows').appendChild(d); syncRow(d); syncFirst(); return d;
+}
+function fillFieldList() { $('#fieldList').innerHTML = FC[S.type].filter(x => x[4] !== 'a').map(x => `<option value="${esc(x[0])}">${esc(x[2])}</option>`).join(''); }
+function syncFirst() { $$('#qRows .qrow').forEach((r, i) => $('.op', r).classList.toggle('first', i === 0)); }
+function buildQuery() {
+  const parts = [];
+  $$('#qRows .qrow').forEach((r, i) => {
+    const f = $('.fld', r).value, v = $('.val', r).value.trim();
+    if (!v) return;
+    const m = fmeta(S.type, f), t = m ? m[4] : '';
+    const fld = f + ($('.ex input', r).checked ? '.exact' : '');
+    let term, rg;
+    // short names like doi/issn are query aliases, not real index fields — map them for _exists_
+    if (f === '_exists_' || f === '!_exists_') term = (f[0] === '!' ? 'NOT ' : '') + '_exists_:' + ({ doi: 'index.doi', issn: 'index.issn' }[v.toLowerCase()] || v);
+    else if (/^[\[{].+ TO .+[\]}]$/.test(v)) term = fld + ':' + v; // ready-made range
+    else if ('ndk'.includes(t) && t && (rg = /^(.+?)\s*\.\.\s*(.+)$/.exec(v) || (/^\d{1,4}\s*[-–]\s*\d{1,4}$/.test(v) && /^(\d+)\s*[-–]\s*(\d+)$/.exec(v))))
+      term = `${fld}:[${rg[1]} TO ${rg[2]}]`; // 2020-2023 for numbers/years, a..b for anything (incl. dates)
+    else if (f === 'doi') term = 'doi:' + lq(normDoi(v));
+    else if (f === 'bibjson.author.orcid_id') term = fld + ':' + lq(normOrcid(v));
+    else if (!f) term = /\s/.test(v) && !/[":]/.test(v) ? '(' + v + ')' : v;
+    else if (t === 'b') term = fld + ':' + (/^(да|yes|true|1)$/i.test(v) ? 'true' : /^(нет|no|false|0)$/i.test(v) ? 'false' : v);
+    else if (t === 'y') term = fld + ':' + (/^(да|yes|true|1)$/i.test(v) ? 'Yes' : /^(нет|no|false|0)$/i.test(v) ? 'No' : v);
+    else term = fld + ':' + lq(v);
+    if (parts.length) { const op = $('.op', r).value; parts.push(op === 'NOT' ? 'AND NOT' : op); }
+    parts.push(term);
+  });
+  return parts.join(' ');
+}
+$('#qRows').addEventListener('input', () => { $('#qText').value = buildQuery(); qTouched = false; });
+$('#qRows').addEventListener('change', e => { if (e.target.classList.contains('fld')) syncRow(e.target.closest('.qrow')); $('#qText').value = buildQuery(); qTouched = false; });
+$('#qRows').addEventListener('click', e => { if (e.target.closest('.del')) { e.target.closest('.qrow').remove(); if (!$('#qRows .qrow')) addQRow(); syncFirst(); $('#qText').value = buildQuery(); } });
+$('#qRows').addEventListener('keydown', e => { if (e.key === 'Enter') runSearch(1); });
+$('#qText').addEventListener('input', () => qTouched = true);
+$('#qText').addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); runSearch(1); } });
+$('#addRow').onclick = () => $('.val', addQRow()).focus();
+function renderRef() {
+  const t = ($('#refFilter').value || '').toLowerCase().trim();
+  const rows = FC[S.type].filter(x => !t || x.join(' ').toLowerCase().includes(t) || TYPE_LABEL[x[4]].includes(t));
+  $('#refCount').textContent = `(${S.type === 'articles' ? 'articles' : 'journals'}: ${FC[S.type].length} fields)`;
+  let g = null, h = '<tr><th>Field</th><th>Title</th><th>Description</th><th>Type</th><th>Example</th></tr>';
+  for (const [f, grp, label, desc, type, ex] of rows) {
+    if (grp !== g) { h += `<tr class="grp"><td colspan="5">${esc(grp)}</td></tr>`; g = grp; }
+    h += `<tr><td class="fn" data-ins="${esc(f)}:">${esc(f)}</td><td>${esc(label)}</td><td>${esc(desc)}</td><td style="white-space:nowrap"><span class="badge">${esc(TYPE_LABEL[type])}</span>${'sku'.includes(type) ? ' <span class="badge" title="supports .exact">.exact</span>' : ''}</td>
+      <td class="ex" ${ex ? `data-ins="${esc(f)}:${esc(ex)}"` : ''}>${ex ? esc(f + ':' + ex) : ''}</td></tr>`;
+  }
+  $('#refTable').innerHTML = rows.length ? h : '<tr><td class="empty">Nothing found</td></tr>';
+}
+$('#refFilter').addEventListener('input', renderRef);
+$('#refTable').addEventListener('click', e => {
+  const c = e.target.closest('[data-ins]'); if (!c) return;
+  const ta = $('#qText'), ins = c.dataset.ins, cur = ta.value.trim();
+  ta.value = cur ? cur + ' AND ' + ins : ins; qTouched = true;
+  ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length);
+  ta.scrollIntoView({ block: 'center', behavior: 'smooth' });
+});
+function setSorts() { $('#sSort').innerHTML = SORTS[S.type].map(([v, l]) => `<option value="${v}">${esc(l)}</option>`).join(''); }
+seg($('#sType'), v => {
+  S.type = v; setSorts(); fillFieldList(); renderRef();
+  $$('#qRows .qrow').forEach(r => { const f = $('.fld', r).value; $('.fld', r).innerHTML = fieldOpts(v, f.includes('_exists_') || fmeta(v, f) ? f : ''); syncRow(r); });
+  if (!qTouched) $('#qText').value = buildQuery();
+  S.results = []; S.sel.clear(); renderResults();
+});
+$('#sClear').onclick = () => { $('#qRows').innerHTML = ''; addQRow(); $('#qText').value = ''; qTouched = false; S.results = []; S.total = 0; S.sel.clear(); renderResults(); };
+$('#sGo').onclick = () => runSearch(1);
+function searchFor(type, rows) {
+  S.type = type; setSeg($('#sType'), type); setSorts(); fillFieldList(); renderRef();
+  $('#qRows').innerHTML = ''; rows.forEach(addQRow); $('#qText').value = buildQuery(); qTouched = false;
+  showTab('search'); runSearch(1);
+}
+async function runSearch(page) {
+  const q = $('#qText').value.trim();
+  if (!q) { toast('Enter a query'); return; }
+  if (/_exists_:(doi|issn)\b/i.test(q)) toast('doi/issn are short names, so _exists_ with them is always false. Use index.doi / index.issn', 'err', 8000);
+  if (q !== '*' && /[*?~]/.test(q.replace(/"[^"]*"/g, ''))) toast('DOAJ does not support * ? ~ wildcards — the query will most likely fail', 'err');
+  const size = +$('#sSize').value;
+  if (page * size > 1000 && page > 1) { toast('The API returns only the first 1000 results. Narrow down the query.', 'err'); return; }
+  $('#sInfo').innerHTML = '<span class="spin"></span> Searching…';
+  try {
+    const r = await doaj.search(S.type, q, page, size, $('#sSort').value);
+    Object.assign(S, { page, total: r.total, results: r.results || [], q, size });
+    if (page === 1) S.sel.clear();
+    renderResults();
+  } catch (e) { $('#sInfo').textContent = ''; toast('Search error: ' + e.message, 'err', 7000); }
+}
+function renderResults() {
+  const box = $('#sResults');
+  if (!S.results.length) {
+    $('#sInfo').textContent = S.q && S.total === 0 ? 'Nothing found' : '';
+    box.innerHTML = S.q ? '' : '<div class="empty">Set conditions and click “Search” — or click “Example” to see search in action.<br>For example: field “Journal ISSN (short)” = 1810-3189, or “Field is missing” = bibjson.abstract.</div>';
+    $('#sPager').innerHTML = ''; updateSel(); return;
+  }
+  const pages = Math.ceil(Math.min(S.total, 1000) / S.size);
+  $('#sInfo').textContent = `Found: ${S.total.toLocaleString('en')}` + (S.total > 1000 ? ' (first 1000 available via the API)' : '') + ` · page ${S.page} of ${pages}`;
+  box.innerHTML = S.results.map((r, i) => {
+    const b = r.bibjson || {};
+    if (S.type === 'journals') {
+      return `<div class="result"><div class="grow"><div class="t" data-i="${i}">${esc(b.title)}</div>
+        <div class="meta">${esc([b.pissn, b.eissn].filter(Boolean).join(' / '))} · ${esc((b.publisher || {}).name)}${(b.publisher || {}).country ? ' (' + esc(b.publisher.country) + ')' : ''}</div>
+        <div>${(b.subject || []).slice(0, 3).map(s => `<span class="badge">${esc(s.term)}</span>`).join('')}${(r.admin || {}).seal ? '<span class="badge ok">Seal</span>' : ''}${(b.apc || {}).has_apc === false ? '<span class="badge">no APC</span>' : ''}</div></div></div>`;
+    }
+    const au = (b.author || []).map(a => a.name);
+    const doi = ident(r, 'doi');
+    const issues = validateArticle(r).filter(v => v.lvl === 'err' || /DOI|abstract|keyword/i.test(v.msg));
+    return `<div class="result"><input type="checkbox" data-id="${esc(r.id)}" ${S.sel.has(r.id) ? 'checked' : ''}>
+      <div class="grow" style="min-width:0"><div class="t" data-i="${i}">${esc(b.title)}</div>
+      <div class="meta">${esc(au.slice(0, 4).join(', '))}${au.length > 4 ? ' et al.' : ''}</div>
+      <div class="meta">${esc((b.journal || {}).title)}${citation(b) ? ' · ' + esc(citation(b)) : ''}${doi ? ` · <a href="https://doi.org/${esc(doi)}" target="_blank" rel="noopener">${esc(doi)}</a>` : ''}</div>
+      <div>${issues.map(v => `<span class="badge ${v.lvl}">${esc(v.msg)}</span>`).join('')}</div></div>
+      <div><button class="b sm" data-edit="${i}">Edit</button></div></div>`;
+  }).join('');
+  const pg = $('#sPager');
+  pg.innerHTML = `<button class="b sm" ${S.page <= 1 ? 'disabled' : ''} data-p="${S.page - 1}">← Previous</button>
+    <span class="small muted">page</span><input type="number" min="1" max="${pages}" value="${S.page}" style="width:70px" id="sPageIn"><span class="small muted">of ${pages}</span>
+    <button class="b sm" ${S.page >= pages ? 'disabled' : ''} data-p="${S.page + 1}">Next →</button>`;
+  updateSel();
+}
+$('#sPager').addEventListener('click', e => { const b = e.target.closest('[data-p]'); if (b) runSearch(+b.dataset.p); });
+$('#sPager').addEventListener('change', e => { if (e.target.id === 'sPageIn') runSearch(Math.max(1, +e.target.value || 1)); });
+$('#sResults').addEventListener('click', e => {
+  const t = e.target.closest('.t');
+  if (t) return openDrawer(S.results[+t.dataset.i], S.type === 'articles' ? 'article' : 'journal');
+  const ed = e.target.closest('[data-edit]');
+  if (ed) { editorLoadRecord(S.results[+ed.dataset.edit]); showTab('editor'); }
+});
+$('#sResults').addEventListener('change', e => {
+  if (e.target.type !== 'checkbox') return;
+  const id = e.target.dataset.id;
+  e.target.checked ? S.sel.set(id, S.results.find(r => r.id === id)) : S.sel.delete(id); updateSel();
+});
+function updateSel() {
+  $('#sSelN').textContent = S.sel.size; $('#sSel').classList.toggle('show', S.sel.size > 0 && S.type === 'articles');
+  const show = S.type === 'articles' && S.results.length > 0;
+  $('#sTools').style.display = show ? '' : 'none';
+  if (!show) return;
+  const pageAll = S.results.every(r => S.sel.has(r.id));
+  $('#sSelPage').textContent = pageAll ? 'Clear selection on page' : 'Select all on page';
+  const n = Math.min(S.total, 1000);
+  $('#sSelAll').textContent = `Select all results (${n.toLocaleString('en')}${S.total > 1000 ? ' of ' + S.total.toLocaleString('en') : ''})`;
+  $('#sSelAll').disabled = S.sel.size >= n;
+  $('#sSelNone').disabled = !S.sel.size;
+  $('#sSelNone').textContent = S.sel.size ? `Clear selection (${S.sel.size})` : 'Clear selection';
+}
+$('#sSelNone').onclick = () => { S.sel.clear(); renderResults(); };
+$('#sSelPage').onclick = () => {
+  const pageAll = S.results.every(r => S.sel.has(r.id));
+  S.results.forEach(r => pageAll ? S.sel.delete(r.id) : S.sel.set(r.id, r));
+  renderResults();
+};
+$('#sSelAll').onclick = () => busy($('#sSelAll'), selectAllFound).then(updateSel); // busy() restores the old label, so refresh after
+async function selectAllFound() {
+  const n = Math.min(S.total, 1000), pages = Math.ceil(n / 100);
+  try {
+    for (let p = 1; p <= pages; p++) {
+      const r = await doaj.search(S.type, S.q, p, 100, $('#sSort').value);
+      (r.results || []).forEach(x => S.sel.set(x.id, x));
+    }
+    renderResults();
+    toast(`Selected: ${S.sel.size}` + (S.total > 1000 ? '. The API returns only the first 1000 — use “Export & audit” for a complete set' : ''), S.total > 1000 ? '' : 'ok', 6000);
+  } catch (e) { renderResults(); toast('Could not select all: ' + e.message, 'err'); }
+}
+$('#sSel').addEventListener('click', e => {
+  const a = e.target.closest('[data-act]')?.dataset.act; if (!a) return;
+  const ids = [...S.sel.keys()];
+  if (a === 'copy') copy(ids.join('\n'), `IDs copied: ${ids.length}`);
+  if (a === 'json') download('doaj-articles.json', JSON.stringify([...S.sel.values()], null, 2));
+  if (a === 'del') sendToDelete(ids);
+  if (a === 'clear') { S.sel.clear(); renderResults(); }
+});
+async function openById(raw) {
+  const id = extractIds(raw)[0];
+  if (!id) { toast('Does not look like a DOAJ ID (32 hex characters)', 'err'); return; }
+  try {
+    if (S.type === 'journals') return openDrawer(await doaj.journal(id), 'journal');
+    try { openDrawer(await doaj.article(id), 'article'); }
+    catch (e) { if (e.status === 404) openDrawer(await doaj.journal(id), 'journal'); else throw e; }
+  } catch (e) { toast('Could not open: ' + e.message, 'err'); }
+}
+$('#byIdBtn').onclick = () => busy($('#byIdBtn'), () => openById($('#byId').value));
+$('#byId').addEventListener('keydown', e => { if (e.key === 'Enter') $('#byIdBtn').click(); });
+
+/* ---------------- EDITOR ---------------- */
+let edBase = null; // original record (for update); null for new
+const F = id => $('#e_' + id);
+function authorRow(a = {}) {
+  const d = document.createElement('div'); d.className = 'arow';
+  d.innerHTML = `<input class="an" placeholder="Full name *"><input class="aa" placeholder="Affiliation"><input class="ao mono" placeholder="ORCID">
+    <button class="b sm up" title="Up">↑</button><button class="b sm dn" title="Down">↓</button><button class="b sm rm" title="Delete">✕</button>`;
+  $('.an', d).value = a.name || ''; $('.aa', d).value = a.affiliation || ''; $('.ao', d).value = a.orcid_id || '';
+  $('#eAuthors').appendChild(d); return d;
+}
+function linkRow(l = { type: 'fulltext', content_type: 'html' }) {
+  const d = document.createElement('div'); d.className = 'lrow';
+  d.innerHTML = `<input class="lu mono" placeholder="https://…"><select class="lt"><option>fulltext</option></select>
+    <select class="lc"><option value="">file type</option><option>html</option><option>pdf</option><option>epub</option><option>xml</option></select><button class="b sm rm">✕</button>`;
+  $('.lu', d).value = l.url || ''; $('.lt', d).value = 'fulltext';
+  const ct = (l.content_type || '').toLowerCase();
+  if (ct && ![...$('.lc', d).options].some(o => o.value === ct)) $('.lc', d).add(new Option(ct, ct));
+  $('.lc', d).value = ct;
+  $('#eLinks').appendChild(d); return d;
+}
+$('#eAddAuthor').onclick = () => { $('.an', authorRow()).focus(); edChanged(); };
+$('#eAddLink').onclick = () => { $('.lu', linkRow()).focus(); edChanged(); };
+$('#eAuthors').addEventListener('click', e => {
+  const row = e.target.closest('.arow'); if (!row) return;
+  if (e.target.closest('.rm')) row.remove();
+  else if (e.target.closest('.up') && row.previousElementSibling) row.parentNode.insertBefore(row, row.previousElementSibling);
+  else if (e.target.closest('.dn') && row.nextElementSibling) row.parentNode.insertBefore(row.nextElementSibling, row);
+  else return;
+  edChanged();
+});
+$('#eLinks').addEventListener('click', e => { if (e.target.closest('.rm')) { e.target.closest('.lrow').remove(); edChanged(); } });
+$('#eAuthors').addEventListener('change', e => { if (e.target.classList.contains('ao') && e.target.value) { e.target.value = normOrcid(e.target.value); edChanged(); } });
+F('doi').addEventListener('change', () => { F('doi').value = normDoi(F('doi').value); edChanged(); });
+
+function formToRecord() {
+  const base = edBase ? JSON.parse(JSON.stringify(edBase)) : { bibjson: {} };
+  const b = base.bibjson = base.bibjson || {};
+  b.title = F('title').value; b.abstract = F('abstract').value; b.year = F('year').value.trim(); b.month = F('month').value.trim();
+  const j = b.journal = b.journal || {};
+  for (const k of ['volume', 'number', 'start_page', 'end_page']) j[k] = F(k).value.trim();
+  delete b.start_page; delete b.end_page; // legacy top-level location used in some outgoing records
+  const other = (b.identifier || []).filter(i => !['doi', 'pissn', 'eissn'].includes((i.type || '').toLowerCase()));
+  b.identifier = [...other];
+  if (F('pissn').value.trim()) b.identifier.push({ type: 'pissn', id: F('pissn').value.trim().toUpperCase() });
+  if (F('eissn').value.trim()) b.identifier.push({ type: 'eissn', id: F('eissn').value.trim().toUpperCase() });
+  if (F('doi').value.trim()) b.identifier.push({ type: 'doi', id: normDoi(F('doi').value) });
+  b.author = $$('#eAuthors .arow').map(r => ({ name: $('.an', r).value.trim(), affiliation: $('.aa', r).value.trim(), orcid_id: normOrcid($('.ao', r).value) }))
+    .filter(a => a.name || a.affiliation || a.orcid_id);
+  b.keywords = F('keywords').value.split(/[;,]/).map(s => s.trim()).filter(Boolean);
+  b.link = $$('#eLinks .lrow').map(r => ({ type: $('.lt', r).value, url: $('.lu', r).value.trim(), content_type: $('.lc', r).value })).filter(l => l.url);
+  return base;
+}
+function recordToForm(rec) {
+  const b = rec.bibjson || {}, j = b.journal || {};
+  F('title').value = b.title || ''; F('abstract').value = b.abstract || '';
+  F('year').value = b.year || ''; F('month').value = b.month || '';
+  for (const k of ['volume', 'number']) F(k).value = j[k] || '';
+  F('start_page').value = j.start_page || b.start_page || ''; F('end_page').value = j.end_page || b.end_page || '';
+  F('doi').value = ident(rec, 'doi'); F('pissn').value = ident(rec, 'pissn'); F('eissn').value = ident(rec, 'eissn');
+  $('#eAuthors').innerHTML = ''; (b.author || []).forEach(authorRow); if (!(b.author || []).length) authorRow();
+  F('keywords').value = (b.keywords || []).join('; ');
+  $('#eLinks').innerHTML = ''; (b.link || []).forEach(linkRow); if (!(b.link || []).length) linkRow();
+  $('#eJournalInfo').textContent = j.title ? `Journal: ${j.title}` : '';
+}
+function edChanged() {
+  const rec = formToRecord();
+  $('#eJson').value = JSON.stringify(toPayload(rec), null, 2);
+  const kw = rec.bibjson.keywords.length; $('#eKwCount').textContent = kw ? `(${kw}/6)` : '';
+  $('#eKwCount').style.color = kw > 6 ? 'var(--warn)' : '';
+  const v = validateArticle(clean(rec) || {});
+  $('#eValid').innerHTML = v.length ? v.map(x => `<li class="${x.lvl}">${x.lvl === 'err' ? '✕' : '!'} ${esc(x.msg)}</li>`).join('') : '<li class="ok">✓ Record is ready to send</li>';
+  const hasErr = v.some(x => x.lvl === 'err');
+  $('#eCreate').disabled = hasErr; $('#eUpdate').disabled = hasErr || !edBase?.id; $('#eDelete').disabled = !edBase?.id;
+  try { sessionStorage.setItem('doajs.draft', JSON.stringify({ base: edBase, rec })); } catch {}
+}
+$('#tab-editor').addEventListener('input', e => { if (e.target.id !== 'eJson' && e.target.id !== 'eLoadId') edChanged(); });
+function editorLoadRecord(rec, isNew = false) {
+  edBase = isNew ? null : JSON.parse(JSON.stringify(rec));
+  recordToForm(rec);
+  $('#eMode').textContent = edBase?.id ? 'Editing · ' + edBase.id : 'New article';
+  $('#eMode').className = 'badge ' + (edBase?.id ? 'warn' : '');
+  $('#eLoadId').value = edBase?.id || '';
+  edChanged();
+}
+$('#eNew').onclick = () => {
+  const keep = { bibjson: { identifier: [['pissn', F('pissn').value], ['eissn', F('eissn').value]].filter(x => x[1]).map(([type, id]) => ({ type, id })) } };
+  editorLoadRecord(keep, true); toast('New article (ISSNs kept from the previous record)');
+};
+$('#eLoad').onclick = () => busy($('#eLoad'), async () => {
+  const id = extractIds($('#eLoadId').value)[0];
+  if (!id) return toast('Enter the DOAJ article ID', 'err');
+  try { editorLoadRecord(await doaj.article(id)); toast('Article loaded', 'ok', 2000); }
+  catch (e) { toast('Could not load: ' + e.message, 'err'); }
+});
+$('#eApplyJson').onclick = () => {
+  try {
+    let o = JSON.parse($('#eJson').value);
+    if (Array.isArray(o)) o = o[0];
+    if (!o.bibjson) throw new Error('no bibjson object');
+    if (edBase) { o = { ...edBase, ...o, bibjson: o.bibjson }; editorLoadRecord(o); } else { recordToForm(o); edChanged(); }
+    toast('JSON applied to the form', 'ok', 2000);
+  } catch (e) { toast('JSON error: ' + e.message, 'err'); }
+};
+$('#eCopyJson').onclick = () => copy($('#eJson').value);
+$('#eFillIssn').onclick = () => busy($('#eFillIssn'), async () => {
+  const issn = F('eissn').value.trim() || F('pissn').value.trim();
+  if (!issn) return toast('Enter a pISSN or eISSN', 'err');
+  try {
+    const r = await doaj.search('journals', 'issn:' + lq(issn), 1, 1);
+    const jr = r.results?.[0];
+    if (!jr) { $('#eJournalInfo').textContent = '⚠ No journal with this ISSN found in DOAJ'; return; }
+    const b = jr.bibjson;
+    if (b.pissn && !F('pissn').value) F('pissn').value = b.pissn;
+    if (b.eissn && !F('eissn').value) F('eissn').value = b.eissn;
+    $('#eJournalInfo').textContent = `✓ ${b.title} (${[b.pissn, b.eissn].filter(Boolean).join(' / ')})`;
+    edChanged();
+  } catch (e) { toast(e.message, 'err'); }
+});
+$('#eCreate').onclick = () => busy($('#eCreate'), async () => {
+  const p = toPayload(formToRecord());
+  if (edBase?.id && !confirm('This article is already in DOAJ. Create a copy of it as a new record?\n(To edit it, use “Save changes”.)')) return;
+  try {
+    const r = await doaj.create(p);
+    const id = r && (r.id || (r.location || '').split('/').pop());
+    toast('Article created' + (id ? ': ' + id : ''), 'ok', 7000);
+    if (id) { try { editorLoadRecord(await doaj.article(id)); } catch { edBase = { ...p, id }; edChanged(); } }
+  } catch (e) { toast('DOAJ rejected the record: ' + e.message, 'err', 10000); }
+});
+$('#eUpdate').onclick = () => busy($('#eUpdate'), async () => {
+  const id = edBase.id;
+  try {
+    await doaj.update(id, toPayload(formToRecord()));
+    toast('Changes saved', 'ok');
+    try { editorLoadRecord(await doaj.article(id)); } catch {}
+  } catch (e) { toast('Could not save: ' + e.message, 'err', 10000); }
+});
+$('#eDelete').onclick = () => busy($('#eDelete'), async () => {
+  const id = edBase.id;
+  if (!confirm(`Permanently delete this article from DOAJ?\n\n“${F('title').value.slice(0, 140)}»\nID: ${id}`)) return;
+  try { await doaj.remove(id); toast('Article deleted', 'ok'); editorLoadRecord({ bibjson: {} }, true); }
+  catch (e) { toast('Could not delete: ' + e.message, 'err', 8000); }
+});
+
+/* ---------------- BULK ---------------- */
+const CSV_COLS = ['id', 'title', 'abstract', 'year', 'month', 'volume', 'number', 'start_page', 'end_page', 'doi', 'pissn', 'eissn', 'fulltext_url', 'fulltext_type', 'keywords', 'authors'];
+function parseCSV(text) {
+  text = text.replace(/^\uFEFF/, '');
+  const first = text.split(/\r?\n/)[0];
+  const cnt = c => (first.match(new RegExp('\\' + c, 'g')) || []).length;
+  const d = [';', ',', '\t'].sort((a, b) => cnt(b) - cnt(a))[0];
+  const rows = []; let row = [], f = '', q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) { if (c === '"') { if (text[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += c; }
+    else if (c === '"') q = true;
+    else if (c === d) { row.push(f); f = ''; }
+    else if (c === '\n' || c === '\r') { if (c === '\r' && text[i + 1] === '\n') i++; row.push(f); rows.push(row); row = []; f = ''; }
+    else f += c;
+  }
+  if (f || row.length) { row.push(f); rows.push(row); }
+  return rows.filter(r => r.some(x => x.trim()));
+}
+function csvToArticles(text) {
+  const rows = parseCSV(text);
+  if (rows.length < 2) throw new Error('The CSV has no data rows');
+  const head = rows[0].map(h => h.trim().toLowerCase());
+  if (!head.includes('title')) throw new Error('No title column. Download the CSV template.');
+  return rows.slice(1).map(r => {
+    const g = k => (r[head.indexOf(k)] ?? '').trim();
+    const ids = [['pissn', g('pissn')], ['eissn', g('eissn')], ['doi', normDoi(g('doi'))]].filter(x => x[1]).map(([type, id]) => ({ type, id }));
+    const kwRaw = g('keywords');
+    const auRaw = g('authors'); // one author per line; ";" only when the cell has no line breaks
+    const authors = auRaw.split(/\r?\n/.test(auRaw) ? /\r?\n/ : /\s*;\s*/).map(s => s.trim()).filter(Boolean).map(s => {
+      const [name, affiliation, orcid] = s.split('|').map(x => (x || '').trim());
+      return { name, affiliation, orcid_id: normOrcid(orcid) };
+    });
+    const rec = { bibjson: {
+      title: g('title'), abstract: g('abstract'), year: g('year'), month: g('month'),
+      journal: { volume: g('volume'), number: g('number'), start_page: g('start_page'), end_page: g('end_page') },
+      identifier: ids, author: authors,
+      keywords: kwRaw.split(kwRaw.includes(';') ? ';' : ',').map(s => s.trim()).filter(Boolean),
+      link: g('fulltext_url') ? [{ type: 'fulltext', url: g('fulltext_url'), content_type: g('fulltext_type') }] : [],
+    } };
+    if (g('id')) rec.id = g('id');
+    return { ...clean(rec), bibjson: clean(rec.bibjson) || {} };
+  });
+}
+function articlesToCSV(recs, d) {
+  const cell = v => { v = String(v ?? ''); return /["\n\r]/.test(v) || v.includes(d) ? '"' + v.replace(/"/g, '""') + '"' : v; };
+  const lines = [CSV_COLS.join(d)];
+  for (const r of recs) {
+    const b = r.bibjson || {}, j = b.journal || {}, ft = (b.link || []).find(l => l.type === 'fulltext') || {};
+    const vals = {
+      id: r.id, title: b.title, abstract: b.abstract, year: b.year, month: b.month, volume: j.volume, number: j.number,
+      start_page: j.start_page || b.start_page, end_page: j.end_page || b.end_page, doi: ident(r, 'doi'), pissn: ident(r, 'pissn'), eissn: ident(r, 'eissn'),
+      fulltext_url: ft.url, fulltext_type: ft.content_type, keywords: (b.keywords || []).join('; '),
+      authors: (b.author || []).map(a => [a.name, a.affiliation, a.orcid_id].map(x => x || '').join(' | ').replace(/( \| )+$/, '')).join('\n'),
+    };
+    lines.push(CSV_COLS.map(c => cell(vals[c])).join(d));
+  }
+  return '\uFEFF' + lines.join('\r\n');
+}
+let bItems = [];
+const SRC_HINT = {
+  json: 'An array of article objects in DOAJ format (as in “JSON for re-upload” or an API response). Records with an id field will update existing articles.',
+  csv: 'Columns: ' + CSV_COLS.join(', ') + '. Authors — one per line inside the cell (or separated by “;”), each as: full name | affiliation | ORCID. The delimiter (; , tab) is detected automatically. If id is filled in, the article will be updated.',
+};
+seg($('#bSrc'), v => { $('#bSrcHint').textContent = SRC_HINT[v]; $('#bText').placeholder = v === 'csv' ? CSV_COLS.join(';') : '[{"bibjson": {…}}]'; });
+$('#bSrcHint').textContent = SRC_HINT.json;
+$('#bTpl').onclick = () => download('doaj-template.csv', articlesToCSV([{ bibjson: {
+  title: 'Sample article title', abstract: 'Abstract text', year: '2025', month: '3',
+  journal: { volume: '28', number: '1', start_page: '7', end_page: '15' },
+  identifier: [{ type: 'pissn', id: '1810-3189' }, { type: 'eissn', id: '2782-294X' }, { type: 'doi', id: '10.18469/xxxx' }],
+  keywords: ['waveguide', 'antenna'], author: [{ name: 'Smith J.', affiliation: 'University', orcid_id: 'https://orcid.org/0000-0002-1825-0097' }, { name: 'Doe J.', affiliation: 'Institute' }],
+  link: [{ type: 'fulltext', url: 'https://journal.example/article/view/1', content_type: 'html' }] } }], ';'), 'text/csv');
+$('#bFile').onchange = async e => {
+  const f = e.target.files[0]; if (!f) return;
+  let text = await f.text();
+  if (/\.csv$/i.test(f.name)) setSeg($('#bSrc'), 'csv'), $('#bSrcHint').textContent = SRC_HINT.csv;
+  else if (/\.json$/i.test(f.name)) setSeg($('#bSrc'), 'json'), $('#bSrcHint').textContent = SRC_HINT.json;
+  $('#bText').value = text; e.target.value = ''; parseBulk();
+};
+$('#bParse').onclick = parseBulk;
+$('#bSkipBad').onchange = renderBulkPreview;
+function parseBulk() {
+  const txt = $('#bText').value.trim();
+  if (!txt) return toast('Paste data or choose a file');
+  try {
+    let arr;
+    if (segVal($('#bSrc')) === 'csv') arr = csvToArticles(txt);
+    else {
+      arr = JSON.parse(txt);
+      if (!Array.isArray(arr)) arr = arr.results || [arr];
+      arr = arr.map(r => toPayload(r, true));
+    }
+    bItems = arr.map(rec => ({ rec, v: validateArticle(rec) }));
+    renderBulkPreview();
+  } catch (e) { bItems = []; renderBulkPreview(); toast('Could not parse: ' + e.message, 'err', 7000); }
+}
+function renderBulkPreview() {
+  const box = $('#bPreview');
+  if (!bItems.length) { box.innerHTML = ''; $('#bSend').disabled = true; return; }
+  const bad = bItems.filter(x => x.v.some(v => v.lvl === 'err')).length;
+  const toSend = $('#bSkipBad').checked ? bItems.length - bad : (bad ? 0 : bItems.length);
+  $('#bSend').disabled = !toSend; $('#bSend').textContent = `Send to DOAJ (${toSend})`;
+  box.innerHTML = `<div class="small" style="margin-bottom:8px">Records: <b>${bItems.length}</b> · with errors: <b style="color:${bad ? 'var(--err)' : 'inherit'}">${bad}</b> · updates (have id): ${bItems.filter(x => x.rec.id).length}${bad && !$('#bSkipBad').checked ? ' — fix the errors or enable “skip records with errors”' : ''}</div>
+  <div class="tw" style="max-height:360px"><table><tr><th>#</th><th>Title</th><th>DOI</th><th>Publication details</th><th>Issues</th></tr>
+  ${bItems.map((x, i) => `<tr><td>${i + 1}</td><td class="t">${esc(x.rec.bibjson.title)}</td><td class="mono small">${esc(ident(x.rec, 'doi'))}</td><td class="small">${esc(citation(x.rec.bibjson))}</td>
+   <td>${x.v.map(v => `<span class="badge ${v.lvl}">${esc(v.msg)}</span>`).join('') || '<span class="badge ok">ok</span>'}</td></tr>`).join('')}</table></div>`;
+}
+$('#bSend').onclick = () => busy($('#bSend'), async () => {
+  const items = bItems.filter(x => !x.v.some(v => v.lvl === 'err')).map(x => x.rec);
+  const chunks = chunkBySize(items, BULK_MAX_BYTES);
+  if (!confirm(`Send ${items.length} articles to DOAJ?` + (chunks.length > 1 ? `\n(${chunks.length} batches of up to 600 KB, as DOAJ recommends)` : ''))) return;
+  let sent = 0, last = null;
+  for (const [i, chunk] of chunks.entries()) {
+    try {
+      const r = await doaj.bulkCreate(chunk);
+      const up = r && (r.upload_id || r.id);
+      sent += chunk.length;
+      if (up) { addUpload(up, chunk.length); last = up; }
+      else { $('#bStatus').style.display = ''; $('#bStatus').textContent = JSON.stringify(r, null, 2); }
+    } catch (e) {
+      toast(`DOAJ rejected batch ${i + 1} of ${chunks.length}: ${e.message}` + (sent ? `\nArticles already sent: ${sent}` : ''), 'err', 12000);
+      if (e.body) { $('#bStatus').style.display = ''; $('#bStatus').textContent = JSON.stringify(e.body, null, 2); }
+      return;
+    }
+  }
+  toast(`Accepted by DOAJ: ${sent} articles` + (chunks.length > 1 ? `, batches: ${chunks.length}` : '') + (last ? `. upload_id: ${last}` : ''), 'ok', 9000);
+  if (last) { $('#bUpId').value = last; checkUpload(last); }
+});
+// DOAJ recommends bulk batches of about 600 KB to stay clear of the processing timeout
+const BULK_MAX_BYTES = 600 * 1024;
+function chunkBySize(items, max) {
+  const out = []; let cur = [], size = 2;
+  for (const it of items) {
+    const n = new Blob([JSON.stringify(it)]).size + 1;
+    if (cur.length && size + n > max) { out.push(cur); cur = []; size = 2; }
+    cur.push(it); size += n;
+  }
+  if (cur.length) out.push(cur);
+  return out;
+}
+function addUpload(id, n) { const l = store.get('uploads', []); l.unshift({ id, n, at: new Date().toISOString() }); store.set('uploads', l.slice(0, 30)); renderUploads(); }
+function renderUploads() {
+  const l = store.get('uploads', []);
+  $('#bUploads').innerHTML = l.length ? '<div class="small muted" style="margin-bottom:4px">Recent uploads:</div>' + l.map(u =>
+    `<div class="row small" style="margin-bottom:4px"><button class="link mono" data-up="${esc(u.id)}">${esc(u.id)}</button><span class="muted">${esc(u.n)} art. · ${esc(new Date(u.at).toLocaleString('en'))}</span></div>`).join('') : '';
+}
+$('#bUploads').addEventListener('click', e => { const b = e.target.closest('[data-up]'); if (b) { $('#bUpId').value = b.dataset.up; checkUpload(b.dataset.up); } });
+$('#bCheck').onclick = () => { const id = $('#bUpId').value.trim(); if (id) busy($('#bCheck'), () => checkUpload(id)); };
+async function checkUpload(id) {
+  const box = $('#bStatus'); box.style.display = ''; box.textContent = 'Requesting status…';
+  try { const r = await doaj.bulkStatus(id); box.textContent = JSON.stringify(r, null, 2); }
+  catch (e) { box.textContent = 'Error: ' + e.message; }
+}
+function sendToDelete(ids) {
+  const cur = extractIds($('#dIds').value);
+  $('#dIds').value = [...new Set([...cur, ...ids])].join('\n'); updDCount(); showTab('bulk');
+  toast(`IDs added to the delete list: ${ids.length}`);
+}
+function updDCount() { $('#dCount').textContent = extractIds($('#dIds').value).length + ' ID'; }
+$('#dIds').addEventListener('input', updDCount);
+$('#dGo').onclick = () => busy($('#dGo'), async () => {
+  const ids = extractIds($('#dIds').value);
+  if (!ids.length) return toast('No DOAJ IDs found', 'err');
+  const ans = prompt(`${ids.length} articles will be permanently deleted.\nType this number to confirm:`);
+  if (ans === null) return;
+  if (ans.trim() !== String(ids.length)) return toast('Number does not match — deletion cancelled', 'err');
+  try {
+    const r = await doaj.bulkDelete(ids);
+    toast(`Deleted: ${ids.length}`, 'ok', 7000);
+    $('#dIds').value = ''; updDCount();
+    if (r) { $('#bStatus').style.display = ''; $('#bStatus').textContent = JSON.stringify(r, null, 2); }
+  } catch (e) { toast('Could not delete: ' + e.message, 'err', 10000); }
+});
+
+/* ---------------- EXPORT & AUDIT ---------------- */
+const X = { recs: [], filter: 'all', year: null, text: '', page: 1, sel: new Set(), stop: false, label: '' };
+const CHECKS = [
+  ['all', 'Total articles', () => true],
+  ['nodoi', 'No DOI', r => !ident(r, 'doi')],
+  ['dupdoi', 'Duplicate DOIs', null],
+  ['duptitle', 'Duplicate titles', null],
+  ['noabs', 'No abstract', r => !(r.bibjson || {}).abstract],
+  ['nokw', 'No keywords', r => !((r.bibjson || {}).keywords || []).length],
+  ['nolink', 'No full-text link', r => !fulltext(r)],
+  ['noauthor', 'No authors', r => !((r.bibjson || {}).author || []).length],
+  ['noaff', 'Not all authors have affiliation', r => ((r.bibjson || {}).author || []).some(a => !a.affiliation)],
+  ['noorcid', 'No ORCID at all', r => !((r.bibjson || {}).author || []).some(a => a.orcid_id)],
+  ['badorcid', 'Invalid ORCID', r => ((r.bibjson || {}).author || []).some(a => a.orcid_id && !orcidOk(a.orcid_id))],
+  ['nopages', 'No pages', r => { const b = r.bibjson || {}, j = b.journal || {}; return !(j.start_page || b.start_page); }],
+  ['novol', 'No volume/issue', r => { const j = (r.bibjson || {}).journal || {}; return !j.volume && !j.number; }],
+  ['noyear', 'No year', r => !(r.bibjson || {}).year],
+];
+let flags = {};
+seg($('#xMode'), v => { $('#xQ').placeholder = v === 'issn' ? 'Journal ISSN, e.g. 1810-3189' : 'Lucene query, e.g. bibjson.journal.publisher:"Samara"'; });
+$('#xQ').addEventListener('keydown', e => { if (e.key === 'Enter') $('#xGo').click(); });
+$('#xStop').onclick = () => { X.stop = true; };
+function xlog(s) { const l = $('#xLog'); l.textContent += s + '\n'; l.scrollTop = l.scrollHeight; }
+$('#xGo').onclick = async () => {
+  const raw = $('#xQ').value.trim();
+  if (!raw) return toast('Enter an ISSN or a query');
+  const q = segVal($('#xMode')) === 'issn' ? 'issn:' + lq(raw.toUpperCase()) : raw;
+  X.stop = false; $('#xResult').style.display = 'none'; $('#xSummary').textContent = ''; $('#xGo').disabled = true; $('#xStop').style.display = '';
+  $('#xProg').style.display = ''; $('#xLog').textContent = ''; $('#xBar').style.width = '0';
+  try {
+    const { recs, total, limited } = await fetchAll(q);
+    const incomplete = limited || recs.length < total;
+    X.recs = recs; X.label = raw; X.filter = 'all'; X.year = null; X.text = ''; X.page = 1; X.sel.clear(); $('#xFilter').value = '';
+    computeFlags(); renderExport();
+    const summary = $('#xSummary');
+    summary.classList.toggle('partial', incomplete);
+    summary.textContent = (incomplete ? 'Incomplete export. ' : '') + `Received ${recs.length.toLocaleString('en')} of ${total.toLocaleString('en')} records.` + (incomplete && X.stop ? ' Export stopped.' : '');
+    xlog(`Done: ${recs.length} articles${X.stop ? ' (stopped by user)' : ''}`);
+  } catch (e) { xlog('Error: ' + e.message); toast('Load error: ' + e.message, 'err', 8000); }
+  finally { $('#xGo').disabled = false; $('#xStop').style.display = 'none'; }
+};
+async function fetchAll(q) {
+  const first = await doaj.search('articles', q, 1, 100);
+  const total = first.total;
+  xlog(`Found ${total} articles for query ${q}`);
+  if (!total) return { recs: [], total, limited: false };
+  const got = new Map(); let done = 0; let limited = false;
+  const prog = () => { $('#xBar').style.width = Math.min(100, 100 * done / total).toFixed(1) + '%'; };
+  const take = rs => { for (const r of rs) if (!got.has(r.id)) { got.set(r.id, r); done++; } prog(); };
+  async function pages(qq, firstPage, n) {
+    take(firstPage.results);
+    const last = Math.ceil(Math.min(n, 1000) / 100);
+    for (let p = 2; p <= last && !X.stop; p++) { const r = await doaj.search('articles', qq, p, 100); take(r.results); }
+  }
+  if (total <= 1000) { await pages(q, first, total); return { recs: [...got.values()], total, limited }; }
+  xlog('More than 1000 — splitting by record creation date…');
+  const iso = d => new Date(d).toISOString().replace(/\.\d{3}Z$/, 'Z');
+  async function split(from, to) {
+    if (X.stop) return;
+    const qq = `(${q}) AND created_date:[${iso(from)} TO ${iso(to)}}`;
+    const r = await doaj.search('articles', qq, 1, 100);
+    if (!r.total) return;
+    if (r.total <= 1000) { xlog(`  ${iso(from).slice(0, 10)} … ${iso(to).slice(0, 10)}: ${r.total}`); return pages(qq, r, r.total); }
+    if (to - from <= 2000) { limited = true; xlog(`  ⚠ ${r.total} records created at the same moment (${iso(from)}) — only 1000 available`); return pages(qq, r, 1000); }
+    const mid = from + Math.floor((to - from) / 2);
+    await split(from, mid); await split(mid, to);
+  }
+  await split(Date.UTC(1990, 0, 1), Date.now() + 86400000);
+  if (got.size < total && !X.stop) xlog(`⚠ Got ${got.size} of ${total}`);
+  return { recs: [...got.values()], total, limited };
+}
+function computeFlags() {
+  flags = {};
+  for (const [k, , fn] of CHECKS) if (fn) flags[k] = new Set(X.recs.filter(fn).map(r => r.id));
+  const dup = (keyFn) => {
+    const m = new Map();
+    for (const r of X.recs) { const k = keyFn(r); if (!k) continue; (m.get(k) || m.set(k, []).get(k)).push(r.id); }
+    return new Set([...m.values()].filter(a => a.length > 1).flat());
+  };
+  flags.dupdoi = dup(r => ident(r, 'doi').toLowerCase());
+  flags.duptitle = dup(r => String((r.bibjson || {}).title || '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim());
+}
+const CHECK_LABEL = Object.fromEntries(CHECKS.map(([k, l]) => [k, l]));
+function rowIssues(r) { return CHECKS.filter(([k]) => k !== 'all' && flags[k].has(r.id)).map(([k]) => k); }
+function sortKey(r) { const b = r.bibjson || {}, j = b.journal || {}; const n = v => String(parseInt(v) || 0).padStart(6, '0'); return [b.year || '0000', n(j.volume), n(j.number), n(j.start_page || b.start_page)].join('|'); }
+function filtered() {
+  const t = X.text.toLowerCase();
+  return X.recs.filter(r => {
+    if (X.filter !== 'all' && !flags[X.filter].has(r.id)) return false;
+    if (X.year && ((r.bibjson || {}).year || '—') !== X.year) return false;
+    if (t) {
+      const b = r.bibjson || {};
+      const hay = [b.title, ident(r, 'doi'), r.id, ...(b.author || []).map(a => a.name), ...(b.keywords || [])].join(' ').toLowerCase();
+      if (!hay.includes(t)) return false;
+    }
+    return true;
+  }).sort((a, b) => sortKey(b).localeCompare(sortKey(a)));
+}
+function renderExport() {
+  $('#xResult').style.display = '';
+  $('#xTitle').textContent = `Articles: ${X.label}`;
+  $('#xLoadedAt').textContent = 'Loaded ' + new Date().toLocaleString('en');
+  const good = new Set(['all']);
+  $('#xStats').innerHTML = CHECKS.map(([k, l]) => {
+    const n = k === 'all' ? X.recs.length : flags[k].size;
+    return `<div class="stat ${k === 'all' ? '' : n ? 'bad' : 'good'} ${X.filter === k ? 'on' : ''}" data-f="${k}"><div class="n">${n.toLocaleString('en')}</div><div class="l">${esc(l)}</div></div>`;
+  }).join('');
+  const years = {};
+  for (const r of X.recs) { const y = (r.bibjson || {}).year || '—'; years[y] = (years[y] || 0) + 1; }
+  const max = Math.max(...Object.values(years), 1);
+  $('#xYears').innerHTML = Object.entries(years).sort((a, b) => b[0].localeCompare(a[0])).map(([y, c]) =>
+    `<div class="yr ${X.year === y ? 'on' : ''}" data-y="${esc(y)}"><span>${esc(y)}</span><div><div class="bar2" style="width:${(100 * c / max).toFixed(1)}%"></div></div><span class="c">${c}</span></div>`).join('');
+  renderTable();
+}
+const PER = 100;
+function renderTable() {
+  const rows = filtered();
+  $('#xFN').textContent = rows.length;
+  const pages = Math.max(1, Math.ceil(rows.length / PER)); X.page = Math.min(X.page, pages);
+  const slice = rows.slice((X.page - 1) * PER, X.page * PER);
+  $('#xShown').textContent = `Showing ${rows.length} of ${X.recs.length}` + (X.year ? ` · year ${X.year}` : '') + (X.filter !== 'all' ? ` · ${CHECK_LABEL[X.filter]}` : '');
+  const allOn = slice.length && slice.every(r => X.sel.has(r.id));
+  $('#xTable').innerHTML = `<tr><th><input type="checkbox" id="xAll" ${allOn ? 'checked' : ''}></th><th>Year</th><th>Vol. (No.)</th><th>Pages</th><th>Title</th><th>Authors</th><th>DOI</th><th>Issues</th></tr>` +
+    (slice.length ? slice.map(r => {
+      const b = r.bibjson || {}, j = b.journal || {}, doi = ident(r, 'doi');
+      const sp = j.start_page || b.start_page, ep = j.end_page || b.end_page;
+      return `<tr><td><input type="checkbox" data-id="${esc(r.id)}" ${X.sel.has(r.id) ? 'checked' : ''}></td><td>${esc(b.year)}</td>
+        <td style="white-space:nowrap">${esc(j.volume || '')}${j.number ? ` (${esc(j.number)})` : ''}</td><td style="white-space:nowrap">${esc(sp || '')}${ep ? '–' + esc(ep) : ''}</td>
+        <td class="t"><span class="title" data-id="${esc(r.id)}">${esc(b.title)}</span></td><td>${(b.author || []).length}</td>
+        <td class="mono small">${doi ? `<a href="https://doi.org/${esc(doi)}" target="_blank" rel="noopener">${esc(doi)}</a>` : ''}</td>
+        <td>${rowIssues(r).map(k => `<span class="badge ${/dup|bad|nodoi|nolink/.test(k) ? 'err' : 'warn'}">${esc(CHECK_LABEL[k])}</span>`).join('')}</td></tr>`;
+    }).join('') : '<tr><td colspan="8" class="empty">No records</td></tr>');
+  $('#xPager').innerHTML = pages > 1 ? `<button class="b sm" ${X.page <= 1 ? 'disabled' : ''} data-p="${X.page - 1}">← Previous</button><span class="small muted">page ${X.page} of ${pages}</span><button class="b sm" ${X.page >= pages ? 'disabled' : ''} data-p="${X.page + 1}">Next →</button>` : '';
+  $('#xSelN').textContent = X.sel.size; $('#xSel').classList.toggle('show', X.sel.size > 0);
+}
+$('#xStats').addEventListener('click', e => { const s = e.target.closest('[data-f]'); if (!s) return; X.filter = X.filter === s.dataset.f ? 'all' : s.dataset.f; X.page = 1; renderExport(); });
+$('#xYears').addEventListener('click', e => { const s = e.target.closest('[data-y]'); if (!s) return; X.year = X.year === s.dataset.y ? null : s.dataset.y; X.page = 1; renderExport(); });
+$('#xFilter').addEventListener('input', e => { X.text = e.target.value.trim(); X.page = 1; renderTable(); });
+$('#xPager').addEventListener('click', e => { const b = e.target.closest('[data-p]'); if (b) { X.page = +b.dataset.p; renderTable(); } });
+const byId = id => X.recs.find(r => r.id === id);
+$('#xTable').addEventListener('click', e => { const t = e.target.closest('.title'); if (t) openDrawer(byId(t.dataset.id), 'article'); });
+$('#xTable').addEventListener('change', e => {
+  if (e.target.id === 'xAll') { const slice = filtered().slice((X.page - 1) * PER, X.page * PER); slice.forEach(r => e.target.checked ? X.sel.add(r.id) : X.sel.delete(r.id)); renderTable(); return; }
+  if (e.target.dataset.id) { e.target.checked ? X.sel.add(e.target.dataset.id) : X.sel.delete(e.target.dataset.id); $('#xSelN').textContent = X.sel.size; $('#xSel').classList.toggle('show', X.sel.size > 0); }
+});
+$('#xSel').addEventListener('click', e => {
+  const a = e.target.closest('[data-act]')?.dataset.act; if (!a) return;
+  const ids = [...X.sel];
+  if (a === 'edit') { if (ids.length !== 1) return toast('Select one article'); editorLoadRecord(byId(ids[0])); showTab('editor'); }
+  if (a === 'copy') copy(ids.join('\n'), `IDs copied: ${ids.length}`);
+  if (a === 'del') sendToDelete(ids);
+  if (a === 'clear') { X.sel.clear(); renderTable(); }
+});
+$('#xResult').addEventListener('click', e => {
+  const x = e.target.closest('[data-x]')?.dataset.x; if (!x) return;
+  const rows = filtered(), base = 'doaj-' + X.label.replace(/[^\w.-]+/g, '_').slice(0, 40);
+  if (!rows.length) return toast('No records to export');
+  if (x === 'csv') { const d = $('#xDelim').value === '\\t' ? '\t' : $('#xDelim').value; download(base + '.csv', articlesToCSV(rows, d), 'text/csv'); }
+  if (x === 'json') download(base + '.json', JSON.stringify(rows, null, 2));
+  if (x === 'bulk') download(base + '-bulk.json', JSON.stringify(rows.map(r => toPayload(r, true)), null, 2));
+  if (x === 'ids') download(base + '-ids.txt', rows.map(r => r.id).join('\n'), 'text/plain');
+  if (x === 'dois') download(base + '-dois.txt', rows.map(r => ident(r, 'doi')).filter(Boolean).join('\n'), 'text/plain');
+});
+$('#rGo').onclick = () => busy($('#rGo'), async () => {
+  const list = extractDois($('#rText').value);
+  if (!list.length) return toast('No DOIs found in the text', 'err');
+  const have = new Map(X.recs.map(r => [ident(r, 'doi').toLowerCase(), r]).filter(([d]) => d));
+  const found = list.filter(d => have.has(d)), missing = list.filter(d => !have.has(d));
+  const listSet = new Set(list);
+  const extra = [...have.keys()].filter(d => !listSet.has(d));
+  const elsewhere = new Map();
+  if ($('#rRemote').checked && missing.length) {
+    for (let i = 0; i < missing.length; i += 20) {
+      const chunk = missing.slice(i, i + 20);
+      try {
+        const r = await doaj.search('articles', chunk.map(d => 'doi:' + lq(d)).join(' OR '), 1, 100);
+        for (const a of r.results || []) elsewhere.set(ident(a, 'doi').toLowerCase(), a);
+      } catch (e) { toast('Error searching DOAJ: ' + e.message, 'err'); break; }
+    }
+  }
+  const notInDoaj = missing.filter(d => !elsewhere.has(d));
+  const block = (title, arr, cls, render = d => `<a href="https://doi.org/${esc(d)}" target="_blank" rel="noopener">${esc(d)}</a>`) => arr.length ? `
+    <div style="margin-bottom:14px"><div class="row" style="margin-bottom:4px"><span class="badge ${cls}">${arr.length}</span><b>${esc(title)}</b>
+    <button class="link small" data-copy="${esc(arr.join('\n'))}">copy</button></div>
+    <div class="mono small" style="max-height:180px;overflow:auto;line-height:1.7">${arr.map(render).join('<br>')}</div></div>` : '';
+  $('#rOut').innerHTML = `<div class="small muted" style="margin-bottom:10px">DOIs in list: ${list.length}${X.recs.length ? ` · checked against loaded articles (${X.recs.length})` : ' · journal articles not loaded — checking against the whole of DOAJ only'}</div>` +
+    block('In loaded articles', found, 'ok') +
+    block('In DOAJ, but in another set', [...elsewhere.keys()], 'warn', d => `${esc(d)} <span class="muted">— ${esc((elsewhere.get(d).bibjson.journal || {}).title || '')}</span>`) +
+    block($('#rRemote').checked ? 'Not in DOAJ' : 'Not in loaded articles', notInDoaj, 'err') +
+    (X.recs.length ? block('In DOAJ, but not in your list', extra, 'warn') : '');
+});
+$('#rOut').addEventListener('click', e => { const b = e.target.closest('[data-copy]'); if (b) copy(b.dataset.copy); });
+
+/* ---------------- SETTINGS ---------------- */
+function updKeyPill() { const p = $('#keyPill'); p.textContent = apiKey ? 'API key set' : 'No API key'; p.classList.toggle('on', !!apiKey); }
+$('#kVal').value = apiKey; $('#kRemember').checked = !!store.get('key', null);
+$('#kShow').onclick = () => { const i = $('#kVal'); i.type = i.type === 'password' ? 'text' : 'password'; $('#kShow').textContent = i.type === 'password' ? 'Show' : 'Hide'; };
+$('#kSave').onclick = () => {
+  apiKey = $('#kVal').value.trim();
+  if ($('#kRemember').checked && apiKey) { store.set('key', apiKey); sess.del('key'); } else { store.del('key'); apiKey ? sess.set('key', apiKey) : sess.del('key'); }
+  updKeyPill(); $('#kMsg').textContent = 'Saved'; setTimeout(() => $('#kMsg').textContent = '', 2000);
+};
+$('#kClear').onclick = () => { apiKey = ''; $('#kVal').value = ''; store.del('key'); sess.del('key'); updKeyPill(); toast('Key removed'); };
+$('#kTest').onclick = () => busy($('#kTest'), async () => {
+  const k = $('#kVal').value.trim(); if (!k) return toast('Enter a key');
+  const saved = apiKey; apiKey = k;
+  try { await api('GET', '/search/applications/' + encodeURIComponent('id:test'), { auth: true }); $('#kMsg').innerHTML = '<span style="color:var(--ok)">✓ Key accepted by DOAJ</span>'; }
+  catch (e) { $('#kMsg').innerHTML = e.status === 401 ? '<span style="color:var(--err)">✕ Key rejected</span>' : `<span style="color:var(--warn)">Could not verify: ${esc(e.message)}</span>`; }
+  finally { apiKey = saved; }
+});
+$('#sDelay').value = delay;
+$('#sDelay').onchange = e => { delay = Math.max(0, +e.target.value || 0); store.set('delay', delay); };
+function applyTheme(t) { if (t === 'auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', t); }
+const theme = store.get('theme', 'auto'); setSeg($('#sTheme'), theme); applyTheme(theme);
+seg($('#sTheme'), v => { store.set('theme', v); applyTheme(v); });
+
+/* ---------------- init ---------------- */
+setSorts(); fillFieldList(); renderRef(); addQRow(); updKeyPill(); renderResults(); renderUploads(); updDCount();
+try {
+  const d = JSON.parse(sessionStorage.getItem('doajs.draft') || 'null');
+  if (d && d.rec) { edBase = d.base; recordToForm(d.rec); $('#eMode').textContent = edBase?.id ? 'Editing · ' + edBase.id : 'New article'; $('#eMode').className = 'badge ' + (edBase?.id ? 'warn' : ''); }
+  else editorLoadRecord({ bibjson: {} }, true);
+} catch { editorLoadRecord({ bibjson: {} }, true); }
+edChanged();
+try { const t = sessionStorage.getItem('doajs.tab'); if (t && $('#tab-' + t)) showTab(t); } catch {}
+
+/* ---------------- examples & deep links ---------------- */
+// Physics of Wave Processes and Radio Systems: ~640 articles, a realistic mix of complete and incomplete metadata
+const EXAMPLE_ISSN = '1810-3189';
+function exampleSearch() { searchFor('articles', [{ op: 'AND', f: 'issn', v: EXAMPLE_ISSN }, { op: 'AND', f: '!_exists_', v: 'doi' }]); }
+function exampleExport() { exportFor('issn', EXAMPLE_ISSN); }
+function exportFor(mode, value) {
+  setSeg($('#xMode'), mode); $('#xQ').value = value;
+  $('#xQ').placeholder = mode === 'issn' ? 'Journal ISSN, e.g. 1810-3189' : 'Lucene query';
+  showTab('export'); $('#xGo').click();
+}
+$('#sExample').onclick = exampleSearch;
+$('#xExample').onclick = exampleExport;
+// ?tab=search|editor|bulk|export|settings  ?example=search|export
+// ?q=<lucene>&type=articles|journals  (runs the search)   ?issn=<issn> | ?xq=<lucene>  (loads the export)
+(() => {
+  const p = new URLSearchParams(location.search);
+  const tab = p.get('tab'), ex = p.get('example');
+  if (tab && $('#tab-' + tab)) showTab(tab);
+  if (ex === 'search') return exampleSearch();
+  if (ex === 'export') return exampleExport();
+  if (p.get('q')) {
+    const type = p.get('type') === 'journals' ? 'journals' : 'articles';
+    S.type = type; setSeg($('#sType'), type); setSorts(); fillFieldList(); renderRef();
+    $('#qRows').innerHTML = ''; addQRow();
+    $('#qText').value = p.get('q'); qTouched = true;
+    showTab('search'); runSearch(1);
+  } else if (p.get('issn')) exportFor('issn', p.get('issn'));
+  else if (p.get('xq')) exportFor('query', p.get('xq'));
+})();
+</script>
+</body>
+</html>
