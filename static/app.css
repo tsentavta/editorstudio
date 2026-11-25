@@ -231,10 +231,11 @@ body.viewer-open .page { max-width: none; margin: 0 min(640px, 48vw) 0 0; }
   .viewer-keys { display: none; }
 }
 
-/* на вкладке «Пакет» таблица на всю ширину, журнал — под ней */
-body[data-tab="batch"] .layout { grid-template-columns: minmax(0, 1fr); }
-body[data-tab="batch"] .term { position: static; max-height: none; }
-body[data-tab="batch"] .term-body { max-height: 360px; }
+#uploadKind { margin-bottom: 14px; }
+/* Широкая таблица и ответ API под ней. */
+body[data-tab="upload"][data-upload-kind="batch"] .layout { grid-template-columns: minmax(0, 1fr); }
+body[data-tab="upload"][data-upload-kind="batch"] .term { position: static; max-height: none; }
+body[data-tab="upload"][data-upload-kind="batch"] .term-body { max-height: 360px; }
 .btable .sub-m { font: 11px/1.5 var(--mono); color: var(--stone); word-break: break-all; }
 .btable .num { font: 12px var(--mono); color: var(--stone); }
 .btable select {
