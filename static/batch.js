@@ -591,9 +591,31 @@ function exportCsv() {
    ========================================================= */
 const V = { row: null, shown: null };
 
+function openPdfPreview(file, title = "") {
+  if (!file) return;
+  V.row = null;
+  V.shown = file;
+  document.body.classList.add("viewer-open");
+  const viewer = $("#viewer");
+  viewer.hidden = false;
+  $(".viewer-nav", viewer).hidden = true;
+  $(".viewer-keys", viewer).textContent = "Esc закрыть";
+  $("#vSelect").hidden = true;
+  $("#vPos").textContent = "ПРОСМОТР PDF";
+  $("#vMeta").innerHTML = `<div class="v-title">${esc(title || file.name)}</div>`;
+  $("#vHint").textContent = title ? file.name : "";
+  $("#vOpen").href = pdfUrl(file);
+  $("#vOpen").hidden = false;
+  showPdf(file);
+}
+
 function openViewer(i) {
   if (!B.rows[i]) return;
+  if (V.row == null) V.shown = null;
   V.row = i;
+  $(".viewer-nav").hidden = false;
+  $(".viewer-keys").textContent = "← → листать · Esc закрыть";
+  $("#vSelect").hidden = false;
   document.body.classList.add("viewer-open");
   $("#viewer").hidden = false;
   renderViewer();
@@ -687,7 +709,7 @@ async function showPdf(file) {
   let doc;
   try {
     const lib = await loadPdfJs();
-    doc = await lib.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
+    doc = await lib.getDocument({ data: new Uint8Array(await file.arrayBuffer()), isEvalSupported: false }).promise;
   } catch {
     if (my === V.task) box.innerHTML = `<iframe title="PDF ${esc(file.name)}" src="${pdfUrl(file)}#view=FitH"></iframe>`;
     return;
@@ -755,11 +777,9 @@ $("#vNextIssue").addEventListener("click", nextProblem);
 document.addEventListener("keydown", (e) => {
   if ($("#viewer").hidden || /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
   if (e.key === "Escape") closeViewer();
-  else if (e.key === "ArrowRight") { e.preventDefault(); stepViewer(1); }
-  else if (e.key === "ArrowLeft") { e.preventDefault(); stepViewer(-1); }
+  else if (V.row != null && e.key === "ArrowRight") { e.preventDefault(); stepViewer(1); }
+  else if (V.row != null && e.key === "ArrowLeft") { e.preventDefault(); stepViewer(-1); }
 });
-// на другой вкладке консоли панель не нужна
-$$(".tab").forEach((t) => t.addEventListener("click", () => { if (t.dataset.tab !== "batch" && V.row != null) closeViewer(); }));
 
 /* ---------- события ---------- */
 function resetBatch() {

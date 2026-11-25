@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="app.css?v=20261126-tabs">
 </head>
 <body>
 
@@ -25,10 +25,8 @@
     <nav class="tabs" role="tablist">
       <button class="tab is-active" data-tab="upload" role="tab">Загрузка</button>
       <button class="tab" data-tab="files" role="tab">Файлы</button>
-      <button class="tab" data-tab="batch" role="tab">Пакет</button>
       <button class="tab" data-tab="pdf" role="tab">PDF</button>
       <button class="tab" data-tab="pubs" role="tab">Публикации</button>
-      <button class="tab" data-tab="search" role="tab">Поиск</button>
     </nav>
     <div class="nav-right">
       <a class="home-link" href="../" title="Все инструменты EditorStudio">EditorStudio</a>
@@ -70,56 +68,93 @@
 
       <!-- ===== ЗАГРУЗКА ===== -->
       <section class="panel" data-panel="upload">
-        <div class="card">
-          <div class="eyebrow">ФОРМАТ</div>
-          <div class="seg" id="modeSeg">
-            <button class="seg-btn is-on" data-mode="journal">Journal XML</button>
-            <button class="seg-btn" data-mode="jats" hidden>JATS XML</button>
-            <button class="seg-btn" data-mode="jats_pdf" hidden>JATS XML + PDF</button>
-          </div>
-          <p class="hint" id="modeHint"></p>
-
-          <div class="drops">
-            <label class="drop" id="dropXml">
-              <input type="file" accept=".xml,application/xml,text/xml" id="fXml">
-              <span class="drop-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="m10 13-2 2 2 2M14 13l2 2-2 2"/></svg></span>
-              <span class="drop-title">XML-файл</span>
-              <span class="drop-name mono" data-empty="перетащите или выберите">перетащите или выберите</span>
-            </label>
-            <label class="drop" id="dropPdf" hidden>
-              <input type="file" accept=".pdf,application/pdf" id="fPdf">
-              <span class="drop-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg></span>
-              <span class="drop-title">PDF статьи</span>
-              <span class="drop-name mono" data-empty="перетащите или выберите">перетащите или выберите</span>
-            </label>
-          </div>
-
-          <label class="field">
-            <span class="label">Издательская платформа <span class="opt">необязательно</span></span>
-            <input type="text" id="platform" placeholder="например, ojs" autocomplete="off">
-          </label>
-
-          <div class="actions">
-            <button class="btn btn-primary" id="uploadBtn">Загрузить</button>
-            <button class="btn btn-ghost" id="resetBtn">Очистить</button>
-          </div>
-          <div class="note" id="uploadNote" hidden></div>
+        <div class="seg" id="uploadKind" aria-label="Способ загрузки">
+          <button type="button" class="seg-btn is-on" data-upload-kind="xml" aria-pressed="true">XML отдельно</button>
+          <button type="button" class="seg-btn" data-upload-kind="batch" aria-pressed="false">Выпуск с PDF</button>
         </div>
-
-        <div class="card" id="procCard" hidden>
-          <div class="card-head">
-            <div>
-              <div class="eyebrow">ОБРАБОТКА</div>
-              <div class="mono uid" id="procUid"></div>
+        <div id="uploadXml">
+          <div class="card">
+            <div class="eyebrow">ФОРМАТ</div>
+            <div class="seg" id="modeSeg">
+              <button class="seg-btn is-on" data-mode="journal">Journal XML</button>
+              <button class="seg-btn" data-mode="jats" hidden>JATS XML</button>
+              <button class="seg-btn" data-mode="jats_pdf" hidden>JATS XML + PDF</button>
             </div>
-            <button class="btn btn-ghost btn-sm" id="procOpen">Открыть в «Файлах»</button>
+            <p class="hint" id="modeHint"></p>
+
+            <div class="drops">
+              <label class="drop" id="dropXml">
+                <input type="file" accept=".xml,application/xml,text/xml" id="fXml">
+                <span class="drop-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="m10 13-2 2 2 2M14 13l2 2-2 2"/></svg></span>
+                <span class="drop-title">XML-файл</span>
+                <span class="drop-name mono" data-empty="перетащите или выберите">перетащите или выберите</span>
+              </label>
+              <label class="drop" id="dropPdf" hidden>
+                <input type="file" accept=".pdf,application/pdf" id="fPdf">
+                <span class="drop-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h4"/></svg></span>
+                <span class="drop-title">PDF статьи</span>
+                <span class="drop-name mono" data-empty="перетащите или выберите">перетащите или выберите</span>
+              </label>
+            </div>
+
+            <label class="field">
+              <span class="label">Издательская платформа <span class="opt">необязательно</span></span>
+              <input type="text" id="platform" placeholder="например, ojs" autocomplete="off">
+            </label>
+
+            <div class="actions">
+              <button type="button" class="btn btn-ghost" id="previewUploadPdf" hidden>Просмотреть PDF</button>
+              <button class="btn btn-primary" id="uploadBtn">Загрузить</button>
+              <button class="btn btn-ghost" id="resetBtn">Очистить</button>
+            </div>
+            <div class="note" id="uploadNote" hidden></div>
           </div>
-          <ol class="steps" id="procSteps">
-            <li data-code="1">Загружен</li>
-            <li data-code="2">Обрабатывается</li>
-            <li data-code="3">Обработан</li>
-          </ol>
-          <div id="procBody"></div>
+
+          <div class="card" id="procCard" hidden>
+            <div class="card-head">
+              <div>
+                <div class="eyebrow">ОБРАБОТКА</div>
+                <div class="mono uid" id="procUid"></div>
+              </div>
+              <button class="btn btn-ghost btn-sm" id="procOpen">Открыть в «Файлах»</button>
+            </div>
+            <ol class="steps" id="procSteps">
+              <li data-code="1">Загружен</li>
+              <li data-code="2">Обрабатывается</li>
+              <li data-code="3">Обработан</li>
+            </ol>
+            <div id="procBody"></div>
+          </div>
+        </div>
+        <div id="uploadBatch" hidden>
+          <div class="card">
+            <div class="eyebrow">РЕЖИМ</div>
+            <div class="seg" id="bModeSeg">
+              <button class="seg-btn" data-bmode="jats" hidden>JATS: статьи + PDF</button>
+              <button class="seg-btn is-on" data-bmode="journal">Journal XML: выпуск + PDF</button>
+            </div>
+            <p class="hint" id="bHint"></p>
+
+            <label class="drop drop-wide" id="bDrop">
+              <input type="file" id="bFiles" multiple accept=".xml,.pdf,application/xml,text/xml,application/pdf">
+              <span class="drop-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3h7l4 4v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M15 3v4h4"/><path d="M4 7v12a2 2 0 0 0 2 2h9"/></svg></span>
+              <span class="drop-title" id="bDropTitle">Все XML и PDF разом</span>
+              <span class="drop-name mono" id="bDropName">перетащите или выберите сразу все файлы — пары подберутся по имени</span>
+            </label>
+
+            <div class="bsum" id="bSummary" hidden></div>
+            <div id="bTable"></div>
+
+            <div class="actions" id="bActions" hidden>
+              <button class="btn btn-primary" id="bStart">Загрузить</button>
+              <button class="btn btn-ghost" id="bStop" hidden>Остановить</button>
+              <button class="btn btn-ghost" id="bRetry" hidden>Повторить упавшие</button>
+              <button class="btn btn-ghost" id="bSign" hidden>Подписать обработанные</button>
+              <button class="btn btn-ghost" id="bCsv" hidden>Отчёт CSV</button>
+              <button class="btn btn-ghost" id="bClear">Очистить</button>
+            </div>
+            <div id="bNote"></div>
+          </div>
         </div>
       </section>
 
@@ -144,37 +179,7 @@
         </div>
       </section>
 
-      <!-- ===== ПАКЕТ ===== -->
-      <section class="panel" data-panel="batch" hidden>
-        <div class="card">
-          <div class="eyebrow">РЕЖИМ</div>
-          <div class="seg" id="bModeSeg">
-            <button class="seg-btn" data-bmode="jats" hidden>JATS: статьи + PDF</button>
-            <button class="seg-btn is-on" data-bmode="journal">Journal XML: выпуск + PDF</button>
-          </div>
-          <p class="hint" id="bHint"></p>
 
-          <label class="drop drop-wide" id="bDrop">
-            <input type="file" id="bFiles" multiple accept=".xml,.pdf,application/xml,text/xml,application/pdf">
-            <span class="drop-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3h7l4 4v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M15 3v4h4"/><path d="M4 7v12a2 2 0 0 0 2 2h9"/></svg></span>
-            <span class="drop-title" id="bDropTitle">Все XML и PDF разом</span>
-            <span class="drop-name mono" id="bDropName">перетащите или выберите сразу все файлы — пары подберутся по имени</span>
-          </label>
-
-          <div class="bsum" id="bSummary" hidden></div>
-          <div id="bTable"></div>
-
-          <div class="actions" id="bActions" hidden>
-            <button class="btn btn-primary" id="bStart">Загрузить</button>
-            <button class="btn btn-ghost" id="bStop" hidden>Остановить</button>
-            <button class="btn btn-ghost" id="bRetry" hidden>Повторить упавшие</button>
-            <button class="btn btn-ghost" id="bSign" hidden>Подписать обработанные</button>
-            <button class="btn btn-ghost" id="bCsv" hidden>Отчёт CSV</button>
-            <button class="btn btn-ghost" id="bClear">Очистить</button>
-          </div>
-          <div id="bNote"></div>
-        </div>
-      </section>
 
       <section class="panel" data-panel="pdf" hidden>
         <div class="card">
@@ -200,6 +205,19 @@
       <!-- ===== ПУБЛИКАЦИИ ===== -->
       <section class="panel" data-panel="pubs" hidden>
         <div class="card">
+          <div class="eyebrow">ПОИСК ПУБЛИКАЦИИ</div>
+          <div class="seg" id="searchSeg">
+            <button class="seg-btn is-on" data-by="doi">DOI</button>
+            <button class="seg-btn" data-by="edn">EDN</button>
+          </div>
+          <div class="row">
+            <input type="text" id="searchQ" class="mono grow" placeholder="10.18469/1810-3189.2025.28.1.7-15" autocomplete="off">
+            <button class="btn btn-ghost" id="searchBtn">Найти</button>
+          </div>
+          <label class="check"><input type="checkbox" id="searchPublic"><span>искать по всем организациям <span class="mono" style="font-size:12px;color:var(--stone)">public=true</span></span></label>
+          <div id="searchResult"></div>
+        </div>
+        <div class="card">
           <div class="eyebrow">ПУБЛИКАЦИЯ</div>
           <div class="row">
             <input type="text" id="artUid" class="mono grow" placeholder="article_uid" autocomplete="off">
@@ -213,23 +231,6 @@
           <textarea id="batchUids" class="mono" rows="4" placeholder="article_uid — по одному на строку или через запятую"></textarea>
           <div class="actions"><button class="btn btn-ghost" id="batchBtn">Получить статусы</button></div>
           <div id="batchResult"></div>
-        </div>
-      </section>
-
-      <!-- ===== ПОИСК ===== -->
-      <section class="panel" data-panel="search" hidden>
-        <div class="card">
-          <div class="eyebrow">ПОИСК ПУБЛИКАЦИИ</div>
-          <div class="seg" id="searchSeg">
-            <button class="seg-btn is-on" data-by="doi">DOI</button>
-            <button class="seg-btn" data-by="edn">EDN</button>
-          </div>
-          <div class="row">
-            <input type="text" id="searchQ" class="mono grow" placeholder="10.18469/1810-3189.2025.28.1.7-15" autocomplete="off">
-            <button class="btn btn-ghost" id="searchBtn">Найти</button>
-          </div>
-          <label class="check"><input type="checkbox" id="searchPublic"><span>искать по всем организациям <span class="mono" style="font-size:12px;color:var(--stone)">public=true</span></span></label>
-          <div id="searchResult"></div>
         </div>
       </section>
     </div>
@@ -270,8 +271,8 @@
   <div class="hint mono" id="vHint"></div>
 </aside>
 
-<script src="app.js?v=20261126-pdf-issue"></script>
-<script src="batch.js?v=20261126-pdf-issue"></script>
-<script src="pdf-issue.js?v=20261126"></script>
+<script src="app.js?v=20261126-tabs"></script>
+<script src="batch.js?v=20261126-tabs"></script>
+<script src="pdf-issue.js?v=20261126-tabs"></script>
 </body>
 </html>

@@ -45,6 +45,7 @@ function issuePdfRender() {
       const file = selectable
         ? `<select data-pdf-issue-row="${index}" aria-label="PDF для ${esc(row.doi)}" ${issuePdfBusy ? "disabled" : ""}><option value="">Выберите PDF</option>${options}</select>`
         : esc(row.pdf?.file.name || "—");
+      const preview = row.pdf ? ` <button type="button" class="btn btn-ghost btn-sm" data-pdf-preview="${index}">Просмотреть PDF</button>` : "";
       let message = row.message;
       if (issuePdfAssignable(row) && row.pdf && !ready.has(row)) {
         message = row.pdf.dois.length && !row.pdf.dois.includes(row.doi)
@@ -53,7 +54,7 @@ function issuePdfRender() {
         message = row.pdf.dois.length ? "DOI совпадает" : "Выбрано вручную";
       }
       return `<tr><td>${row.title ? `<b>${esc(row.title)}</b><br>` : ""}<span class="mono">${esc(row.doi)}</span></td>
-        <td>${file}</td><td>${esc(message || "PDF не выбран")}</td></tr>`;
+        <td>${file}${preview}</td><td>${esc(message || "PDF не выбран")}</td></tr>`;
     }).join("")}</tbody></table></div>` : "";
 }
 
@@ -158,6 +159,13 @@ $("#pdfIssueLookup").addEventListener("submit", async (event) => {
     issuePdfStatus.textContent = "";
   } finally { issuePdfSetBusy(false); }
   await issuePdfScan();
+});
+
+issuePdfRows.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-pdf-preview]");
+  if (!button) return;
+  const row = issuePublications[Number(button.dataset.pdfPreview)];
+  if (row?.pdf) openPdfPreview(row.pdf.file, row.title || row.doi);
 });
 
 issuePdfRows.addEventListener("change", (event) => {

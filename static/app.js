@@ -220,11 +220,10 @@ const HERO = {
   upload: ["Загрузка статей в <em>Метафору</em>", "JATS или Journal XML, PDF к статьям, статус обработки и подписание — через официальный API. Ключ хранится на локальном сервере и в браузер не передаётся."],
   files: ["Статус и <em>файлы</em>", "Проверка обработки XML, догрузка PDF и удаление файла вместе с его публикациями."],
   pdf: ["PDF к <em>публикации</em>", "Введите DOI статей выпуска, подберите PDF и проверьте пары перед отправкой."],
-  pubs: ["Публикации и <em>подписание</em>", "Полные метаданные статьи, PDF к конкретной публикации, подписание и отзыв подписи."],
-  batch: ["Пакетная <em>загрузка</em>", "Все статьи номера разом: XML и PDF подбираются в пары по имени файла, загружаются по очереди, статусы обновляются сами."],
-  search: ["Поиск по <em>DOI</em> и EDN", "Найти публикацию своей организации — или по всей системе с флагом public."],
+  pubs: ["Публикации и <em>подписание</em>", "Поиск по DOI и EDN, метаданные статьи, прикрепление PDF и управление подписью."],
 };
 function setTab(name) {
+  if (document.body.dataset.tab !== name && !$("#viewer").hidden) closeViewer();
   document.body.dataset.tab = name;
   $$(".tab").forEach((t) => t.classList.toggle("is-active", t.dataset.tab === name));
   $$(".panel").forEach((p) => (p.hidden = p.dataset.panel !== name));
@@ -232,6 +231,17 @@ function setTab(name) {
   $("#heroLead").textContent = HERO[name][1];
 }
 $$("[data-tab]").forEach((b) => b.addEventListener("click", (e) => { e.preventDefault(); setTab(b.dataset.tab); }));
+$$("#uploadKind button").forEach((button) => button.addEventListener("click", () => {
+  const batch = button.dataset.uploadKind === "batch";
+  if (!$("#viewer").hidden) closeViewer();
+  $("#uploadXml").hidden = batch;
+  $("#uploadBatch").hidden = !batch;
+  document.body.dataset.uploadKind = button.dataset.uploadKind;
+  $$("#uploadKind button").forEach((option) => {
+    option.classList.toggle("is-on", option === button);
+    option.setAttribute("aria-pressed", String(option === button));
+  });
+}));
 
 document.addEventListener("click", (e) => {
   const f = e.target.closest("[data-open-file]");
@@ -335,6 +345,7 @@ function setMode(m) {
   if (!MODE.direct) store.set("metafora.mode", m);
   $$("#modeSeg .seg-btn").forEach((b) => b.classList.toggle("is-on", b.dataset.mode === m));
   $("#dropPdf").hidden = !MODES[m].pdf;
+  refreshUploadPdfPreview();
   $("#modeHint").textContent = MODES[m].hint;
 }
 $$("#modeSeg .seg-btn").forEach((b) => b.addEventListener("click", () => setMode(b.dataset.mode)));
@@ -357,10 +368,17 @@ function wireDrop(drop, input) {
 }
 const updXml = wireDrop($("#dropXml"), $("#fXml"));
 const updPdf = wireDrop($("#dropPdf"), $("#fPdf"));
+const previewUploadPdf = $("#previewUploadPdf");
+function refreshUploadPdfPreview() {
+  previewUploadPdf.hidden = !MODES[mode].pdf || !$("#fPdf").files.length;
+}
+$("#fPdf").addEventListener("change", refreshUploadPdfPreview);
+$("#dropPdf").addEventListener("drop", refreshUploadPdfPreview);
+previewUploadPdf.addEventListener("click", () => openPdfPreview($("#fPdf").files[0]));
 
 $("#resetBtn").addEventListener("click", () => {
   $("#fXml").value = ""; $("#fPdf").value = ""; $("#platform").value = "";
-  updXml(); updPdf(); $("#uploadNote").hidden = true;
+  updXml(); updPdf(); refreshUploadPdfPreview(); $("#uploadNote").hidden = true;
 });
 
 $("#uploadBtn").addEventListener("click", async () => {
@@ -447,9 +465,11 @@ function fileDetailsHtml(uid, d) {
     <div class="pdf-up">
       <span class="btn btn-ghost btn-sm file-btn">Выбрать PDF<input type="file" accept=".pdf,application/pdf" data-role="pdf"></span>
       <span class="fname" data-role="fname">файл не выбран</span>
+      <button type="button" class="btn btn-ghost btn-sm" data-role="pdfpreview" disabled>Просмотреть PDF</button>
       <button class="btn btn-ghost btn-sm" data-role="pdfgo" ${pdf ? "disabled" : ""}>Загрузить PDF</button>
     </div>
     <div class="actions"><button class="btn btn-ghost btn-sm btn-danger" data-role="del">Удалить файл и публикации</button></div>
+    <p class="hint">В «Метафоре» будут удалены XML и все созданные из него статьи. Если в XML загружен выпуск, удалятся все его статьи.</p>
     <div data-role="msg"></div>
   </div>`;
   return h;
@@ -457,6 +477,7 @@ function fileDetailsHtml(uid, d) {
 function wireFileActions(root, uid) {
   const inp = $("[data-role=pdf]", root), fname = $("[data-role=fname]", root), msg = $("[data-role=msg]", root);
   inp.addEventListener("change", () => (fname.textContent = inp.files[0] ? `${inp.files[0].name} · ${kb(inp.files[0].size)}` : "файл не выбран"));
+  wirePdfPreview(inp, $("[data-role=pdfpreview]", root));
   $("[data-role=pdfgo]", root).addEventListener("click", async (e) => {
     if (!inp.files[0]) { msg.innerHTML = '<div class="note err"><b>Выберите PDF</b></div>'; return; }
     busy(e.currentTarget, true);
@@ -466,7 +487,7 @@ function wireFileActions(root, uid) {
     if (r.ok) patchHistory(uid, { pdf: true });
   });
   $("[data-role=del]", root).addEventListener("click", async (e) => {
-    if (!confirm(`Удалить файл ${uid} и все созданные из него публикации?\n\nДействие необратимо. Файлы с подписанными публикациями удалить нельзя.`)) return;
+    if (!confirm(`Удалить файл ${uid} и все созданные из него публикации?\n\nДействие необратимо. «Метафора» разрешает удалить обработанный файл, если ни одна из его публикаций не подписана.`)) return;
     busy(e.currentTarget, true);
     const r = await call("DELETE", `/api/v2/files/${encodeURIComponent(uid)}`);
     busy(e.currentTarget, false);
@@ -565,6 +586,7 @@ function pubHtml(uid, article, sig) {
       <div class="pdf-up">
         <span class="btn btn-ghost btn-sm file-btn">Выбрать PDF<input type="file" accept=".pdf,application/pdf" data-role="ppdf"></span>
         <span class="fname" data-role="pfname">файл не выбран</span>
+        <button type="button" class="btn btn-ghost btn-sm" data-role="ppdfpreview" disabled>Просмотреть PDF</button>
         <button class="btn btn-ghost btn-sm" data-role="ppdfgo" ${signed ? "disabled title='К подписанной публикации PDF не загружается'" : ""}>Загрузить PDF</button>
       </div>
       <div class="eyebrow">ПОДПИСАНИЕ</div>
@@ -603,6 +625,7 @@ function renderPub() {
   const msg = $("[data-role=pmsg]", out);
   const inp = $("[data-role=ppdf]", out), fn = $("[data-role=pfname]", out);
   inp.addEventListener("change", () => (fn.textContent = inp.files[0] ? `${inp.files[0].name} · ${kb(inp.files[0].size)}` : "файл не выбран"));
+  wirePdfPreview(inp, $("[data-role=ppdfpreview]", out));
   $("[data-role=ppdfgo]", out).addEventListener("click", async (e) => {
     if (!inp.files[0]) { msg.innerHTML = '<div class="note err"><b>Выберите PDF</b></div>'; return; }
     busy(e.currentTarget, true);
@@ -691,6 +714,11 @@ $("#searchBtn").addEventListener("click", doSearch);
 $("#searchQ").addEventListener("keydown", (e) => e.key === "Enter" && doSearch());
 
 /* ========================================================= */
+function wirePdfPreview(input, button) {
+  input.addEventListener("change", () => { button.disabled = !input.files.length; });
+  button.addEventListener("click", () => openPdfPreview(input.files[0]));
+}
+
 function uploadPublicationPdf(uid, pdf) {
   return call("POST", `/api/v2/publications/${encodeURIComponent(uid)}/pdf/`, { form: { pdf } });
 }
