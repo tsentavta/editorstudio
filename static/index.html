@@ -61,7 +61,7 @@
   <section class="hero">
     <div class="eyebrow eyebrow-brand">ИС «МЕТАФОРА» · РЦНИ · API V2.0.2</div>
     <h1 id="heroTitle">Загрузка статей в <em>Метафору</em></h1>
-    <p class="lead" id="heroLead">JATS или Journal XML, PDF к статьям, статус обработки и подписание — через официальный API. Ключ хранится на локальном сервере и в браузер не передаётся.</p>
+    <p class="lead" id="heroLead">Journal XML, PDF к статьям, статус обработки и подписание через официальный API.</p>
   </section>
 
   <div class="layout">
@@ -73,8 +73,8 @@
           <div class="eyebrow">ФОРМАТ</div>
           <div class="seg" id="modeSeg">
             <button class="seg-btn is-on" data-mode="journal">Journal XML</button>
-            <button class="seg-btn" data-mode="jats">JATS XML</button>
-            <button class="seg-btn" data-mode="jats_pdf">JATS XML + PDF</button>
+            <button class="seg-btn" data-mode="jats" hidden>JATS XML</button>
+            <button class="seg-btn" data-mode="jats_pdf" hidden>JATS XML + PDF</button>
           </div>
           <p class="hint" id="modeHint"></p>
 
@@ -148,8 +148,8 @@
         <div class="card">
           <div class="eyebrow">РЕЖИМ</div>
           <div class="seg" id="bModeSeg">
-            <button class="seg-btn is-on" data-bmode="jats">JATS: статьи + PDF</button>
-            <button class="seg-btn" data-bmode="journal">Journal XML: выпуск + PDF</button>
+            <button class="seg-btn" data-bmode="jats" hidden>JATS: статьи + PDF</button>
+            <button class="seg-btn is-on" data-bmode="journal">Journal XML: выпуск + PDF</button>
           </div>
           <p class="hint" id="bHint"></p>
 
@@ -248,7 +248,7 @@
   <div class="hint mono" id="vHint"></div>
 </aside>
 
-<script src="app.js"></script>
-<script src="batch.js"></script>
+<script src="app.js?v=20261126"></script>
+<script src="batch.js?v=20261126"></script>
 </body>
 </html>

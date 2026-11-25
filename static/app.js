@@ -67,6 +67,28 @@ async function call(method, path, { query, json, form, silent } = {}) {
   await MODE.ready;
   let shownUrl = path;
   if (query) shownUrl += "?" + new URLSearchParams(query).toString();
+  if (MODE.direct && method === "POST") {
+    let uploadError = "";
+    if (path.startsWith("/api/v2/files/jats/")) {
+      uploadError = "Загрузка JATS на сайте отключена. Используйте Journal XML.";
+    } else if (path === "/api/v2/files/journal/" && form?.xml) {
+      try {
+        const bytes = new Uint8Array(await form.xml.arrayBuffer());
+        const encoding = bytes[0] === 0 || bytes[0] === 0xfe ? "utf-16be"
+          : bytes[1] === 0 || bytes[0] === 0xff ? "utf-16le" : "utf-8";
+        const root = new DOMParser().parseFromString(new TextDecoder(encoding).decode(bytes), "application/xml").documentElement;
+        if (root?.nodeName !== "journal") uploadError = "Выберите Journal XML с корневым элементом <journal>. Загрузка JATS на сайте отключена.";
+      } catch {
+        uploadError = "Не удалось прочитать Journal XML.";
+      }
+    }
+    if (uploadError) {
+      const data = { message: uploadError, error: "UPLOAD_FORMAT_DISABLED" };
+      const entry = { id: ++seq, method, url: shownUrl, status: 0, ms: 0, req: null, at: new Date(), data };
+      if (!silent) pushLog(entry);
+      return { ok: false, status: 0, data, entry };
+    }
+  }
   const url = (MODE.direct ? METAFORA : "") + shownUrl;
   const opts = { method, headers: {} };
   if (MODE.direct) {
@@ -242,7 +264,7 @@ async function detectMode() {
   } catch { /* нет локального сервера */ }
   MODE.direct = true;
   document.body.classList.add("is-direct");
-  HERO.upload[1] = "JATS или Journal XML, PDF к статьям, статус обработки и подписание — через официальный API. Ключ организации хранится только в вашем браузере и уходит только на metafora.rcsi.science.";
+  HERO.upload[1] = "Journal XML, PDF к статьям, статус обработки и подписание — через официальный API. Ключ организации хранится только в вашем браузере и уходит только на metafora.rcsi.science.";
   if ($("#heroTitle").innerHTML === HERO.upload[0]) $("#heroLead").textContent = HERO.upload[1];
   refreshKeyBadge();
   if (!currentKey()) openKeyPanel();
@@ -303,11 +325,13 @@ const MODES = {
   jats: { path: "/api/v2/files/jats/xml/", pdf: false, hint: "JATS 1.4 Archiving (OASIS). Корень — <article>. PDF можно догрузить позже." },
   jats_pdf: { path: "/api/v2/files/jats/xml_pdf/", pdf: true, hint: "JATS XML и PDF статьи одним запросом." },
 };
-let mode = store.get("metafora.mode", "journal");
-if (!MODES[mode]) mode = "journal";
+const savedMode = store.get("metafora.mode", "journal");
+let mode = "journal";
 
 function setMode(m) {
-  mode = m; store.set("metafora.mode", m);
+  if (MODE.direct && m !== "journal") return;
+  mode = m;
+  if (!MODE.direct) store.set("metafora.mode", m);
   $$("#modeSeg .seg-btn").forEach((b) => b.classList.toggle("is-on", b.dataset.mode === m));
   $("#dropPdf").hidden = !MODES[m].pdf;
   $("#modeHint").textContent = MODES[m].hint;
@@ -339,6 +363,7 @@ $("#resetBtn").addEventListener("click", () => {
 });
 
 $("#uploadBtn").addEventListener("click", async () => {
+  await MODE.ready;
   const note = $("#uploadNote");
   const xml = $("#fXml").files[0], pdf = $("#fPdf").files[0];
   const m = MODES[mode];
@@ -658,6 +683,11 @@ $("#searchBtn").addEventListener("click", doSearch);
 $("#searchQ").addEventListener("keydown", (e) => e.key === "Enter" && doSearch());
 
 /* ========================================================= */
-setMode(mode);
+$("#modeHint").textContent = MODES.journal.hint;
+MODE.ready.then(() => {
+  $$("#modeSeg [data-mode^=jats]").forEach((button) => { button.hidden = MODE.direct; });
+  setMode(!MODE.direct && MODES[savedMode] ? savedMode : "journal");
+  if (MODE.direct) $("#modeHint").textContent += " Загрузка JATS на сайте отключена.";
+});
 renderHistory();
 

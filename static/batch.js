@@ -15,7 +15,7 @@
    ========================================================= */
 
 const B = {
-  mode: "jats",
+  mode: "journal",
   rows: [],          // строки таблицы
   pdfs: [],          // все выбранные PDF (File)
   issueXml: null,    // journal: XML выпуска
@@ -199,8 +199,10 @@ function jatsInfo(text) {
 
 /* ---------- приём файлов ---------- */
 async function addFiles(list) {
-  const files = [...list].filter((f) => f.size > 0 && (isXml(f) || isPdf(f)));
-  const skipped = list.length - files.length;
+  const selected = [...list];
+  await MODE.ready;
+  const files = selected.filter((f) => f.size > 0 && (isXml(f) || isPdf(f)));
+  const skipped = selected.length - files.length;
   const newPdfs = files.filter(isPdf);
   const newXml = files.filter(isXml);
   // PDF с тем же именем заменяют прежний
@@ -768,7 +770,7 @@ function resetBatch() {
   $("#bFiles").value = ""; bNote(""); renderBatch();
 }
 $$("#bModeSeg .seg-btn").forEach((b) => b.addEventListener("click", () => {
-  if (B.running || b.dataset.bmode === B.mode) return;
+  if (B.running || b.dataset.bmode === B.mode || (MODE.direct && b.dataset.bmode === "jats")) return;
   if ((B.rows.length || B.pdfs.length || B.issueXml) && !confirm("Сменить режим? Выбранные файлы и таблица очистятся.")) return;
   B.mode = b.dataset.bmode;
   $$("#bModeSeg .seg-btn").forEach((x) => x.classList.toggle("is-on", x === b));
@@ -805,4 +807,12 @@ $("#bClear").addEventListener("click", () => {
 });
 window.addEventListener("beforeunload", (e) => { if (B.running) { e.preventDefault(); e.returnValue = ""; } });
 
+MODE.ready.then(() => {
+  B.mode = MODE.direct ? "journal" : "jats";
+  $$("#bModeSeg .seg-btn").forEach((button) => {
+    button.hidden = MODE.direct && button.dataset.bmode === "jats";
+    button.classList.toggle("is-on", button.dataset.bmode === B.mode);
+  });
+  renderBatch();
+});
 renderBatch();
