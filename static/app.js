@@ -219,6 +219,7 @@ function busy(btn, on) { btn.disabled = on; btn.classList.toggle("is-busy", on);
 const HERO = {
   upload: ["Загрузка статей в <em>Метафору</em>", "JATS или Journal XML, PDF к статьям, статус обработки и подписание — через официальный API. Ключ хранится на локальном сервере и в браузер не передаётся."],
   files: ["Статус и <em>файлы</em>", "Проверка обработки XML, догрузка PDF и удаление файла вместе с его публикациями."],
+  pdf: ["PDF к <em>публикации</em>", "Найдите загруженную статью и прикрепите к ней PDF."],
   pubs: ["Публикации и <em>подписание</em>", "Полные метаданные статьи, PDF к конкретной публикации, подписание и отзыв подписи."],
   batch: ["Пакетная <em>загрузка</em>", "Все статьи номера разом: XML и PDF подбираются в пары по имени файла, загружаются по очереди, статусы обновляются сами."],
   search: ["Поиск по <em>DOI</em> и EDN", "Найти публикацию своей организации — или по всей системе с флагом public."],
@@ -605,7 +606,7 @@ function renderPub() {
   $("[data-role=ppdfgo]", out).addEventListener("click", async (e) => {
     if (!inp.files[0]) { msg.innerHTML = '<div class="note err"><b>Выберите PDF</b></div>'; return; }
     busy(e.currentTarget, true);
-    const r = await call("POST", `/api/v2/publications/${encodeURIComponent(uid)}/pdf/`, { form: { pdf: inp.files[0] } });
+    const r = await uploadPublicationPdf(uid, inp.files[0]);
     busy(e.currentTarget, false);
     msg.innerHTML = r.ok ? okHtml("PDF загружен") : errorHtml(r);
   });
@@ -659,14 +660,18 @@ $$("#searchSeg .seg-btn").forEach((b) => b.addEventListener("click", () => {
   $$("#searchSeg .seg-btn").forEach((x) => x.classList.toggle("is-on", x === b));
   $("#searchQ").placeholder = searchBy === "doi" ? "10.18469/1810-3189.2025.28.1.7-15" : "ABCDEF";
 }));
+function publicationPath(by, q) {
+  if (by === "uid") return "/api/v2/publications/" + encodeURIComponent(q);
+  if (by === "doi") q = q.replace(/^https?:\/\/(dx\.)?doi\.org\//i, "").replace(/^doi:\s*/i, "");
+  return by === "doi"
+    ? "/api/v2/publications/doi/" + q.split("/").map(encodeURIComponent).join("/")
+    : "/api/v2/publications/edn/" + encodeURIComponent(q);
+}
 async function doSearch() {
   let q = $("#searchQ").value.trim();
   const out = $("#searchResult");
   if (!q) { out.innerHTML = '<div class="note err"><b>Введите значение</b></div>'; return; }
-  if (searchBy === "doi") q = q.replace(/^https?:\/\/(dx\.)?doi\.org\//i, "").replace(/^doi:\s*/i, "");
-  const path = searchBy === "doi"
-    ? "/api/v2/publications/doi/" + q.split("/").map(encodeURIComponent).join("/")
-    : "/api/v2/publications/edn/" + encodeURIComponent(q);
+  const path = publicationPath(searchBy, q);
   const b = $("#searchBtn"); busy(b, true);
   const r = await call("GET", path, { query: $("#searchPublic").checked ? { public: "true" } : undefined });
   busy(b, false);
@@ -683,6 +688,89 @@ $("#searchBtn").addEventListener("click", doSearch);
 $("#searchQ").addEventListener("keydown", (e) => e.key === "Enter" && doSearch());
 
 /* ========================================================= */
+function uploadPublicationPdf(uid, pdf) {
+  return call("POST", `/api/v2/publications/${encodeURIComponent(uid)}/pdf/`, { form: { pdf } });
+}
+
+const pdfId = $("#pdfId"), pdfIdType = $("#pdfIdType"), pdfFind = $("#pdfFind");
+const pdfArticle = $("#pdfArticle"), pdfAttach = $("#pdfAttach"), pdfInput = $("#pdfAttachFile");
+const pdfGo = $("#pdfAttachGo"), pdfResult = $("#pdfAttachResult");
+const updatePdfFile = wireDrop($("#pdfAttachDrop"), pdfInput);
+let pdfTarget = null;
+let pdfLookupVersion = 0;
+
+function clearPdfTarget() {
+  pdfLookupVersion++;
+  pdfTarget = null;
+  pdfArticle.replaceChildren();
+  pdfAttach.hidden = true;
+  pdfInput.value = "";
+  updatePdfFile();
+  pdfResult.replaceChildren();
+}
+pdfId.addEventListener("input", clearPdfTarget);
+pdfIdType.addEventListener("change", () => {
+  pdfId.placeholder = { doi: "DOI статьи", edn: "EDN статьи", uid: "article_uid" }[pdfIdType.value];
+  clearPdfTarget();
+});
+
+$("#pdfLookup").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  if (pdfFind.disabled) return;
+  clearPdfTarget();
+  const value = pdfId.value.trim();
+  if (!value) { pdfArticle.textContent = "Введите идентификатор статьи."; return; }
+  const version = pdfLookupVersion;
+  const by = pdfIdType.value;
+  busy(pdfFind, true);
+  let uid = value;
+  let status;
+  if (by !== "uid") {
+    const lookup = await call("GET", publicationPath(by, value));
+    status = lookup.data?.data;
+    uid = status?.article_uid;
+    if (!lookup.ok || !uid || version !== pdfLookupVersion) {
+      busy(pdfFind, false);
+      if (version === pdfLookupVersion) pdfArticle.innerHTML = lookup.ok
+        ? '<div class="note err">Ответ API не содержит article_uid.</div>' : errorHtml(lookup);
+      return;
+    }
+  }
+  const r = await call("GET", publicationPath("uid", uid));
+  busy(pdfFind, false);
+  if (version !== pdfLookupVersion) return;
+  if (!r.ok) { pdfArticle.innerHTML = errorHtml(r); return; }
+  const article = r.data?.article || r.data?.data?.article || {};
+  const meta = article.RUS || article.ENG || Object.values(article)[0];
+  if (!meta?.title) { pdfArticle.textContent = "В ответе API нет названия статьи."; return; }
+  pdfTarget = uid;
+  pdfArticle.innerHTML = `<div class="sub"><h2 class="pub-title">${esc(meta.title)}</h2>
+    <dl class="kv"><dt>DOI</dt><dd>${esc(meta.doi || "—")}</dd><dt>article_uid</dt><dd>${esc(uid)}</dd></dl>
+    ${status?.signed_at ? '<p class="hint">Статья подписана. Для загрузки PDF сначала отзовите подпись во вкладке «Публикации».</p>' : ""}
+    </div>`;
+  pdfAttach.hidden = false;
+  pdfGo.disabled = Boolean(status?.signed_at);
+});
+
+pdfGo.addEventListener("click", async () => {
+  if (!pdfTarget || pdfGo.disabled) return;
+  const file = pdfInput.files[0];
+  if (!file?.size || !/\.pdf$/i.test(file.name)) {
+    pdfResult.innerHTML = '<div class="note err">Выберите непустой PDF-файл.</div>';
+    return;
+  }
+  busy(pdfGo, true);
+  pdfId.disabled = pdfIdType.disabled = pdfFind.disabled = pdfInput.disabled = true;
+  const r = await uploadPublicationPdf(pdfTarget, file);
+  busy(pdfGo, false);
+  pdfId.disabled = pdfIdType.disabled = pdfFind.disabled = pdfInput.disabled = false;
+  pdfResult.innerHTML = r.ok ? okHtml("PDF прикреплён к статье") : errorHtml(r);
+  if (r.ok) {
+    pdfInput.value = "";
+    updatePdfFile();
+  }
+});
+
 $("#modeHint").textContent = MODES.journal.hint;
 MODE.ready.then(() => {
   $$("#modeSeg [data-mode^=jats]").forEach((button) => { button.hidden = MODE.direct; });
