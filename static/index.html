@@ -47,7 +47,7 @@
     </div>
     <p class="hint" style="margin:0">Ключ организации из личного кабинета <a href="https://metafora.rcsi.science" target="_blank" rel="noopener">metafora.rcsi.science</a>. Хранится только в этом браузере и отправляется только в «Метафору» – у EditorStudio нет сервера.</p>
     <div class="row">
-      <input type="password" id="keyInput" class="mono grow" placeholder="вставьте ключ" autocomplete="off" spellcheck="false">
+      <input type="password" id="keyInput" class="mono grow ym-disable-keys ym-hide-content" placeholder="вставьте ключ" autocomplete="off" spellcheck="false">
       <button type="button" class="btn btn-ghost" id="keyToggle">показать</button>
     </div>
     <label class="check"><input type="checkbox" id="keyRemember"><span>запомнить на этом компьютере <span class="muted">(иначе – до закрытия вкладки)</span></span></label>
@@ -245,7 +245,7 @@
     </div>
 
     <!-- ===== ТЕРМИНАЛ ===== -->
-    <aside class="term">
+    <aside class="term ym-hide-content">
       <div class="term-bar">
         <span class="lights"><i></i><i></i><i></i></span>
         <span class="eyebrow term-eyebrow">ОТВЕТ API</span>
@@ -260,7 +260,7 @@
   </div>
 </main>
 
-<aside class="viewer" id="viewer" hidden aria-label="Просмотр PDF">
+<aside class="viewer ym-hide-content" id="viewer" hidden aria-label="Просмотр PDF">
   <div class="viewer-head">
     <div class="eyebrow eyebrow-brand" id="vPos">СВЕРКА</div>
     <div class="viewer-keys mono">← → листать, Esc закрыть</div>
