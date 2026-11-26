@@ -63,7 +63,7 @@ const currentKey = () => keyStore.get() || memKey;
 const log = [];
 let seq = 0;
 
-async function call(method, path, { query, json, form, silent } = {}) {
+async function call(method, path, { query, json, form, silent, pdf = false } = {}) {
   await MODE.ready;
   let shownUrl = path;
   if (query) shownUrl += "?" + new URLSearchParams(query).toString();
@@ -90,7 +90,7 @@ async function call(method, path, { query, json, form, silent } = {}) {
     }
   }
   const url = (MODE.direct ? METAFORA : "") + shownUrl;
-  const opts = { method, headers: {} };
+  const opts = { method, headers: { Accept: pdf ? "application/pdf, application/json" : "application/json" } };
   if (MODE.direct) {
     const key = currentKey();
     if (!key) {
@@ -101,7 +101,6 @@ async function call(method, path, { query, json, form, silent } = {}) {
       return { ok: false, status: 0, data: entry.data, entry };
     }
     opts.headers["Api-Key"] = key;
-    opts.headers["Accept"] = "application/json";
   }
   let req = null;
   if (json) {
@@ -119,20 +118,26 @@ async function call(method, path, { query, json, form, silent } = {}) {
     opts.body = fd;
   }
   const t0 = performance.now();
-  let status = 0, data = null, text = "";
+  let status = 0, data = null, file;
   try {
     const r = await fetch(url, opts);
     status = r.status;
-    text = await r.text();
-    try { data = text ? JSON.parse(text) : null; } catch { data = text; }
+    if (pdf && status === 200 && r.headers.get("Content-Type")?.split(";")[0].trim().toLowerCase() === "application/pdf") {
+      file = await r.blob();
+      data = { message: "Получен PDF", size: file.size };
+    } else {
+      const text = await r.text();
+      try { data = text ? JSON.parse(text) : null; } catch { data = text; }
+    }
   } catch (e) {
+    status = 0;
     data = MODE.direct
       ? { message: "Нет связи с «Метафорой»: " + e.message, error: "NETWORK" }
       : { message: "Нет связи с локальным сервером: " + e.message, error: "LOCAL_NETWORK" };
   }
   const entry = { id: ++seq, method, url: shownUrl, status, ms: Math.round(performance.now() - t0), req, data, at: new Date() };
   if (!silent) pushLog(entry);
-  return { ok: status >= 200 && status < 300, status, data, entry };
+  return { ok: status >= 200 && status < 300, status, data, entry, file };
 }
 
 function pushLog(entry) {
@@ -619,6 +624,9 @@ function pubHtml(uid, article, sig) {
 
     <div class="sub">
       <div class="eyebrow">PDF ПУБЛИКАЦИИ</div>
+      <div class="actions">
+        <button type="button" class="btn btn-ghost btn-sm" data-role="download-pdf">Скачать PDF</button>
+      </div>
       <div class="pdf-up">
         <span class="btn btn-ghost btn-sm file-btn">Выбрать PDF<input type="file" accept=".pdf,application/pdf" data-role="ppdf"></span>
         <span class="fname" data-role="pfname">файл не выбран</span>
@@ -626,7 +634,7 @@ function pubHtml(uid, article, sig) {
         <button class="btn btn-ghost btn-sm" data-role="ppdfgo" ${signed ? "disabled title='К подписанной публикации PDF не загружается'" : ""}>Загрузить PDF</button>
       </div>
       <div class="actions"><button type="button" class="btn btn-ghost" data-role="manage-signing">Открыть подписание</button></div>
-      <div data-role="pmsg"></div>
+      <div data-role="pmsg" role="status"></div>
     </div>
   </div>`;
 }
@@ -638,6 +646,13 @@ function renderPub() {
   out.innerHTML = pubHtml(uid, article, sig);
   $$("[data-loc]", out).forEach((b) => b.addEventListener("click", () => { pubLocale = b.dataset.loc; renderPub(); }));
   const msg = $("[data-role=pmsg]", out);
+  const download = $("[data-role=download-pdf]", out);
+  download.addEventListener("click", async () => {
+    busy(download, true);
+    msg.replaceChildren();
+    try { await downloadPublicationPdf(uid, msg); }
+    finally { busy(download, false); }
+  });
   const inp = $("[data-role=ppdf]", out), fn = $("[data-role=pfname]", out);
   inp.addEventListener("change", () => (fn.textContent = inp.files[0] ? `${inp.files[0].name} (${kb(inp.files[0].size)})` : "файл не выбран"));
   wirePdfPreview(inp, $("[data-role=ppdfpreview]", out));
@@ -673,6 +688,32 @@ function wirePdfPreview(input, button) {
 
 function uploadPublicationPdf(uid, pdf) {
   return call("POST", `/api/v2/publications/${encodeURIComponent(uid)}/pdf/`, { form: { pdf } });
+}
+
+async function downloadPublicationPdf(uid, msg) {
+  const result = await call("GET", `${publicationPath("uid", uid)}/export/pdf`, { pdf: true });
+  if (!result.ok) {
+    msg.innerHTML = errorHtml(result);
+    return;
+  }
+  if (result.status === 204) {
+    msg.textContent = "К публикации не прикреплён PDF.";
+    return;
+  }
+  if (!result.file?.size) {
+    msg.textContent = "«Метафора» не вернула PDF. Проверьте ответ API.";
+    return;
+  }
+
+  const url = URL.createObjectURL(result.file);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `article-${uid}.pdf`;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+  msg.innerHTML = okHtml("Скачивание PDF началось");
 }
 
 const pdfHashes = new WeakMap();

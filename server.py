@@ -107,7 +107,7 @@ class Handler(BaseHTTPRequestHandler):
             return self._json(413, {"message": "Слишком большой запрос", "error": "LOCAL_TOO_LARGE"})
         body = self.rfile.read(length) if length else None
 
-        headers = {"Api-Key": API_KEY, "Accept": "application/json"}
+        headers = {"Api-Key": API_KEY, "Accept": self.headers.get("Accept", "application/json")}
         if self.headers.get("Content-Type"):
             headers["Content-Type"] = self.headers["Content-Type"]
 
