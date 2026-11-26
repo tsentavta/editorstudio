@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DOAJ Metadata Studio — upload and audit DOAJ article metadata</title>
+<title>DOAJ Metadata Studio – upload and audit DOAJ article metadata</title>
 <meta name="description" content="Free tool for journal editors: search DOAJ, create and edit articles via the API, bulk upload from Excel, check DOI and ORCID.">
 <meta name="keywords" content="DOAJ, DOAJ API, Directory of Open Access Journals, article metadata, upload articles to DOAJ, scholarly journal, open access, DOI, ORCID, open access metadata">
 <meta name="author" content="tsentavta">
@@ -18,14 +18,14 @@
 <meta property="og:site_name" content="DOAJ Metadata Studio">
 <meta property="og:locale" content="en_US">
 <meta property="og:url" content="https://editorstudio.ru/doaj/en/">
-<meta property="og:title" content="DOAJ Metadata Studio — article metadata in DOAJ">
+<meta property="og:title" content="DOAJ Metadata Studio – article metadata in DOAJ">
 <meta property="og:description" content="Search, upload, edit and audit DOAJ article metadata via API v4. Free, in the browser, nothing to install.">
 <meta property="og:image" content="https://editorstudio.ru/doaj/docs/screenshot-search-en.jpg">
 <meta property="og:image:width" content="800">
 <meta property="og:image:height" content="506">
 <meta property="og:image:alt" content="Article search in DOAJ Metadata Studio">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="DOAJ Metadata Studio — article metadata in DOAJ">
+<meta name="twitter:title" content="DOAJ Metadata Studio – article metadata in DOAJ">
 <meta name="twitter:description" content="Search, upload, edit and audit DOAJ article metadata via API v4.">
 <meta name="twitter:image" content="https://editorstudio.ru/doaj/docs/screenshot-search-en.jpg">
 <script type="application/ld+json">
@@ -229,6 +229,8 @@ details.help{margin-top:10px}
 details.help code{font-family:var(--mono);font-size:12px;background:var(--panel2);padding:1px 5px;border-radius:4px}
 .chk{display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer}
 </style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/theme.css">
 <link rel="stylesheet" href="/doaj/editorstudio.css">
 </head>
 <body>
@@ -249,6 +251,10 @@ details.help code{font-family:var(--mono);font-size:12px;background:var(--panel2
 </header>
 
 <main>
+<nav class="breadcrumbs" aria-label="Breadcrumbs"><ol>
+  <li><a href="/">EditorStudio</a></li>
+  <li><a href="/doaj/en/" aria-current="page">DOAJ</a></li>
+</ol></nav>
 <!-- ============ SEARCH ============ -->
 <section class="tab active" id="tab-search">
   <div class="card">
@@ -262,7 +268,7 @@ details.help code{font-family:var(--mono);font-size:12px;background:var(--panel2
     <div id="qRows"></div>
     <datalist id="fieldList"></datalist>
     <div class="row" style="margin:4px 0 10px"><button class="b sm" id="addRow">+ Condition</button><span class="hint" style="margin:0">Range: year/number <code>2020-2023</code>, date <code>2024-01-01..2024-12-31</code>. For true/false and Yes/No you can type “yes”/“no”.</span></div>
-    <label class="f">Query (Lucene) — built from the conditions, can be edited by hand
+    <label class="f">Query (Lucene) – built from the conditions, can be edited by hand
       <textarea id="qText" class="mono" rows="2" placeholder="e.g. issn:1810-3189 AND bibjson.year:2024"></textarea>
     </label>
     <div class="row" style="margin-top:10px">
@@ -275,13 +281,13 @@ details.help code{font-family:var(--mono);font-size:12px;background:var(--panel2
     </div>
     <details class="help"><summary>Query syntax</summary>
       <div class="small" style="margin-top:8px;line-height:1.8">
-        Search a field: <code>bibjson.title:"wave propagation"</code> · short names: <code>doi:</code> <code>issn:</code> <code>title:</code> <code>license:CC-BY</code><br>
-        Logic: <code>AND</code>, <code>OR</code>, <code>NOT</code>, parentheses · range: <code>bibjson.year:[2020 TO 2023]</code><br>
+        Search a field: <code>bibjson.title:"wave propagation"</code>, short names: <code>doi:</code> <code>issn:</code> <code>title:</code> <code>license:CC-BY</code><br>
+        Logic: <code>AND</code>, <code>OR</code>, <code>NOT</code>, parentheses, range: <code>bibjson.year:[2020 TO 2023]</code><br>
         Field present: <code>_exists_:bibjson.abstract</code>, missing: <code>NOT _exists_:bibjson.author.orcid_id</code><br>
-        Articles without DOI: <code>NOT _exists_:index.doi</code> or <code>NOT bibjson.identifier.type:doi</code> — the short name <code>doi:</code> only works when searching by value; the index has no <code>doi</code> field<br>
+        Articles without DOI: <code>NOT _exists_:index.doi</code> or <code>NOT bibjson.identifier.type:doi</code> – the short name <code>doi:</code> only works when searching by value; the index has no <code>doi</code> field<br>
         Quote DOIs that contain a slash: <code>doi:"10.18469/1810-3189.2022.25.4.122-128"</code><br>
-        Exact match of the whole value: suffix <code>.exact</code> — <code>bibjson.journal.title.exact:"Journal of Science"</code> (full field names only, not short names)<br>
-        Values: boolean fields <code>bibjson.*</code> — <code>true</code>/<code>false</code>; flags <code>index.*</code> — <code>Yes</code>/<code>No</code>; <code>index.country</code> and <code>index.language</code> — English names (<code>"Russian Federation"</code>, <code>Russian</code>), while <code>bibjson.*.country</code>/<code>language</code> — codes (<code>RU</code>)<br>
+        Exact match of the whole value: suffix <code>.exact</code> – <code>bibjson.journal.title.exact:"Journal of Science"</code> (full field names only, not short names)<br>
+        Values: boolean fields <code>bibjson.*</code> – <code>true</code>/<code>false</code>; flags <code>index.*</code> – <code>Yes</code>/<code>No</code>; <code>index.country</code> and <code>index.language</code> – English names (<code>"Russian Federation"</code>, <code>Russian</code>), while <code>bibjson.*.country</code>/<code>language</code> – codes (<code>RU</code>)<br>
         Ranges must be closed: <code>created_date:[2026-01-01 TO 2026-06-30]</code>; <code>TO *</code> is not allowed. All records: query <code>*</code><br>
         Wildcards <code>*</code> and <code>?</code> inside words, fuzzy search <code>~</code> and regular expressions are <b>not allowed</b> by DOAJ. Only the first 1000 results of a query are available.
       </div>
@@ -353,7 +359,7 @@ details.help code{font-family:var(--mono);font-size:12px;background:var(--panel2
       </div>
       <div class="card authors">
         <div class="row" style="justify-content:space-between"><h2 style="margin:0">Authors</h2><button class="b sm" id="eAddAuthor">+ Author</button></div>
-        <div class="small muted" style="margin:6px 0 10px">Full name · affiliation · ORCID (https://orcid.org/ prefix optional)</div>
+        <div class="small muted" style="margin:6px 0 10px">Full name, affiliation, ORCID (https://orcid.org/ prefix optional)</div>
         <div id="eAuthors"></div>
       </div>
       <div class="card">
@@ -419,7 +425,7 @@ details.help code{font-family:var(--mono);font-size:12px;background:var(--panel2
     </div>
     <div class="card">
       <h2>Bulk delete</h2>
-      <textarea id="dIds" class="mono" rows="7" placeholder="DOAJ article IDs — one per line (doaj.org/article/… links also work)"></textarea>
+      <textarea id="dIds" class="mono" rows="7" placeholder="DOAJ article IDs – one per line (doaj.org/article/… links also work)"></textarea>
       <div class="row" style="margin-top:8px">
         <span class="small muted" id="dCount">0 ID</span>
         <div class="grow"></div>
@@ -493,7 +499,7 @@ details.help code{font-family:var(--mono);font-size:12px;background:var(--panel2
 
     <div class="card">
       <h2>Reconciliation against a DOI list</h2>
-      <div class="small muted" style="margin-bottom:8px">Paste DOIs from any source (journal website, Crossref, reference list) — in any format, one per line or mixed with text.</div>
+      <div class="small muted" style="margin-bottom:8px">Paste DOIs from any source (journal website, Crossref, reference list) – in any format, one per line or mixed with text.</div>
       <textarea id="rText" class="mono" rows="6"></textarea>
       <div class="row" style="margin-top:8px">
         <button class="b primary" id="rGo">Reconcile</button>
@@ -528,8 +534,8 @@ details.help code{font-family:var(--mono);font-size:12px;background:var(--panel2
 </section>
 
 <section class="about" id="about" aria-labelledby="aboutTitle">
-  <h1 id="aboutTitle">DOAJ Metadata Studio — work with DOAJ article metadata</h1>
-  <p class="lead">A free online tool for editors and publishers of open access scholarly journals. Search articles and journals in <a href="https://doaj.org" target="_blank" rel="noopener">DOAJ (Directory of Open Access Journals)</a>, upload and fix articles via the DOAJ API, audit metadata completeness and export data to Excel — right in the browser, with nothing to install and no sign-up.</p>
+  <h1 id="aboutTitle">DOAJ Metadata Studio – work with DOAJ article metadata</h1>
+  <p class="lead">A free online tool for editors and publishers of open access scholarly journals. Search articles and journals in <a href="https://doaj.org" target="_blank" rel="noopener">DOAJ (Directory of Open Access Journals)</a>, upload and fix articles via the DOAJ API, audit metadata completeness and export data to Excel – right in the browser, with nothing to install and no sign-up.</p>
   <div class="about-grid">
     <div>
       <h2>Search by any DOAJ field</h2>
@@ -588,7 +594,7 @@ details.help code{font-family:var(--mono);font-size:12px;background:var(--panel2
 </aside>
 <footer>
   Unofficial tool, not affiliated with <a href="https://doaj.org" target="_blank" rel="noopener">DOAJ</a> (Directory of Open Access Journals). Data is loaded directly from <a href="https://doaj.org/api/v4/docs" target="_blank" rel="noopener">DOAJ API v4</a>.
-  · <a href="https://github.com/tsentavta/editorstudio" target="_blank" rel="noopener">Source code</a> · MIT License
+  <a href="https://github.com/tsentavta/editorstudio" target="_blank" rel="noopener">Source code</a> <span>MIT License</span>
 </footer>
 <div id="toasts"></div>
 
@@ -653,7 +659,7 @@ async function api(method, path, { params = {}, body, auth = false } = {}) {
   const url = new URL(API + path);
   for (const [k, v] of Object.entries(params)) if (v !== undefined && v !== '') url.searchParams.set(k, v);
   if (auth) {
-    if (!apiKey) throw new ApiError(0, 'An API key is required — enter it on the “Settings” tab');
+    if (!apiKey) throw new ApiError(0, 'An API key is required – enter it on the “Settings” tab');
     url.searchParams.set('api_key', apiKey);
   }
   for (let attempt = 0; attempt < 4; attempt++) {
@@ -753,7 +759,7 @@ function validateArticle(a) {
   if (au.length && au.some(x => !x.affiliation)) W('Not all authors have an affiliation');
   const kw = b.keywords || [];
   if (!kw.length) W('No keywords');
-  if (kw.length > 6) W(`${kw.length} keywords — DOAJ will keep only the first 6`);
+  if (kw.length > 6) W(`${kw.length} keywords – DOAJ will keep only the first 6`);
   const j = b.journal || {};
   if (j.start_page && j.end_page && /^\d+$/.test(j.start_page) && /^\d+$/.test(j.end_page) && +j.end_page < +j.start_page) E('Last page is lower than the first');
   return out;
@@ -827,7 +833,7 @@ function renderDrawer() {
       ['pISSN / eISSN', esc([ident(r, 'pissn'), ident(r, 'eissn')].filter(Boolean).join(' / '))],
       ['Authors', authors],
       ['Keywords', (b.keywords || []).map(k => `<span class="badge">${esc(k)}</span>`).join('')],
-      ['Links', (b.link || []).map(l => `<div><span class="badge">${esc(l.type)}${l.content_type ? ' · ' + esc(l.content_type) : ''}</span> <a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.url)}</a></div>`).join('')],
+      ['Links', (b.link || []).map(l => `<div><span class="badge">${esc(l.type)}${l.content_type ? ', ' + esc(l.content_type) : ''}</span> <a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.url)}</a></div>`).join('')],
       ['Subjects (LCC)', (b.subject || []).map(s => esc(s.term) + ` <span class="muted small">${esc(s.code)}</span>`).join('<br>')],
       ['Journal languages', esc((j.language || []).join(', '))],
       ['Abstract', `<div style="white-space:pre-wrap">${esc(b.abstract)}</div>`],
@@ -861,8 +867,8 @@ function renderDrawer() {
 }
 
 /* ---------------- SEARCH ---------------- */
-/* Field catalog. Types: s — text (analysed, .exact available), k — code/identifier (.exact available), u — URL,
-   n — number, d — date (UTC ISO), b — boolean true/false, y — Yes/No (index.* flags), a — short alias (no .exact).
+/* Field catalog. Types: s – text (analysed, .exact available), k – code/identifier (.exact available), u – URL,
+   n – number, d – date (UTC ISO), b – boolean true/false, y – Yes/No (index.* flags), a – short alias (no .exact).
    [field, group, label, description, type, example] */
 const FC = {
   articles: [
@@ -880,7 +886,7 @@ const FC = {
     ['bibjson.author.affiliation', 'Authors', 'Affiliation', 'Author’s institution', 's', '"Samara University"'],
     ['bibjson.author.orcid_id', 'Authors', 'ORCID', 'Author ORCID as https://orcid.org/0000-0000-0000-0000', 'k', '"https://orcid.org/0000-0002-1825-0097"'],
     ['bibjson.identifier.id', 'Identifiers', 'Identifier', 'Value of any article identifier: DOI, pISSN, eISSN', 'k', '2782-294X'],
-    ['bibjson.identifier.type', 'Identifiers', 'Identifier type', 'doi, pissn, eissn. “NOT bibjson.identifier.type:doi” — articles without DOI', 'k', 'doi'],
+    ['bibjson.identifier.type', 'Identifiers', 'Identifier type', 'doi, pissn, eissn. “NOT bibjson.identifier.type:doi” – articles without DOI', 'k', 'doi'],
     ['bibjson.journal.issns', 'Identifiers', 'Journal ISSN', 'All ISSNs of the journal the article belongs to', 'k', '1810-3189'],
     ['bibjson.journal.volume', 'Publication details', 'Volume', 'Volume number (string)', 'k', '25'],
     ['bibjson.journal.number', 'Publication details', 'Issue', 'Issue number (string)', 'k', '4'],
@@ -899,11 +905,11 @@ const FC = {
     ['id', 'System', 'DOAJ ID', 'Record ID in DOAJ, 32 characters', 'k', '0033bd95b3c2468d94d72bf9f68d1232'],
     ['created_date', 'System', 'Record creation date', 'When the article appeared in DOAJ. Closed ranges only, “TO *” is not allowed', 'd', '[2026-10-01 TO 2026-11-01]'],
     ['last_updated', 'System', 'Last updated', 'When the record last changed', 'd', '[2026-10-01 TO 2026-11-01]'],
-    ['admin.in_doaj', 'System', 'Published in DOAJ', 'true — publicly visible, false — withdrawn', 'b', 'true'],
+    ['admin.in_doaj', 'System', 'Published in DOAJ', 'true – publicly visible, false – withdrawn', 'b', 'true'],
     ['admin.publisher_record_id', 'System', 'Publisher record ID', 'Publisher’s own record ID (deprecated)', 'k', ''],
     ['admin.upload_id', 'System', 'Bulk upload ID', 'upload_id of the batch the article was uploaded in', 'k', ''],
     ['es_type', 'System', 'Record type', 'Always article', 'k', 'article'],
-    ['index.doi', 'Index (system)', 'DOI (index)', 'Normalised DOI. “NOT _exists_:index.doi” — articles without DOI', 'k', ''],
+    ['index.doi', 'Index (system)', 'DOI (index)', 'Normalised DOI. “NOT _exists_:index.doi” – articles without DOI', 'k', ''],
     ['index.issn', 'Index (system)', 'ISSN (index)', 'All ISSNs of the article’s journal', 'k', '2782-294X'],
     ['index.fulltext', 'Index (system)', 'Full-text link', 'Full-text URL', 'u', '"pwp.psuti.ru"'],
     ['index.date', 'Index (system)', 'Publication date', 'Date built from publication year and month', 'd', '[2024-01-01 TO 2024-12-31]'],
@@ -924,8 +930,8 @@ const FC = {
   journals: [
     ['title', 'Short names', 'Title (short)', 'Search the journal title', 'a', 'radio'],
     ['issn', 'Short names', 'ISSN (short)', 'Print or online ISSN', 'a', '1810-3189'],
-    ['publisher', 'Short names', 'Publisher (short)', 'Documented, but in practice often finds nothing — use bibjson.publisher.name', 'a', 'dove'],
-    ['license', 'Short names', 'License (short)', 'Documented, but unreliable — use index.license or bibjson.license.type', 'a', 'CC-BY'],
+    ['publisher', 'Short names', 'Publisher (short)', 'Documented, but in practice often finds nothing – use bibjson.publisher.name', 'a', 'dove'],
+    ['license', 'Short names', 'License (short)', 'Documented, but unreliable – use index.license or bibjson.license.type', 'a', 'CC-BY'],
     ['username', 'Short names', 'Publisher username', 'Your DOAJ username: shows your public journals', 'a', ''],
     ['bibjson.title', 'Main', 'Title', 'Main journal title (may be in the national language; the English one is in alternative_title)', 's', '"Journal of Physics"'],
     ['bibjson.alternative_title', 'Main', 'Alternative title', 'Other title, including a translation', 's', '"Physics of Wave Processes"'],
@@ -1022,7 +1028,7 @@ function fieldOpts(type, sel) {
   let g = null;
   for (const [f, grp, label] of FC[type]) {
     if (grp !== g) { if (g) h += '</optgroup>'; h += `<optgroup label="${esc(grp)}">`; g = grp; }
-    h += o(f, `${label} — ${f}`);
+    h += o(f, `${label} – ${f}`);
   }
   return h + '</optgroup>';
 }
@@ -1034,7 +1040,7 @@ function syncRow(d) {
   const val = $('.val', d);
   val.placeholder = f === '_exists_' || f === '!_exists_' ? 'field name, e.g. bibjson.abstract' : m ? (m[5] ? 'e.g.: ' + m[5] : TYPE_LABEL[m[4]]) : 'search terms';
   val.setAttribute('list', f === '_exists_' || f === '!_exists_' ? 'fieldList' : '');
-  val.title = m ? `${m[0]} · ${TYPE_LABEL[m[4]]}${m[3] ? ' — ' + m[3] : ''}` : '';
+  val.title = m ? `${m[0]}, ${TYPE_LABEL[m[4]]}${m[3] ? ' – ' + m[3] : ''}` : '';
 }
 function addQRow(r = { op: 'AND', f: '', v: '' }) {
   const d = document.createElement('div'); d.className = 'qrow';
@@ -1056,7 +1062,7 @@ function buildQuery() {
     const m = fmeta(S.type, f), t = m ? m[4] : '';
     const fld = f + ($('.ex input', r).checked ? '.exact' : '');
     let term, rg;
-    // short names like doi/issn are query aliases, not real index fields — map them for _exists_
+    // short names like doi/issn are query aliases, not real index fields – map them for _exists_
     if (f === '_exists_' || f === '!_exists_') term = (f[0] === '!' ? 'NOT ' : '') + '_exists_:' + ({ doi: 'index.doi', issn: 'index.issn' }[v.toLowerCase()] || v);
     else if (/^[\[{].+ TO .+[\]}]$/.test(v)) term = fld + ':' + v; // ready-made range
     else if ('ndk'.includes(t) && t && (rg = /^(.+?)\s*\.\.\s*(.+)$/.exec(v) || (/^\d{1,4}\s*[-–]\s*\d{1,4}$/.test(v) && /^(\d+)\s*[-–]\s*(\d+)$/.exec(v))))
@@ -1117,7 +1123,7 @@ async function runSearch(page) {
   const q = $('#qText').value.trim();
   if (!q) { toast('Enter a query'); return; }
   if (/_exists_:(doi|issn)\b/i.test(q)) toast('doi/issn are short names, so _exists_ with them is always false. Use index.doi / index.issn', 'err', 8000);
-  if (q !== '*' && /[*?~]/.test(q.replace(/"[^"]*"/g, ''))) toast('DOAJ does not support * ? ~ wildcards — the query will most likely fail', 'err');
+  if (q !== '*' && /[*?~]/.test(q.replace(/"[^"]*"/g, ''))) toast('DOAJ does not support * ? ~ wildcards – the query will most likely fail', 'err');
   const size = +$('#sSize').value;
   if (page * size > 1000 && page > 1) { toast('The API returns only the first 1000 results. Narrow down the query.', 'err'); return; }
   $('#sInfo').innerHTML = '<span class="spin"></span> Searching…';
@@ -1132,16 +1138,16 @@ function renderResults() {
   const box = $('#sResults');
   if (!S.results.length) {
     $('#sInfo').textContent = S.q && S.total === 0 ? 'Nothing found' : '';
-    box.innerHTML = S.q ? '' : '<div class="empty">Set conditions and click “Search” — or click “Example” to see search in action.<br>For example: field “Journal ISSN (short)” = 1810-3189, or “Field is missing” = bibjson.abstract.</div>';
+    box.innerHTML = S.q ? '' : '<div class="empty">Set conditions and click “Search” – or click “Example” to see search in action.<br>For example: field “Journal ISSN (short)” = 1810-3189, or “Field is missing” = bibjson.abstract.</div>';
     $('#sPager').innerHTML = ''; updateSel(); return;
   }
   const pages = Math.ceil(Math.min(S.total, 1000) / S.size);
-  $('#sInfo').textContent = `Found: ${S.total.toLocaleString('en')}` + (S.total > 1000 ? ' (first 1000 available via the API)' : '') + ` · page ${S.page} of ${pages}`;
+  $('#sInfo').textContent = `Found: ${S.total.toLocaleString('en')}` + (S.total > 1000 ? ' (first 1000 available via the API)' : '') + `, page ${S.page} of ${pages}`;
   box.innerHTML = S.results.map((r, i) => {
     const b = r.bibjson || {};
     if (S.type === 'journals') {
       return `<div class="result"><div class="grow"><div class="t" data-i="${i}">${esc(b.title)}</div>
-        <div class="meta">${esc([b.pissn, b.eissn].filter(Boolean).join(' / '))} · ${esc((b.publisher || {}).name)}${(b.publisher || {}).country ? ' (' + esc(b.publisher.country) + ')' : ''}</div>
+        <div class="meta">${esc([b.pissn, b.eissn].filter(Boolean).join(' / '))}, ${esc((b.publisher || {}).name)}${(b.publisher || {}).country ? ' (' + esc(b.publisher.country) + ')' : ''}</div>
         <div>${(b.subject || []).slice(0, 3).map(s => `<span class="badge">${esc(s.term)}</span>`).join('')}${(r.admin || {}).seal ? '<span class="badge ok">Seal</span>' : ''}${(b.apc || {}).has_apc === false ? '<span class="badge">no APC</span>' : ''}</div></div></div>`;
     }
     const au = (b.author || []).map(a => a.name);
@@ -1150,7 +1156,7 @@ function renderResults() {
     return `<div class="result"><input type="checkbox" data-id="${esc(r.id)}" ${S.sel.has(r.id) ? 'checked' : ''}>
       <div class="grow" style="min-width:0"><div class="t" data-i="${i}">${esc(b.title)}</div>
       <div class="meta">${esc(au.slice(0, 4).join(', '))}${au.length > 4 ? ' et al.' : ''}</div>
-      <div class="meta">${esc((b.journal || {}).title)}${citation(b) ? ' · ' + esc(citation(b)) : ''}${doi ? ` · <a href="https://doi.org/${esc(doi)}" target="_blank" rel="noopener">${esc(doi)}</a>` : ''}</div>
+      <div class="meta">${esc((b.journal || {}).title)}${citation(b) ? ', ' + esc(citation(b)) : ''}${doi ? `, <a href="https://doi.org/${esc(doi)}" target="_blank" rel="noopener">${esc(doi)}</a>` : ''}</div>
       <div>${issues.map(v => `<span class="badge ${v.lvl}">${esc(v.msg)}</span>`).join('')}</div></div>
       <div><button class="b sm" data-edit="${i}">Edit</button></div></div>`;
   }).join('');
@@ -1201,7 +1207,7 @@ async function selectAllFound() {
       (r.results || []).forEach(x => S.sel.set(x.id, x));
     }
     renderResults();
-    toast(`Selected: ${S.sel.size}` + (S.total > 1000 ? '. The API returns only the first 1000 — use “Export & audit” for a complete set' : ''), S.total > 1000 ? '' : 'ok', 6000);
+    toast(`Selected: ${S.sel.size}` + (S.total > 1000 ? '. The API returns only the first 1000 – use “Export & audit” for a complete set' : ''), S.total > 1000 ? '' : 'ok', 6000);
   } catch (e) { renderResults(); toast('Could not select all: ' + e.message, 'err'); }
 }
 $('#sSel').addEventListener('click', e => {
@@ -1303,7 +1309,7 @@ $('#tab-editor').addEventListener('input', e => { if (e.target.id !== 'eJson' &&
 function editorLoadRecord(rec, isNew = false) {
   edBase = isNew ? null : JSON.parse(JSON.stringify(rec));
   recordToForm(rec);
-  $('#eMode').textContent = edBase?.id ? 'Editing · ' + edBase.id : 'New article';
+  $('#eMode').textContent = edBase?.id ? 'Editing, ' + edBase.id : 'New article';
   $('#eMode').className = 'badge ' + (edBase?.id ? 'warn' : '');
   $('#eLoadId').value = edBase?.id || '';
   edChanged();
@@ -1429,7 +1435,7 @@ function articlesToCSV(recs, d) {
 let bItems = [];
 const SRC_HINT = {
   json: 'An array of article objects in DOAJ format (as in “JSON for re-upload” or an API response). Records with an id field will update existing articles.',
-  csv: 'Columns: ' + CSV_COLS.join(', ') + '. Authors — one per line inside the cell (or separated by “;”), each as: full name | affiliation | ORCID. The delimiter (; , tab) is detected automatically. If id is filled in, the article will be updated.',
+  csv: 'Columns: ' + CSV_COLS.join(', ') + '. Authors – one per line inside the cell (or separated by “;”), each as: full name | affiliation | ORCID. The delimiter (; , tab) is detected automatically. If id is filled in, the article will be updated.',
 };
 seg($('#bSrc'), v => { $('#bSrcHint').textContent = SRC_HINT[v]; $('#bText').placeholder = v === 'csv' ? CSV_COLS.join(';') : '[{"bibjson": {…}}]'; });
 $('#bSrcHint').textContent = SRC_HINT.json;
@@ -1469,7 +1475,7 @@ function renderBulkPreview() {
   const bad = bItems.filter(x => x.v.some(v => v.lvl === 'err')).length;
   const toSend = $('#bSkipBad').checked ? bItems.length - bad : (bad ? 0 : bItems.length);
   $('#bSend').disabled = !toSend; $('#bSend').textContent = `Send to DOAJ (${toSend})`;
-  box.innerHTML = `<div class="small" style="margin-bottom:8px">Records: <b>${bItems.length}</b> · with errors: <b style="color:${bad ? 'var(--err)' : 'inherit'}">${bad}</b> · updates (have id): ${bItems.filter(x => x.rec.id).length}${bad && !$('#bSkipBad').checked ? ' — fix the errors or enable “skip records with errors”' : ''}</div>
+  box.innerHTML = `<div class="small" style="margin-bottom:8px">Records: <b>${bItems.length}</b>, with errors: <b style="color:${bad ? 'var(--err)' : 'inherit'}">${bad}</b>, updates (have id): ${bItems.filter(x => x.rec.id).length}${bad && !$('#bSkipBad').checked ? ' – fix the errors or enable “skip records with errors”' : ''}</div>
   <div class="tw" style="max-height:360px"><table><tr><th>#</th><th>Title</th><th>DOI</th><th>Publication details</th><th>Issues</th></tr>
   ${bItems.map((x, i) => `<tr><td>${i + 1}</td><td class="t">${esc(x.rec.bibjson.title)}</td><td class="mono small">${esc(ident(x.rec, 'doi'))}</td><td class="small">${esc(citation(x.rec.bibjson))}</td>
    <td>${x.v.map(v => `<span class="badge ${v.lvl}">${esc(v.msg)}</span>`).join('') || '<span class="badge ok">ok</span>'}</td></tr>`).join('')}</table></div>`;
@@ -1511,7 +1517,7 @@ function addUpload(id, n) { const l = store.get('uploads', []); l.unshift({ id, 
 function renderUploads() {
   const l = store.get('uploads', []);
   $('#bUploads').innerHTML = l.length ? '<div class="small muted" style="margin-bottom:4px">Recent uploads:</div>' + l.map(u =>
-    `<div class="row small" style="margin-bottom:4px"><button class="link mono" data-up="${esc(u.id)}">${esc(u.id)}</button><span class="muted">${esc(u.n)} art. · ${esc(new Date(u.at).toLocaleString('en'))}</span></div>`).join('') : '';
+    `<div class="row small" style="margin-bottom:4px"><button class="link mono" data-up="${esc(u.id)}">${esc(u.id)}</button><span class="muted">${esc(u.n)} art., ${esc(new Date(u.at).toLocaleString('en'))}</span></div>`).join('') : '';
 }
 $('#bUploads').addEventListener('click', e => { const b = e.target.closest('[data-up]'); if (b) { $('#bUpId').value = b.dataset.up; checkUpload(b.dataset.up); } });
 $('#bCheck').onclick = () => { const id = $('#bUpId').value.trim(); if (id) busy($('#bCheck'), () => checkUpload(id)); };
@@ -1532,7 +1538,7 @@ $('#dGo').onclick = () => busy($('#dGo'), async () => {
   if (!ids.length) return toast('No DOAJ IDs found', 'err');
   const ans = prompt(`${ids.length} articles will be permanently deleted.\nType this number to confirm:`);
   if (ans === null) return;
-  if (ans.trim() !== String(ids.length)) return toast('Number does not match — deletion cancelled', 'err');
+  if (ans.trim() !== String(ids.length)) return toast('Number does not match – deletion cancelled', 'err');
   try {
     const r = await doaj.bulkDelete(ids);
     toast(`Deleted: ${ids.length}`, 'ok', 7000);
@@ -1596,7 +1602,7 @@ async function fetchAll(q) {
     for (let p = 2; p <= last && !X.stop; p++) { const r = await doaj.search('articles', qq, p, 100); take(r.results); }
   }
   if (total <= 1000) { await pages(q, first, total); return { recs: [...got.values()], total, limited }; }
-  xlog('More than 1000 — splitting by record creation date…');
+  xlog('More than 1000 – splitting by record creation date…');
   const iso = d => new Date(d).toISOString().replace(/\.\d{3}Z$/, 'Z');
   async function split(from, to) {
     if (X.stop) return;
@@ -1604,7 +1610,7 @@ async function fetchAll(q) {
     const r = await doaj.search('articles', qq, 1, 100);
     if (!r.total) return;
     if (r.total <= 1000) { xlog(`  ${iso(from).slice(0, 10)} … ${iso(to).slice(0, 10)}: ${r.total}`); return pages(qq, r, r.total); }
-    if (to - from <= 2000) { limited = true; xlog(`  ⚠ ${r.total} records created at the same moment (${iso(from)}) — only 1000 available`); return pages(qq, r, 1000); }
+    if (to - from <= 2000) { limited = true; xlog(`  ⚠ ${r.total} records created at the same moment (${iso(from)}) – only 1000 available`); return pages(qq, r, 1000); }
     const mid = from + Math.floor((to - from) / 2);
     await split(from, mid); await split(mid, to);
   }
@@ -1630,7 +1636,7 @@ function filtered() {
   const t = X.text.toLowerCase();
   return X.recs.filter(r => {
     if (X.filter !== 'all' && !flags[X.filter].has(r.id)) return false;
-    if (X.year && ((r.bibjson || {}).year || '—') !== X.year) return false;
+    if (X.year && ((r.bibjson || {}).year || '–') !== X.year) return false;
     if (t) {
       const b = r.bibjson || {};
       const hay = [b.title, ident(r, 'doi'), r.id, ...(b.author || []).map(a => a.name), ...(b.keywords || [])].join(' ').toLowerCase();
@@ -1649,7 +1655,7 @@ function renderExport() {
     return `<div class="stat ${k === 'all' ? '' : n ? 'bad' : 'good'} ${X.filter === k ? 'on' : ''}" data-f="${k}"><div class="n">${n.toLocaleString('en')}</div><div class="l">${esc(l)}</div></div>`;
   }).join('');
   const years = {};
-  for (const r of X.recs) { const y = (r.bibjson || {}).year || '—'; years[y] = (years[y] || 0) + 1; }
+  for (const r of X.recs) { const y = (r.bibjson || {}).year || '–'; years[y] = (years[y] || 0) + 1; }
   const max = Math.max(...Object.values(years), 1);
   $('#xYears').innerHTML = Object.entries(years).sort((a, b) => b[0].localeCompare(a[0])).map(([y, c]) =>
     `<div class="yr ${X.year === y ? 'on' : ''}" data-y="${esc(y)}"><span>${esc(y)}</span><div><div class="bar2" style="width:${(100 * c / max).toFixed(1)}%"></div></div><span class="c">${c}</span></div>`).join('');
@@ -1661,7 +1667,7 @@ function renderTable() {
   $('#xFN').textContent = rows.length;
   const pages = Math.max(1, Math.ceil(rows.length / PER)); X.page = Math.min(X.page, pages);
   const slice = rows.slice((X.page - 1) * PER, X.page * PER);
-  $('#xShown').textContent = `Showing ${rows.length} of ${X.recs.length}` + (X.year ? ` · year ${X.year}` : '') + (X.filter !== 'all' ? ` · ${CHECK_LABEL[X.filter]}` : '');
+  $('#xShown').textContent = `Showing ${rows.length} of ${X.recs.length}` + (X.year ? `, year ${X.year}` : '') + (X.filter !== 'all' ? `, ${CHECK_LABEL[X.filter]}` : '');
   const allOn = slice.length && slice.every(r => X.sel.has(r.id));
   $('#xTable').innerHTML = `<tr><th><input type="checkbox" id="xAll" ${allOn ? 'checked' : ''}></th><th>Year</th><th>Vol. (No.)</th><th>Pages</th><th>Title</th><th>Authors</th><th>DOI</th><th>Issues</th></tr>` +
     (slice.length ? slice.map(r => {
@@ -1726,9 +1732,9 @@ $('#rGo').onclick = () => busy($('#rGo'), async () => {
     <div style="margin-bottom:14px"><div class="row" style="margin-bottom:4px"><span class="badge ${cls}">${arr.length}</span><b>${esc(title)}</b>
     <button class="link small" data-copy="${esc(arr.join('\n'))}">copy</button></div>
     <div class="mono small" style="max-height:180px;overflow:auto;line-height:1.7">${arr.map(render).join('<br>')}</div></div>` : '';
-  $('#rOut').innerHTML = `<div class="small muted" style="margin-bottom:10px">DOIs in list: ${list.length}${X.recs.length ? ` · checked against loaded articles (${X.recs.length})` : ' · journal articles not loaded — checking against the whole of DOAJ only'}</div>` +
+  $('#rOut').innerHTML = `<div class="small muted" style="margin-bottom:10px">DOIs in list: ${list.length}${X.recs.length ? `, checked against loaded articles (${X.recs.length})` : ', journal articles not loaded – checking against the whole of DOAJ only'}</div>` +
     block('In loaded articles', found, 'ok') +
-    block('In DOAJ, but in another set', [...elsewhere.keys()], 'warn', d => `${esc(d)} <span class="muted">— ${esc((elsewhere.get(d).bibjson.journal || {}).title || '')}</span>`) +
+    block('In DOAJ, but in another set', [...elsewhere.keys()], 'warn', d => `${esc(d)} <span class="muted">– ${esc((elsewhere.get(d).bibjson.journal || {}).title || '')}</span>`) +
     block($('#rRemote').checked ? 'Not in DOAJ' : 'Not in loaded articles', notInDoaj, 'err') +
     (X.recs.length ? block('In DOAJ, but not in your list', extra, 'warn') : '');
 });
@@ -1761,7 +1767,7 @@ seg($('#sTheme'), v => { store.set('theme', v); applyTheme(v); });
 setSorts(); fillFieldList(); renderRef(); addQRow(); updKeyPill(); renderResults(); renderUploads(); updDCount();
 try {
   const d = JSON.parse(sessionStorage.getItem('doajs.draft') || 'null');
-  if (d && d.rec) { edBase = d.base; recordToForm(d.rec); $('#eMode').textContent = edBase?.id ? 'Editing · ' + edBase.id : 'New article'; $('#eMode').className = 'badge ' + (edBase?.id ? 'warn' : ''); }
+  if (d && d.rec) { edBase = d.base; recordToForm(d.rec); $('#eMode').textContent = edBase?.id ? 'Editing, ' + edBase.id : 'New article'; $('#eMode').className = 'badge ' + (edBase?.id ? 'warn' : ''); }
   else editorLoadRecord({ bibjson: {} }, true);
 } catch { editorLoadRecord({ bibjson: {} }, true); }
 edChanged();

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Инструкции по работе с DOAJ — DOAJ Metadata Studio</title>
+<title>Инструкции по работе с DOAJ – DOAJ Metadata Studio</title>
 <meta name="description" content="Пошаговые инструкции для редакторов журналов: загрузка статей в DOAJ, массовая загрузка из Excel, поиск пропусков в метаданных, экспорт и поиск через DOAJ API.">
 <link rel="canonical" href="https://editorstudio.ru/doaj/guides/">
 <link rel="alternate" hreflang="ru" href="https://editorstudio.ru/doaj/guides/">
@@ -23,6 +23,8 @@
 <link rel="apple-touch-icon" href="/doaj/apple-touch-icon.png">
 <link rel="manifest" href="/doaj/site.webmanifest">
 <link rel="stylesheet" href="/doaj/assets/guides.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/theme.css">
 <link rel="stylesheet" href="/doaj/editorstudio.css">
 <script>try{const t=JSON.parse(localStorage.getItem('doajs.theme'));if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 <script type="application/ld+json">
@@ -60,7 +62,7 @@
 <body>
 <header class="top">
   <div class="bar">
-    <a class="brand" href="/doaj/"><img width="24" height="24" src="/favicon.svg" alt="">EditorStudio · DOAJ</a>
+    <a class="brand" href="/doaj/"><img width="24" height="24" src="/favicon.svg" alt="">EditorStudio / DOAJ</a>
     <nav>
       <a href="/doaj/guides/">Инструкции</a>
       <a class="cta" href="/doaj/">Открыть приложение</a>
@@ -69,14 +71,15 @@
   </div>
 </header>
 <main class="guide">
-  <nav class="crumbs" aria-label="breadcrumbs"><a href="/doaj/">DOAJ Metadata Studio</a> <span aria-hidden="true">›</span> <span>Инструкции</span></nav>
+  <nav class="breadcrumbs" aria-label="Хлебные крошки"><ol><li><a href="/">EditorStudio</a></li><li><a href="/doaj/">DOAJ Metadata Studio</a></li><li><a href="/doaj/guides/" aria-current="page">Инструкции</a></li></ol></nav>
   <h1>Инструкции по работе с DOAJ</h1>
-  <p class="lead">Практические инструкции для редакторов и издателей журналов открытого доступа. Каждая инструкция проверена на живом DOAJ API и ведёт в DOAJ Metadata Studio — бесплатный инструмент, где описанное можно сделать в пару кликов.</p>
-  <ul class="index"><li><a href="/doaj/guides/upload-articles/"><b>Как загрузить статьи в DOAJ: вручную, XML, CSV и API</b></a><p>Четыре способа загрузить метаданные статей в DOAJ: форма на сайте, XML (DOAJ и Crossref), CSV через API и DOAJ API. Требования, дубли и частые ошибки.</p></li><li><a href="/doaj/guides/bulk-upload-csv/"><b>Массовая загрузка статей в DOAJ из Excel и CSV</b></a><p>Как загрузить выпуск журнала в DOAJ из таблицы Excel: шаблон CSV, формат авторов и ключевых слов, проверка перед отправкой, пакеты по 600 КБ и статус загрузки.</p></li><li><a href="/doaj/guides/missing-doi-orcid/"><b>Как найти статьи без DOI, ORCID и аннотаций в DOAJ</b></a><p>Готовые запросы DOAJ API для поиска статей журнала без DOI, ORCID, аннотаций и ключевых слов, проверка всего журнала одной кнопкой и исправление найденного.</p></li><li><a href="/doaj/guides/export-articles/"><b>Как выгрузить все статьи журнала из DOAJ</b></a><p>Как скачать все статьи журнала из DOAJ в Excel (CSV) или JSON, обойти ограничение DOAJ API в 1000 записей и когда нужна полная выгрузка данных DOAJ.</p></li><li><a href="/doaj/guides/api-search-syntax/"><b>Поиск в DOAJ API: синтаксис запросов и поля</b></a><p>Синтаксис поиска DOAJ API v4: поля статей и журналов, сокращения, .exact, диапазоны, _exists_, сортировка, лимиты и неочевидные ловушки — с проверенными примерами.</p></li></ul>
+  <p class="lead">Практические инструкции для редакторов и издателей журналов открытого доступа. Каждая инструкция проверена на живом DOAJ API и ведёт в DOAJ Metadata Studio – бесплатный инструмент, где описанное можно сделать в пару кликов.</p>
+  <ul class="index"><li><a href="/doaj/guides/upload-articles/"><b>Как загрузить статьи в DOAJ: вручную, XML, CSV и API</b></a><p>Четыре способа загрузить метаданные статей в DOAJ: форма на сайте, XML (DOAJ и Crossref), CSV через API и DOAJ API. Требования, дубли и частые ошибки.</p></li><li><a href="/doaj/guides/bulk-upload-csv/"><b>Массовая загрузка статей в DOAJ из Excel и CSV</b></a><p>Как загрузить выпуск журнала в DOAJ из таблицы Excel: шаблон CSV, формат авторов и ключевых слов, проверка перед отправкой, пакеты по 600 КБ и статус загрузки.</p></li><li><a href="/doaj/guides/missing-doi-orcid/"><b>Как найти статьи без DOI, ORCID и аннотаций в DOAJ</b></a><p>Готовые запросы DOAJ API для поиска статей журнала без DOI, ORCID, аннотаций и ключевых слов, проверка всего журнала одной кнопкой и исправление найденного.</p></li><li><a href="/doaj/guides/export-articles/"><b>Как выгрузить все статьи журнала из DOAJ</b></a><p>Как скачать все статьи журнала из DOAJ в Excel (CSV) или JSON, обойти ограничение DOAJ API в 1000 записей и когда нужна полная выгрузка данных DOAJ.</p></li><li><a href="/doaj/guides/api-search-syntax/"><b>Поиск в DOAJ API: синтаксис запросов и поля</b></a><p>Синтаксис поиска DOAJ API v4: поля статей и журналов, сокращения, .exact, диапазоны, _exists_, сортировка, лимиты и неочевидные ловушки – с проверенными примерами.</p></li></ul>
 </main>
 <footer>
-  Неофициальный инструмент, не связан с <a href="https://doaj.org" rel="noopener">DOAJ</a> (Directory of Open Access Journals).
-  · <a href="https://github.com/tsentavta/editorstudio" rel="noopener">Исходный код</a> · Лицензия MIT
+  <span>Неофициальный инструмент, не связан с <a href="https://doaj.org" rel="noopener">DOAJ</a> (Directory of Open Access Journals).</span>
+  <a href="https://github.com/tsentavta/editorstudio" rel="noopener">Исходный код</a>
+  <span>Лицензия MIT</span>
 </footer>
 </body>
 </html>

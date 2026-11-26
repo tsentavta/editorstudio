@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Метафора · API-консоль</title>
+<title>Консоль API «Метафоры»</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="app.css?v=20261126-tabs">
+<link rel="stylesheet" href="app.css?v=20261126-publications">
 </head>
 <body>
 
@@ -22,11 +22,12 @@
       </svg>
       <span>Метафора</span><span class="brand-sub">API&nbsp;v2</span>
     </a>
-    <nav class="tabs" role="tablist">
-      <button class="tab is-active" data-tab="upload" role="tab">Загрузка</button>
-      <button class="tab" data-tab="files" role="tab">Файлы</button>
-      <button class="tab" data-tab="pdf" role="tab">PDF</button>
-      <button class="tab" data-tab="pubs" role="tab">Публикации</button>
+    <nav class="tabs" role="tablist" aria-label="Разделы консоли">
+      <button type="button" class="tab" data-tab="upload" role="tab" aria-selected="true">Загрузка</button>
+      <button type="button" class="tab" data-tab="files" role="tab" aria-selected="false" tabindex="-1">Файлы</button>
+      <button type="button" class="tab" data-tab="pdf" role="tab" aria-selected="false" tabindex="-1">PDF</button>
+      <button type="button" class="tab" data-tab="pubs" role="tab" aria-selected="false" tabindex="-1">Публикации</button>
+      <button type="button" class="tab" data-tab="signing" role="tab" aria-selected="false" tabindex="-1">Подписание</button>
     </nav>
     <div class="nav-right">
       <a class="home-link" href="../" title="Все инструменты EditorStudio">EditorStudio</a>
@@ -42,12 +43,12 @@
       <div class="eyebrow eyebrow-brand">API-КЛЮЧ «МЕТАФОРЫ»</div>
       <button type="button" class="link" id="keyClose">закрыть</button>
     </div>
-    <p class="hint" style="margin:0">Ключ организации из личного кабинета <a href="https://metafora.rcsi.science" target="_blank" rel="noopener">metafora.rcsi.science</a>. Хранится только в этом браузере и отправляется только в «Метафору» — у EditorStudio нет сервера.</p>
+    <p class="hint" style="margin:0">Ключ организации из личного кабинета <a href="https://metafora.rcsi.science" target="_blank" rel="noopener">metafora.rcsi.science</a>. Хранится только в этом браузере и отправляется только в «Метафору» – у EditorStudio нет сервера.</p>
     <div class="row">
       <input type="password" id="keyInput" class="mono grow" placeholder="вставьте ключ" autocomplete="off" spellcheck="false">
       <button type="button" class="btn btn-ghost" id="keyToggle">показать</button>
     </div>
-    <label class="check"><input type="checkbox" id="keyRemember"><span>запомнить на этом компьютере <span class="muted">(иначе — до закрытия вкладки)</span></span></label>
+    <label class="check"><input type="checkbox" id="keyRemember"><span>запомнить на этом компьютере <span class="muted">(иначе – до закрытия вкладки)</span></span></label>
     <div class="actions">
       <button type="button" class="btn btn-primary" id="keySave">Сохранить и проверить</button>
       <button type="button" class="btn btn-ghost btn-danger" id="keyForget">Забыть ключ</button>
@@ -57,8 +58,14 @@
 </div>
 
 <main class="page">
+  <nav class="breadcrumbs" aria-label="Хлебные крошки">
+    <ol>
+      <li class="published-crumb"><a href="../">EditorStudio</a></li>
+      <li><a href="#upload">Метафора</a></li>
+      <li><a id="sectionCrumb" href="#upload" aria-current="page">Загрузка</a></li>
+    </ol>
+  </nav>
   <section class="hero">
-    <div class="eyebrow eyebrow-brand">ИС «МЕТАФОРА» · РЦНИ · API V2.0.2</div>
     <h1 id="heroTitle">Загрузка статей в <em>Метафору</em></h1>
     <p class="lead" id="heroLead">Journal XML, PDF к статьям, статус обработки и подписание через официальный API.</p>
   </section>
@@ -139,7 +146,7 @@
               <input type="file" id="bFiles" multiple accept=".xml,.pdf,application/xml,text/xml,application/pdf">
               <span class="drop-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 3h7l4 4v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M15 3v4h4"/><path d="M4 7v12a2 2 0 0 0 2 2h9"/></svg></span>
               <span class="drop-title" id="bDropTitle">Все XML и PDF разом</span>
-              <span class="drop-name mono" id="bDropName">перетащите или выберите сразу все файлы — пары подберутся по имени</span>
+              <span class="drop-name mono" id="bDropName">перетащите или выберите сразу все файлы – пары подберутся по имени</span>
             </label>
 
             <div class="bsum" id="bSummary" hidden></div>
@@ -172,7 +179,7 @@
 
         <div class="card">
           <div class="card-head">
-            <div class="eyebrow">ИСТОРИЯ ЗАГРУЗОК <span class="muted">· в этом браузере</span></div>
+            <div class="eyebrow">ИСТОРИЯ ЗАГРУЗОК <span class="muted">(в этом браузере)</span></div>
             <button class="btn btn-ghost btn-sm" id="histClear">Очистить</button>
           </div>
           <div id="history"></div>
@@ -205,31 +212,27 @@
       <!-- ===== ПУБЛИКАЦИИ ===== -->
       <section class="panel" data-panel="pubs" hidden>
         <div class="card">
-          <div class="eyebrow">ПОИСК ПУБЛИКАЦИИ</div>
-          <div class="seg" id="searchSeg">
-            <button class="seg-btn is-on" data-by="doi">DOI</button>
-            <button class="seg-btn" data-by="edn">EDN</button>
-          </div>
-          <div class="row">
-            <input type="text" id="searchQ" class="mono grow" placeholder="10.18469/1810-3189.2025.28.1.7-15" autocomplete="off">
-            <button class="btn btn-ghost" id="searchBtn">Найти</button>
-          </div>
-          <label class="check"><input type="checkbox" id="searchPublic"><span>искать по всем организациям <span class="mono" style="font-size:12px;color:var(--stone)">public=true</span></span></label>
-          <div id="searchResult"></div>
-        </div>
-        <div class="card">
-          <div class="eyebrow">ПУБЛИКАЦИЯ</div>
-          <div class="row">
-            <input type="text" id="artUid" class="mono grow" placeholder="article_uid" autocomplete="off">
-            <button class="btn btn-ghost" id="artBtn">Открыть</button>
-          </div>
+          <form id="publicationSearch">
+            <label class="label" for="searchQ">DOI, EDN или ID публикации</label>
+            <div class="row">
+              <input type="text" id="searchQ" class="mono grow" placeholder="10.18469/1810-3189.2025.28.1.7-15" autocomplete="off" spellcheck="false" required>
+              <button class="btn btn-primary" id="searchBtn">Найти</button>
+            </div>
+            <label class="check"><input type="checkbox" id="searchPublic"><span>Искать по всем организациям</span></label>
+          </form>
+          <div id="searchResult" role="status"></div>
           <div id="pubResult"></div>
         </div>
-
+      </section>
+      <section class="panel" data-panel="signing" hidden>
         <div class="card">
-          <div class="eyebrow">СТАТУСЫ ПОДПИСАНИЯ · ДО 100 ШТУК</div>
-          <textarea id="batchUids" class="mono" rows="4" placeholder="article_uid — по одному на строку или через запятую"></textarea>
-          <div class="actions"><button class="btn btn-ghost" id="batchBtn">Получить статусы</button></div>
+          <form id="signingForm">
+            <label class="label" for="batchUids">ID публикаций (article_uid)</label>
+            <p class="hint" id="signingHint">До 100 ID за раз, по одному на строку или через запятую.</p>
+            <textarea id="batchUids" class="mono" rows="4" aria-describedby="signingHint" required></textarea>
+            <div class="actions"><button class="btn btn-primary" id="batchBtn">Проверить статусы</button></div>
+          </form>
+          <div id="signingMessage" role="status"></div>
           <div id="batchResult"></div>
         </div>
       </section>
@@ -254,7 +257,7 @@
 <aside class="viewer" id="viewer" hidden aria-label="Просмотр PDF">
   <div class="viewer-head">
     <div class="eyebrow eyebrow-brand" id="vPos">СВЕРКА</div>
-    <div class="viewer-keys mono">← → листать · Esc закрыть</div>
+    <div class="viewer-keys mono">← → листать, Esc закрыть</div>
     <button type="button" class="viewer-x" id="vClose" title="Закрыть (Esc)" aria-label="Закрыть">✕</button>
   </div>
   <div class="viewer-meta" id="vMeta"></div>
@@ -271,8 +274,9 @@
   <div class="hint mono" id="vHint"></div>
 </aside>
 
-<script src="app.js?v=20261126-tabs"></script>
-<script src="batch.js?v=20261126-tabs"></script>
-<script src="pdf-issue.js?v=20261126-tabs"></script>
+<script src="app.js?v=20261126-publications"></script>
+<script src="publications.js?v=20261126"></script>
+<script src="batch.js?v=20261126-publications"></script>
+<script src="pdf-issue.js?v=20261126-publications"></script>
 </body>
 </html>

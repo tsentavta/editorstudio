@@ -3,29 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>EditorStudio — инструменты редакции научного журнала</title>
+<title>EditorStudio – инструменты редакции научного журнала</title>
 <meta name="description" content="Браузерные инструменты для редакций научных журналов: загрузка и проверка метаданных статей в DOAJ и ИС «Метафора» через официальные API.">
 <link rel="canonical" href="https://editorstudio.ru/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="EditorStudio — инструменты редакции научного журнала">
-<meta property="og:description" content="Метаданные статей в DOAJ и ИС «Метафора» через официальные API — прямо в браузере, без сервера.">
+<meta property="og:title" content="EditorStudio – инструменты редакции научного журнала">
+<meta property="og:description" content="Метаданные статей в DOAJ и ИС «Метафора» через официальные API – прямо в браузере, без сервера.">
 <meta property="og:url" content="https://editorstudio.ru/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/theme.css">
 <style>
-:root {
-  --cream:#fafaf8; --white:#fff; --pebble:#f0f0ef; --linen:#e4e5e1; --ash:#d9d9d9;
-  --ink:#141415; --graphite:#2e2e2c; --carbon:#454542; --slate:#6e6f6c; --stone:#8c8c89; --fog:#b7b7b4;
-  --orange:#f35b22; --ember:#ff5e24; --persimmon:#d14200;
-  --teal:#88d2c3; --sky:#8bc5f3; --orchid:#c678dd; --punct:#abb2bf;
-  --sans:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --mono:"JetBrains Mono","IBM Plex Mono",ui-monospace,Consolas,monospace;
-  --sh-nav:rgba(24,25,22,.02) 0 2px 1px 0, rgba(24,25,22,.1) 0 -1px 0 0 inset;
-  --sh-card:rgba(228,229,225,.3) 0 1px 0 0 inset, rgba(110,111,109,.1) 0 -1px 0 0 inset;
-  --sh-btn:rgba(255,255,255,.2) 0 1px 0 0 inset, rgba(24,25,22,.06) 0 1px 2px 0, rgba(24,25,22,.1) 0 -1px 0 0 inset;
-}
 * { box-sizing:border-box; }
 body { margin:0; background:var(--cream); color:var(--ink); font:400 14px/1.5 var(--sans); letter-spacing:.14px; font-feature-settings:"calt" 0,"liga" 0; -webkit-font-smoothing:antialiased; }
 a { color:inherit; }
@@ -57,8 +47,8 @@ h1 em { font-style:normal; color:var(--orange); }
 .tool .meta { font:400 12px/1.5 var(--mono); color:var(--stone); }
 .actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:auto; padding-top:8px; }
 .btn { display:inline-flex; align-items:center; justify-content:center; padding:12px 24px; border-radius:4px; font-weight:500; font-size:14px; text-decoration:none; white-space:nowrap; transition:background-color .15s,border-color .15s; }
-.btn-primary { background:var(--orange); color:#fff; box-shadow:var(--sh-btn); }
-.btn-primary:hover { background:var(--ember); }
+.btn-primary { background:var(--action); color:#fff; box-shadow:var(--sh-btn); }
+.btn-primary:hover { background:var(--action-hover); }
 .btn-ghost { border:1px solid var(--ash); color:var(--ink); }
 .btn-ghost:hover { border-color:var(--stone); background:var(--white); }
 
@@ -105,14 +95,14 @@ footer { border-top:1px solid var(--linen); }
 <main class="page">
   <section class="hero">
     <div class="eyebrow brand">ИНСТРУМЕНТЫ РЕДАКЦИИ НАУЧНОГО ЖУРНАЛА</div>
-    <h1>Метаданные статей — в индексы <em>без рутины</em></h1>
+    <h1>Метаданные статей – в индексы <em>без рутины</em></h1>
     <p class="lead">Загрузка, проверка и правка метаданных в DOAJ и ИС «Метафора» через их официальные API. Всё работает в браузере: ключи остаются у вас, своего сервера у EditorStudio нет.</p>
   </section>
 
   <section class="tools">
     <article class="tool">
       <svg class="tool-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.2-4.2"/><path d="M8.5 11h5M11 8.5v5"/></svg>
-      <div class="eyebrow">DOAJ · API V4</div>
+      <div class="eyebrow">DOAJ API V4</div>
       <h2>DOAJ Metadata Studio</h2>
       <p>Поиск, загрузка, правка и аудит статей журнала в Directory of Open Access Journals.</p>
       <ul>
@@ -120,7 +110,7 @@ footer { border-top:1px solid var(--linen); }
         <li>загрузка статей по одной и пакетом из CSV</li>
         <li>аудит: статьи без DOI и ORCID</li>
       </ul>
-      <div class="meta">RU · EN · руководства внутри</div>
+      <div class="meta">Русский и английский интерфейс</div>
       <div class="actions">
         <a class="btn btn-primary" href="/doaj/">Открыть DOAJ MDS</a>
         <a class="btn btn-ghost" href="/doaj/guides/">Руководства</a>
@@ -129,7 +119,7 @@ footer { border-top:1px solid var(--linen); }
 
     <article class="tool">
       <svg class="tool-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="m10 13-2 2 2 2M14 13l2 2-2 2"/></svg>
-      <div class="eyebrow">ИС «МЕТАФОРА» · РЦНИ · API V2</div>
+      <div class="eyebrow">API V2 ИС «МЕТАФОРА»</div>
       <h2>Консоль «Метафоры»</h2>
       <p>Передача статей в Национальную платформу периодических научных изданий.</p>
       <ul>
@@ -150,14 +140,14 @@ footer { border-top:1px solid var(--linen); }
     <div>
       <div class="eyebrow">КАК ЭТО УСТРОЕНО</div>
       <h2>Ваш браузер говорит с API <em>напрямую</em></h2>
-      <p>Страницы EditorStudio — статические файлы. Запросы уходят из вашего браузера прямо в doaj.org и metafora.rcsi.science.</p>
+      <p>Страницы EditorStudio – статические файлы. Запросы уходят из вашего браузера прямо в doaj.org и metafora.rcsi.science.</p>
       <p>API-ключ хранится только в этом браузере: до закрытия вкладки или, если попросите, на этом компьютере. Код открыт на GitHub.</p>
     </div>
     <div class="term">
       <div class="term-bar"><span class="lights"><i></i><i></i><i></i></span><span class="eyebrow">БРАУЗЕР → API</span></div>
 <pre><span class="m">GET</span> metafora.rcsi.science/api/v2/files/status/
 <span class="c">Api-Key: ••••••••••••</span>
-<span class="ok">200</span> <span class="c">· 184 мс</span>
+<span class="ok">200</span> <span class="c">(184 мс)</span>
 
 <span class="p">{</span>
   <span class="k">"file_uid"</span><span class="p">:</span> <span class="s">"550e8400-e29b-41d4-a716-…"</span><span class="p">,</span>
@@ -171,7 +161,7 @@ footer { border-top:1px solid var(--linen); }
 
 <footer>
   <div class="foot">
-    <span>EditorStudio · неофициальные инструменты, не связаны с DOAJ и РЦНИ</span>
+    <span>Неофициальные инструменты, не связаны с DOAJ и РЦНИ</span>
     <span><a href="https://github.com/tsentavta/editorstudio" rel="noopener">editorstudio</a></span>
   </div>
 </footer>

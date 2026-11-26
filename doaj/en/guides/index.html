@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Guides to working with DOAJ — DOAJ Metadata Studio</title>
+<title>Guides to working with DOAJ – DOAJ Metadata Studio</title>
 <meta name="description" content="Step-by-step guides for journal editors: uploading articles to DOAJ, bulk upload from Excel, finding metadata gaps, exporting and searching with the DOAJ API.">
 <link rel="canonical" href="https://editorstudio.ru/doaj/en/guides/">
 <link rel="alternate" hreflang="ru" href="https://editorstudio.ru/doaj/guides/">
@@ -23,6 +23,8 @@
 <link rel="apple-touch-icon" href="/doaj/apple-touch-icon.png">
 <link rel="manifest" href="/doaj/site.webmanifest">
 <link rel="stylesheet" href="/doaj/assets/guides.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/theme.css">
 <link rel="stylesheet" href="/doaj/editorstudio.css">
 <script>try{const t=JSON.parse(localStorage.getItem('doajs.theme'));if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 <script type="application/ld+json">
@@ -60,7 +62,7 @@
 <body>
 <header class="top">
   <div class="bar">
-    <a class="brand" href="/doaj/en/"><img width="24" height="24" src="/favicon.svg" alt="">EditorStudio · DOAJ</a>
+    <a class="brand" href="/doaj/en/"><img width="24" height="24" src="/favicon.svg" alt="">EditorStudio / DOAJ</a>
     <nav>
       <a href="/doaj/en/guides/">Guides</a>
       <a class="cta" href="/doaj/en/">Open the app</a>
@@ -69,14 +71,15 @@
   </div>
 </header>
 <main class="guide">
-  <nav class="crumbs" aria-label="breadcrumbs"><a href="/doaj/en/">DOAJ Metadata Studio</a> <span aria-hidden="true">›</span> <span>Guides</span></nav>
+  <nav class="breadcrumbs" aria-label="Breadcrumbs"><ol><li><a href="/">EditorStudio</a></li><li><a href="/doaj/en/">DOAJ Metadata Studio</a></li><li><a href="/doaj/en/guides/" aria-current="page">Guides</a></li></ol></nav>
   <h1>Guides to working with DOAJ</h1>
-  <p class="lead">Practical guides for editors and publishers of open access journals. Every guide was checked against the live DOAJ API and links to DOAJ Metadata Studio — a free tool where you can do what is described in a couple of clicks.</p>
-  <ul class="index"><li><a href="/doaj/en/guides/upload-articles/"><b>How to upload articles to DOAJ: manual entry, XML, CSV and API</b></a><p>Four ways to upload article metadata to DOAJ: the web form, XML (DOAJ and Crossref), CSV via the API, and the DOAJ API. Requirements, duplicates and common errors.</p></li><li><a href="/doaj/en/guides/bulk-upload-csv/"><b>Bulk upload articles to DOAJ from Excel and CSV</b></a><p>How to upload a journal issue to DOAJ from an Excel sheet: the CSV template, author and keyword format, validation before sending, 600 KB batches and upload status.</p></li><li><a href="/doaj/en/guides/missing-doi-orcid/"><b>How to find DOAJ articles without DOI, ORCID or abstracts</b></a><p>Ready-made DOAJ API queries to find a journal’s articles without DOI, ORCID, abstracts or keywords, a one-click audit of the whole journal, and how to fix what you find.</p></li><li><a href="/doaj/en/guides/export-articles/"><b>How to export all of a journal’s articles from DOAJ</b></a><p>How to download every article of a journal from DOAJ to Excel (CSV) or JSON, get around the DOAJ API limit of 1000 records, and when you need the full DOAJ data dump.</p></li><li><a href="/doaj/en/guides/api-search-syntax/"><b>DOAJ API search: query syntax and fields</b></a><p>DOAJ API v4 search syntax: article and journal fields, short names, .exact, ranges, _exists_, sorting, limits and non-obvious pitfalls — with tested examples.</p></li></ul>
+  <p class="lead">Practical guides for editors and publishers of open access journals. Every guide was checked against the live DOAJ API and links to DOAJ Metadata Studio – a free tool where you can do what is described in a couple of clicks.</p>
+  <ul class="index"><li><a href="/doaj/en/guides/upload-articles/"><b>How to upload articles to DOAJ: manual entry, XML, CSV and API</b></a><p>Four ways to upload article metadata to DOAJ: the web form, XML (DOAJ and Crossref), CSV via the API, and the DOAJ API. Requirements, duplicates and common errors.</p></li><li><a href="/doaj/en/guides/bulk-upload-csv/"><b>Bulk upload articles to DOAJ from Excel and CSV</b></a><p>How to upload a journal issue to DOAJ from an Excel sheet: the CSV template, author and keyword format, validation before sending, 600 KB batches and upload status.</p></li><li><a href="/doaj/en/guides/missing-doi-orcid/"><b>How to find DOAJ articles without DOI, ORCID or abstracts</b></a><p>Ready-made DOAJ API queries to find a journal’s articles without DOI, ORCID, abstracts or keywords, a one-click audit of the whole journal, and how to fix what you find.</p></li><li><a href="/doaj/en/guides/export-articles/"><b>How to export all of a journal’s articles from DOAJ</b></a><p>How to download every article of a journal from DOAJ to Excel (CSV) or JSON, get around the DOAJ API limit of 1000 records, and when you need the full DOAJ data dump.</p></li><li><a href="/doaj/en/guides/api-search-syntax/"><b>DOAJ API search: query syntax and fields</b></a><p>DOAJ API v4 search syntax: article and journal fields, short names, .exact, ranges, _exists_, sorting, limits and non-obvious pitfalls – with tested examples.</p></li></ul>
 </main>
 <footer>
-  Unofficial tool, not affiliated with <a href="https://doaj.org" rel="noopener">DOAJ</a> (Directory of Open Access Journals).
-  · <a href="https://github.com/tsentavta/editorstudio" rel="noopener">Source code</a> · MIT License
+  <span>Unofficial tool, not affiliated with <a href="https://doaj.org" rel="noopener">DOAJ</a> (Directory of Open Access Journals).</span>
+  <a href="https://github.com/tsentavta/editorstudio" rel="noopener">Source code</a>
+  <span>MIT License</span>
 </footer>
 </body>
 </html>

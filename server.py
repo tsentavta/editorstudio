@@ -69,7 +69,12 @@ class Handler(BaseHTTPRequestHandler):
             return self._json(200, {"base": UPSTREAM, "hasKey": bool(API_KEY)})
         rel = self.path.split("?", 1)[0].lstrip("/") or "index.html"
         target = (STATIC / rel).resolve()
-        if STATIC not in target.parents and target != STATIC or not target.is_file():
+        if rel == "theme.css":
+            target = ROOT / "site" / "theme.css"
+        elif STATIC not in target.parents:
+            self.send_error(404)
+            return
+        if not target.is_file():
             return self._json(404, {"message": "Not found"})
         ctype = mimetypes.guess_type(target.name)[0] or "application/octet-stream"
         if ctype.startswith("text/") or ctype.endswith("javascript"):

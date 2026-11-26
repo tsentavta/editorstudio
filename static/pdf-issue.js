@@ -44,7 +44,7 @@ function issuePdfRender() {
       const options = issuePdfs.map((pdf, i) => `<option value="${i}" ${pdf === row.pdf ? "selected" : ""}>${esc(pdf.file.name)}</option>`).join("");
       const file = selectable
         ? `<select data-pdf-issue-row="${index}" aria-label="PDF для ${esc(row.doi)}" ${issuePdfBusy ? "disabled" : ""}><option value="">Выберите PDF</option>${options}</select>`
-        : esc(row.pdf?.file.name || "—");
+        : esc(row.pdf?.file.name || "–");
       const preview = row.pdf ? ` <button type="button" class="btn btn-ghost btn-sm" data-pdf-preview="${index}">Просмотреть PDF</button>` : "";
       let message = row.message;
       if (issuePdfAssignable(row) && row.pdf && !ready.has(row)) {
@@ -184,6 +184,12 @@ issuePdfSend.addEventListener("click", async () => {
   issuePdfSetBusy(true);
   let uploaded = 0;
   try {
+    const duplicates = await batchPdfConflicts(issuePublications, (row) => row.pdf?.file);
+    const conflicts = ready.filter((row) => duplicates.has(row));
+    if (conflicts.length) {
+      issuePdfStatus.textContent = `Одинаковый PDF выбран для нескольких статей. Проверьте DOI ${conflicts.map((row) => row.doi).join(", ")}.`;
+      return;
+    }
     for (const [index, row] of ready.entries()) {
       issuePdfStatus.textContent = `Отправляю PDF ${index + 1} из ${ready.length}…`;
       const response = await uploadPublicationPdf(row.uid, row.pdf.file);
@@ -193,5 +199,7 @@ issuePdfSend.addEventListener("click", async () => {
       issuePdfRender();
     }
     issuePdfStatus.textContent = `Прикреплено PDF: ${uploaded} из ${ready.length}. Ошибок: ${ready.length - uploaded}.`;
+  } catch {
+    issuePdfStatus.textContent = "Не удалось завершить проверку или отправку. Проверьте уже прикреплённые файлы перед повтором.";
   } finally { issuePdfSetBusy(false); }
 });

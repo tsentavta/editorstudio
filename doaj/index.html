@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>DOAJ Metadata Studio — загрузка и проверка метаданных в DOAJ</title>
+<title>DOAJ Metadata Studio – загрузка и проверка метаданных в DOAJ</title>
 <meta name="description" content="Бесплатный инструмент для редакторов журналов: поиск в DOAJ, загрузка и правка статей через API, массовая загрузка из Excel, проверка DOI и ORCID.">
 <meta name="keywords" content="DOAJ, DOAJ API, Directory of Open Access Journals, метаданные статей, загрузка статей в DOAJ, научный журнал, открытый доступ, DOI, ORCID, open access metadata">
 <meta name="author" content="tsentavta">
@@ -18,14 +18,14 @@
 <meta property="og:site_name" content="DOAJ Metadata Studio">
 <meta property="og:locale" content="ru_RU">
 <meta property="og:url" content="https://editorstudio.ru/doaj/">
-<meta property="og:title" content="DOAJ Metadata Studio — метаданные статей в DOAJ">
+<meta property="og:title" content="DOAJ Metadata Studio – метаданные статей в DOAJ">
 <meta property="og:description" content="Поиск, загрузка, редактирование и проверка метаданных статей в DOAJ через API v4. Бесплатно, в браузере, без установки.">
 <meta property="og:image" content="https://editorstudio.ru/doaj/docs/screenshot-search.jpg">
 <meta property="og:image:width" content="800">
 <meta property="og:image:height" content="506">
 <meta property="og:image:alt" content="Поиск статей в DOAJ Metadata Studio">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="DOAJ Metadata Studio — метаданные статей в DOAJ">
+<meta name="twitter:title" content="DOAJ Metadata Studio – метаданные статей в DOAJ">
 <meta name="twitter:description" content="Поиск, загрузка, редактирование и проверка метаданных статей в DOAJ через API v4.">
 <meta name="twitter:image" content="https://editorstudio.ru/doaj/docs/screenshot-search.jpg">
 <script type="application/ld+json">
@@ -229,6 +229,8 @@ details.help{margin-top:10px}
 details.help code{font-family:var(--mono);font-size:12px;background:var(--panel2);padding:1px 5px;border-radius:4px}
 .chk{display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer}
 </style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/theme.css">
 <link rel="stylesheet" href="/doaj/editorstudio.css">
 </head>
 <body>
@@ -249,6 +251,10 @@ details.help code{font-family:var(--mono);font-size:12px;background:var(--panel2
 </header>
 
 <main>
+<nav class="breadcrumbs" aria-label="Хлебные крошки"><ol>
+  <li><a href="/">EditorStudio</a></li>
+  <li><a href="/doaj/" aria-current="page">DOAJ</a></li>
+</ol></nav>
 <!-- ============ SEARCH ============ -->
 <section class="tab active" id="tab-search">
   <div class="card">
@@ -262,7 +268,7 @@ details.help code{font-family:var(--mono);font-size:12px;background:var(--panel2
     <div id="qRows"></div>
     <datalist id="fieldList"></datalist>
     <div class="row" style="margin:4px 0 10px"><button class="b sm" id="addRow">+ Условие</button><span class="hint" style="margin:0">Диапазон: год/число <code>2020-2023</code>, дата <code>2024-01-01..2024-12-31</code>. Для true/false и Yes/No можно писать «да»/«нет».</span></div>
-    <label class="f">Запрос (Lucene) — собирается из условий, можно править вручную
+    <label class="f">Запрос (Lucene) – собирается из условий, можно править вручную
       <textarea id="qText" class="mono" rows="2" placeholder="например: issn:1810-3189 AND bibjson.year:2024"></textarea>
     </label>
     <div class="row" style="margin-top:10px">
@@ -275,13 +281,13 @@ details.help code{font-family:var(--mono);font-size:12px;background:var(--panel2
     </div>
     <details class="help"><summary>Синтаксис запросов</summary>
       <div class="small" style="margin-top:8px;line-height:1.8">
-        Поиск по полю: <code>bibjson.title:"wave propagation"</code> · сокращения: <code>doi:</code> <code>issn:</code> <code>title:</code> <code>license:CC-BY</code><br>
-        Логика: <code>AND</code>, <code>OR</code>, <code>NOT</code>, скобки · диапазон: <code>bibjson.year:[2020 TO 2023]</code><br>
+        Поиск по полю: <code>bibjson.title:"wave propagation"</code>, сокращения: <code>doi:</code> <code>issn:</code> <code>title:</code> <code>license:CC-BY</code><br>
+        Логика: <code>AND</code>, <code>OR</code>, <code>NOT</code>, скобки, диапазон: <code>bibjson.year:[2020 TO 2023]</code><br>
         Наличие поля: <code>_exists_:bibjson.abstract</code>, отсутствие: <code>NOT _exists_:bibjson.author.orcid_id</code><br>
-        Статьи без DOI: <code>NOT _exists_:index.doi</code> или <code>NOT bibjson.identifier.type:doi</code> — сокращение <code>doi:</code> работает только для поиска по значению, поля <code>doi</code> в индексе нет<br>
+        Статьи без DOI: <code>NOT _exists_:index.doi</code> или <code>NOT bibjson.identifier.type:doi</code> – сокращение <code>doi:</code> работает только для поиска по значению, поля <code>doi</code> в индексе нет<br>
         DOI со слешем заключайте в кавычки: <code>doi:"10.18469/1810-3189.2022.25.4.122-128"</code><br>
-        Точное совпадение всего значения: суффикс <code>.exact</code> — <code>bibjson.journal.title.exact:"Journal of Science"</code> (только для полей с полным именем, не для сокращений)<br>
-        Значения: логические поля <code>bibjson.*</code> — <code>true</code>/<code>false</code>; флаги <code>index.*</code> — <code>Yes</code>/<code>No</code>; <code>index.country</code> и <code>index.language</code> — английские названия (<code>"Russian Federation"</code>, <code>Russian</code>), а <code>bibjson.*.country</code>/<code>language</code> — коды (<code>RU</code>)<br>
+        Точное совпадение всего значения: суффикс <code>.exact</code> – <code>bibjson.journal.title.exact:"Journal of Science"</code> (только для полей с полным именем, не для сокращений)<br>
+        Значения: логические поля <code>bibjson.*</code> – <code>true</code>/<code>false</code>; флаги <code>index.*</code> – <code>Yes</code>/<code>No</code>; <code>index.country</code> и <code>index.language</code> – английские названия (<code>"Russian Federation"</code>, <code>Russian</code>), а <code>bibjson.*.country</code>/<code>language</code> – коды (<code>RU</code>)<br>
         Диапазоны только закрытые: <code>created_date:[2026-01-01 TO 2026-06-30]</code>; <code>TO *</code> запрещено. Все записи: запрос <code>*</code><br>
         Шаблоны <code>*</code> и <code>?</code> внутри слов, нечёткий поиск <code>~</code> и регулярные выражения DOAJ <b>не разрешает</b>. По одному запросу доступны только первые 1000 результатов.
       </div>
@@ -290,7 +296,7 @@ details.help code{font-family:var(--mono);font-size:12px;background:var(--panel2
   <div class="card ref">
     <details id="refBox">
       <summary style="cursor:pointer"><b>Справочник полей</b> <span class="small muted" id="refCount"></span></summary>
-      <div class="small muted" style="margin:8px 0">Щелчок по имени поля вставляет <code>поле:</code> в запрос, по примеру — готовое условие. Поиск возможен по любому полю из списка.</div>
+      <div class="small muted" style="margin:8px 0">Щелчок по имени поля вставляет <code>поле:</code> в запрос, по примеру – готовое условие. Поиск возможен по любому полю из списка.</div>
       <input id="refFilter" placeholder="Найти поле: «orcid», «лицензия», «дата»…" style="width:100%;margin-bottom:8px">
       <div class="tw" style="max-height:460px"><table id="refTable"></table></div>
     </details>
@@ -353,7 +359,7 @@ details.help code{font-family:var(--mono);font-size:12px;background:var(--panel2
       </div>
       <div class="card authors">
         <div class="row" style="justify-content:space-between"><h2 style="margin:0">Авторы</h2><button class="b sm" id="eAddAuthor">+ Автор</button></div>
-        <div class="small muted" style="margin:6px 0 10px">ФИО · аффилиация · ORCID (можно без https://orcid.org/)</div>
+        <div class="small muted" style="margin:6px 0 10px">ФИО, аффилиация, ORCID (можно без https://orcid.org/)</div>
         <div id="eAuthors"></div>
       </div>
       <div class="card">
@@ -419,7 +425,7 @@ details.help code{font-family:var(--mono);font-size:12px;background:var(--panel2
     </div>
     <div class="card">
       <h2>Массовое удаление</h2>
-      <textarea id="dIds" class="mono" rows="7" placeholder="DOAJ ID статей — по одному на строку (подойдут и ссылки doaj.org/article/…)"></textarea>
+      <textarea id="dIds" class="mono" rows="7" placeholder="DOAJ ID статей – по одному на строку (подойдут и ссылки doaj.org/article/…)"></textarea>
       <div class="row" style="margin-top:8px">
         <span class="small muted" id="dCount">0 ID</span>
         <div class="grow"></div>
@@ -493,11 +499,11 @@ details.help code{font-family:var(--mono);font-size:12px;background:var(--panel2
 
     <div class="card">
       <h2>Сверка со списком DOI</h2>
-      <div class="small muted" style="margin-bottom:8px">Вставьте DOI из любого источника (сайт журнала, Crossref, список литературы) — в любом формате, по одному или вперемешку с текстом.</div>
+      <div class="small muted" style="margin-bottom:8px">Вставьте DOI из любого источника (сайт журнала, Crossref, список литературы) – в любом формате, по одному или вперемешку с текстом.</div>
       <textarea id="rText" class="mono" rows="6"></textarea>
       <div class="row" style="margin-top:8px">
         <button class="b primary" id="rGo">Сверить</button>
-        <label class="chk"><input type="checkbox" id="rRemote" checked> не найденные — дополнительно искать по всему DOAJ</label>
+        <label class="chk"><input type="checkbox" id="rRemote" checked> не найденные – дополнительно искать по всему DOAJ</label>
       </div>
       <div id="rOut" style="margin-top:12px"></div>
     </div>
@@ -528,8 +534,8 @@ details.help code{font-family:var(--mono);font-size:12px;background:var(--panel2
 </section>
 
 <section class="about" id="about" aria-labelledby="aboutTitle">
-  <h1 id="aboutTitle">DOAJ Metadata Studio — работа с метаданными статей в DOAJ</h1>
-  <p class="lead">Бесплатный онлайн-инструмент для редакторов и издателей научных журналов открытого доступа. Позволяет искать статьи и журналы в <a href="https://doaj.org" target="_blank" rel="noopener">DOAJ (Directory of Open Access Journals)</a>, загружать и исправлять статьи через DOAJ API, проверять полноту метаданных и выгружать данные в Excel — прямо в браузере, без установки и регистрации.</p>
+  <h1 id="aboutTitle">DOAJ Metadata Studio – работа с метаданными статей в DOAJ</h1>
+  <p class="lead">Бесплатный онлайн-инструмент для редакторов и издателей научных журналов открытого доступа. Позволяет искать статьи и журналы в <a href="https://doaj.org" target="_blank" rel="noopener">DOAJ (Directory of Open Access Journals)</a>, загружать и исправлять статьи через DOAJ API, проверять полноту метаданных и выгружать данные в Excel – прямо в браузере, без установки и регистрации.</p>
   <div class="about-grid">
     <div>
       <h2>Поиск по всем полям DOAJ</h2>
@@ -588,7 +594,7 @@ details.help code{font-family:var(--mono);font-size:12px;background:var(--panel2
 </aside>
 <footer>
   Неофициальный инструмент, не связан с <a href="https://doaj.org" target="_blank" rel="noopener">DOAJ</a> (Directory of Open Access Journals). Данные загружаются напрямую из <a href="https://doaj.org/api/v4/docs" target="_blank" rel="noopener">DOAJ API v4</a>.
-  · <a href="https://github.com/tsentavta/editorstudio" target="_blank" rel="noopener">Исходный код</a> · Лицензия MIT
+  <a href="https://github.com/tsentavta/editorstudio" target="_blank" rel="noopener">Исходный код</a> <span>Лицензия MIT</span>
 </footer>
 <div id="toasts"></div>
 
@@ -653,7 +659,7 @@ async function api(method, path, { params = {}, body, auth = false } = {}) {
   const url = new URL(API + path);
   for (const [k, v] of Object.entries(params)) if (v !== undefined && v !== '') url.searchParams.set(k, v);
   if (auth) {
-    if (!apiKey) throw new ApiError(0, 'Нужен API-ключ — укажите его во вкладке «Настройки»');
+    if (!apiKey) throw new ApiError(0, 'Нужен API-ключ – укажите его во вкладке «Настройки»');
     url.searchParams.set('api_key', apiKey);
   }
   for (let attempt = 0; attempt < 4; attempt++) {
@@ -753,7 +759,7 @@ function validateArticle(a) {
   if (au.length && au.some(x => !x.affiliation)) W('Не у всех авторов указана аффилиация');
   const kw = b.keywords || [];
   if (!kw.length) W('Нет ключевых слов');
-  if (kw.length > 6) W(`Ключевых слов ${kw.length} — DOAJ сохранит только первые 6`);
+  if (kw.length > 6) W(`Ключевых слов ${kw.length} – DOAJ сохранит только первые 6`);
   const j = b.journal || {};
   if (j.start_page && j.end_page && /^\d+$/.test(j.start_page) && /^\d+$/.test(j.end_page) && +j.end_page < +j.start_page) E('Последняя страница меньше первой');
   return out;
@@ -827,7 +833,7 @@ function renderDrawer() {
       ['pISSN / eISSN', esc([ident(r, 'pissn'), ident(r, 'eissn')].filter(Boolean).join(' / '))],
       ['Авторы', authors],
       ['Ключевые слова', (b.keywords || []).map(k => `<span class="badge">${esc(k)}</span>`).join('')],
-      ['Ссылки', (b.link || []).map(l => `<div><span class="badge">${esc(l.type)}${l.content_type ? ' · ' + esc(l.content_type) : ''}</span> <a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.url)}</a></div>`).join('')],
+      ['Ссылки', (b.link || []).map(l => `<div><span class="badge">${esc(l.type)}${l.content_type ? ', ' + esc(l.content_type) : ''}</span> <a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.url)}</a></div>`).join('')],
       ['Предметы (LCC)', (b.subject || []).map(s => esc(s.term) + ` <span class="muted small">${esc(s.code)}</span>`).join('<br>')],
       ['Языки журнала', esc((j.language || []).join(', '))],
       ['Аннотация', `<div style="white-space:pre-wrap">${esc(b.abstract)}</div>`],
@@ -861,8 +867,8 @@ function renderDrawer() {
 }
 
 /* ---------------- SEARCH ---------------- */
-/* Field catalog. Types: s — text (analysed, .exact available), k — code/identifier (.exact available), u — URL,
-   n — number, d — date (UTC ISO), b — boolean true/false, y — Yes/No (index.* flags), a — short alias (no .exact).
+/* Field catalog. Types: s – text (analysed, .exact available), k – code/identifier (.exact available), u – URL,
+   n – number, d – date (UTC ISO), b – boolean true/false, y – Yes/No (index.* flags), a – short alias (no .exact).
    [field, group, label, description, type, example] */
 const FC = {
   articles: [
@@ -880,12 +886,12 @@ const FC = {
     ['bibjson.author.affiliation', 'Авторы', 'Аффилиация', 'Организация автора', 's', '"Samara University"'],
     ['bibjson.author.orcid_id', 'Авторы', 'ORCID', 'ORCID автора в виде https://orcid.org/0000-0000-0000-0000', 'k', '"https://orcid.org/0000-0002-1825-0097"'],
     ['bibjson.identifier.id', 'Идентификаторы', 'Идентификатор', 'Значение любого идентификатора статьи: DOI, pISSN, eISSN', 'k', '2782-294X'],
-    ['bibjson.identifier.type', 'Идентификаторы', 'Тип идентификатора', 'doi, pissn, eissn. «NOT bibjson.identifier.type:doi» — статьи без DOI', 'k', 'doi'],
+    ['bibjson.identifier.type', 'Идентификаторы', 'Тип идентификатора', 'doi, pissn, eissn. «NOT bibjson.identifier.type:doi» – статьи без DOI', 'k', 'doi'],
     ['bibjson.journal.issns', 'Идентификаторы', 'ISSN журнала', 'Все ISSN журнала, к которому относится статья', 'k', '1810-3189'],
     ['bibjson.journal.volume', 'Выходные данные', 'Том', 'Номер тома (строка)', 'k', '25'],
     ['bibjson.journal.number', 'Выходные данные', 'Выпуск', 'Номер выпуска (строка)', 'k', '4'],
-    ['bibjson.start_page', 'Выходные данные', 'Первая страница', 'Первая страница статьи. В индексе лежит в bibjson, а не в bibjson.journal (при загрузке — наоборот)', 'k', '7'],
-    ['bibjson.end_page', 'Выходные данные', 'Последняя страница', 'Последняя страница статьи (в индексе — bibjson.end_page)', 'k', '15'],
+    ['bibjson.start_page', 'Выходные данные', 'Первая страница', 'Первая страница статьи. В индексе лежит в bibjson, а не в bibjson.journal (при загрузке – наоборот)', 'k', '7'],
+    ['bibjson.end_page', 'Выходные данные', 'Последняя страница', 'Последняя страница статьи (в индексе – bibjson.end_page)', 'k', '15'],
     ['bibjson.journal.title', 'Журнал', 'Название журнала', 'Название журнала в том виде, как оно записано в DOAJ (может быть на национальном языке)', 's', '"Физика волновых процессов"'],
     ['bibjson.journal.publisher', 'Журнал', 'Издатель', 'Издатель журнала', 's', 'Povolzhskiy'],
     ['bibjson.journal.country', 'Журнал', 'Страна издателя', 'Код страны ISO 3166, 2 буквы', 'k', 'RU'],
@@ -899,11 +905,11 @@ const FC = {
     ['id', 'Служебные', 'DOAJ ID', 'Идентификатор записи в DOAJ, 32 символа', 'k', '0033bd95b3c2468d94d72bf9f68d1232'],
     ['created_date', 'Служебные', 'Дата создания записи', 'Когда статья появилась в DOAJ. Только закрытые диапазоны, «TO *» запрещено', 'd', '[2026-10-01 TO 2026-11-01]'],
     ['last_updated', 'Служебные', 'Дата изменения', 'Когда запись последний раз менялась', 'd', '[2026-10-01 TO 2026-11-01]'],
-    ['admin.in_doaj', 'Служебные', 'Опубликована в DOAJ', 'true — видна публично, false — снята', 'b', 'true'],
+    ['admin.in_doaj', 'Служебные', 'Опубликована в DOAJ', 'true – видна публично, false – снята', 'b', 'true'],
     ['admin.publisher_record_id', 'Служебные', 'ID у издателя', 'Собственный ID записи издателя (устаревшее поле)', 'k', ''],
     ['admin.upload_id', 'Служебные', 'ID пакетной загрузки', 'upload_id пакета, которым загружена статья', 'k', ''],
     ['es_type', 'Служебные', 'Тип записи', 'Всегда article', 'k', 'article'],
-    ['index.doi', 'Индекс (служебные)', 'DOI (индекс)', 'Нормализованный DOI. «NOT _exists_:index.doi» — статьи без DOI', 'k', ''],
+    ['index.doi', 'Индекс (служебные)', 'DOI (индекс)', 'Нормализованный DOI. «NOT _exists_:index.doi» – статьи без DOI', 'k', ''],
     ['index.issn', 'Индекс (служебные)', 'ISSN (индекс)', 'Все ISSN журнала статьи', 'k', '2782-294X'],
     ['index.fulltext', 'Индекс (служебные)', 'Ссылка на полный текст', 'URL полного текста', 'u', '"pwp.psuti.ru"'],
     ['index.date', 'Индекс (служебные)', 'Дата публикации', 'Дата из года и месяца публикации', 'd', '[2024-01-01 TO 2024-12-31]'],
@@ -924,10 +930,10 @@ const FC = {
   journals: [
     ['title', 'Сокращения', 'Название (сокр.)', 'Поиск по названию журнала', 'a', 'radio'],
     ['issn', 'Сокращения', 'ISSN (сокр.)', 'Печатный или электронный ISSN', 'a', '1810-3189'],
-    ['publisher', 'Сокращения', 'Издатель (сокр.)', 'Описано в документации, но на практике часто ничего не находит — используйте bibjson.publisher.name', 'a', 'dove'],
-    ['license', 'Сокращения', 'Лицензия (сокр.)', 'Описано в документации, но работает ненадёжно — используйте index.license или bibjson.license.type', 'a', 'CC-BY'],
+    ['publisher', 'Сокращения', 'Издатель (сокр.)', 'Описано в документации, но на практике часто ничего не находит – используйте bibjson.publisher.name', 'a', 'dove'],
+    ['license', 'Сокращения', 'Лицензия (сокр.)', 'Описано в документации, но работает ненадёжно – используйте index.license или bibjson.license.type', 'a', 'CC-BY'],
     ['username', 'Сокращения', 'Логин издателя', 'Ваш логин в DOAJ: показывает ваши публичные журналы', 'a', ''],
-    ['bibjson.title', 'Основное', 'Название', 'Основное название журнала (может быть на национальном языке; английское — в alternative_title)', 's', '"Физика волновых процессов"'],
+    ['bibjson.title', 'Основное', 'Название', 'Основное название журнала (может быть на национальном языке; английское – в alternative_title)', 's', '"Физика волновых процессов"'],
     ['bibjson.alternative_title', 'Основное', 'Альтернативное название', 'Другое название, в том числе перевод', 's', '"Physics of Wave Processes"'],
     ['bibjson.pissn', 'Основное', 'pISSN', 'ISSN печатной версии', 'k', '1810-3189'],
     ['bibjson.eissn', 'Основное', 'eISSN', 'ISSN электронной версии', 'k', '2782-294X'],
@@ -946,7 +952,7 @@ const FC = {
     ['bibjson.subject.term', 'Предметы (LCC)', 'Предмет', 'Рубрика Library of Congress', 's', 'Physics'],
     ['bibjson.subject.code', 'Предметы (LCC)', 'Код предмета', 'Код рубрики LCC', 'k', 'QC1-999'],
     ['bibjson.subject.scheme', 'Предметы (LCC)', 'Схема', 'Обычно LCC', 'k', 'LCC'],
-    ['bibjson.license.type', 'Лицензия и права', 'Тип лицензии', 'CC BY, CC BY-SA, CC BY-NC… Значение с пробелом — в кавычках', 'k', '"CC BY"'],
+    ['bibjson.license.type', 'Лицензия и права', 'Тип лицензии', 'CC BY, CC BY-SA, CC BY-NC… Значение с пробелом – в кавычках', 'k', '"CC BY"'],
     ['bibjson.license.BY', 'Лицензия и права', 'Лицензия: BY', 'Требует указания авторства', 'b', 'true'],
     ['bibjson.license.NC', 'Лицензия и права', 'Лицензия: NC', 'Запрет коммерческого использования', 'b', 'true'],
     ['bibjson.license.ND', 'Лицензия и права', 'Лицензия: ND', 'Запрет производных произведений', 'b', 'true'],
@@ -1022,7 +1028,7 @@ function fieldOpts(type, sel) {
   let g = null;
   for (const [f, grp, label] of FC[type]) {
     if (grp !== g) { if (g) h += '</optgroup>'; h += `<optgroup label="${esc(grp)}">`; g = grp; }
-    h += o(f, `${label} — ${f}`);
+    h += o(f, `${label} – ${f}`);
   }
   return h + '</optgroup>';
 }
@@ -1034,7 +1040,7 @@ function syncRow(d) {
   const val = $('.val', d);
   val.placeholder = f === '_exists_' || f === '!_exists_' ? 'имя поля, например bibjson.abstract' : m ? (m[5] ? 'например: ' + m[5] : TYPE_LABEL[m[4]]) : 'слова для поиска';
   val.setAttribute('list', f === '_exists_' || f === '!_exists_' ? 'fieldList' : '');
-  val.title = m ? `${m[0]} · ${TYPE_LABEL[m[4]]}${m[3] ? ' — ' + m[3] : ''}` : '';
+  val.title = m ? `${m[0]}, ${TYPE_LABEL[m[4]]}${m[3] ? ' – ' + m[3] : ''}` : '';
 }
 function addQRow(r = { op: 'AND', f: '', v: '' }) {
   const d = document.createElement('div'); d.className = 'qrow';
@@ -1056,7 +1062,7 @@ function buildQuery() {
     const m = fmeta(S.type, f), t = m ? m[4] : '';
     const fld = f + ($('.ex input', r).checked ? '.exact' : '');
     let term, rg;
-    // short names like doi/issn are query aliases, not real index fields — map them for _exists_
+    // short names like doi/issn are query aliases, not real index fields – map them for _exists_
     if (f === '_exists_' || f === '!_exists_') term = (f[0] === '!' ? 'NOT ' : '') + '_exists_:' + ({ doi: 'index.doi', issn: 'index.issn' }[v.toLowerCase()] || v);
     else if (/^[\[{].+ TO .+[\]}]$/.test(v)) term = fld + ':' + v; // ready-made range
     else if ('ndk'.includes(t) && t && (rg = /^(.+?)\s*\.\.\s*(.+)$/.exec(v) || (/^\d{1,4}\s*[-–]\s*\d{1,4}$/.test(v) && /^(\d+)\s*[-–]\s*(\d+)$/.exec(v))))
@@ -1116,8 +1122,8 @@ function searchFor(type, rows) {
 async function runSearch(page) {
   const q = $('#qText').value.trim();
   if (!q) { toast('Введите запрос'); return; }
-  if (/_exists_:(doi|issn)\b/i.test(q)) toast('Поля doi/issn — это сокращения, _exists_ с ними всегда ложно. Используйте index.doi / index.issn', 'err', 8000);
-  if (q !== '*' && /[*?~]/.test(q.replace(/"[^"]*"/g, ''))) toast('Шаблоны * ? ~ DOAJ не поддерживает — запрос, скорее всего, вернёт ошибку', 'err');
+  if (/_exists_:(doi|issn)\b/i.test(q)) toast('Поля doi/issn – это сокращения, _exists_ с ними всегда ложно. Используйте index.doi / index.issn', 'err', 8000);
+  if (q !== '*' && /[*?~]/.test(q.replace(/"[^"]*"/g, ''))) toast('Шаблоны * ? ~ DOAJ не поддерживает – запрос, скорее всего, вернёт ошибку', 'err');
   const size = +$('#sSize').value;
   if (page * size > 1000 && page > 1) { toast('API отдаёт только первые 1000 результатов. Уточните запрос.', 'err'); return; }
   $('#sInfo').innerHTML = '<span class="spin"></span> Ищу…';
@@ -1132,16 +1138,16 @@ function renderResults() {
   const box = $('#sResults');
   if (!S.results.length) {
     $('#sInfo').textContent = S.q && S.total === 0 ? 'Ничего не найдено' : '';
-    box.innerHTML = S.q ? '' : '<div class="empty">Задайте условия и нажмите «Найти» — или нажмите «Пример», чтобы увидеть поиск в действии.<br>Например: поле «ISSN журнала» = 1810-3189, или «Поле не заполнено» = bibjson.abstract.</div>';
+    box.innerHTML = S.q ? '' : '<div class="empty">Задайте условия и нажмите «Найти» – или нажмите «Пример», чтобы увидеть поиск в действии.<br>Например: поле «ISSN журнала» = 1810-3189, или «Поле не заполнено» = bibjson.abstract.</div>';
     $('#sPager').innerHTML = ''; updateSel(); return;
   }
   const pages = Math.ceil(Math.min(S.total, 1000) / S.size);
-  $('#sInfo').textContent = `Найдено: ${S.total.toLocaleString('ru')}` + (S.total > 1000 ? ' (через API доступны первые 1000)' : '') + ` · страница ${S.page} из ${pages}`;
+  $('#sInfo').textContent = `Найдено: ${S.total.toLocaleString('ru')}` + (S.total > 1000 ? ' (через API доступны первые 1000)' : '') + `, страница ${S.page} из ${pages}`;
   box.innerHTML = S.results.map((r, i) => {
     const b = r.bibjson || {};
     if (S.type === 'journals') {
       return `<div class="result"><div class="grow"><div class="t" data-i="${i}">${esc(b.title)}</div>
-        <div class="meta">${esc([b.pissn, b.eissn].filter(Boolean).join(' / '))} · ${esc((b.publisher || {}).name)}${(b.publisher || {}).country ? ' (' + esc(b.publisher.country) + ')' : ''}</div>
+        <div class="meta">${esc([b.pissn, b.eissn].filter(Boolean).join(' / '))}, ${esc((b.publisher || {}).name)}${(b.publisher || {}).country ? ' (' + esc(b.publisher.country) + ')' : ''}</div>
         <div>${(b.subject || []).slice(0, 3).map(s => `<span class="badge">${esc(s.term)}</span>`).join('')}${(r.admin || {}).seal ? '<span class="badge ok">Seal</span>' : ''}${(b.apc || {}).has_apc === false ? '<span class="badge">без APC</span>' : ''}</div></div></div>`;
     }
     const au = (b.author || []).map(a => a.name);
@@ -1150,7 +1156,7 @@ function renderResults() {
     return `<div class="result"><input type="checkbox" data-id="${esc(r.id)}" ${S.sel.has(r.id) ? 'checked' : ''}>
       <div class="grow" style="min-width:0"><div class="t" data-i="${i}">${esc(b.title)}</div>
       <div class="meta">${esc(au.slice(0, 4).join(', '))}${au.length > 4 ? ' и др.' : ''}</div>
-      <div class="meta">${esc((b.journal || {}).title)}${citation(b) ? ' · ' + esc(citation(b)) : ''}${doi ? ` · <a href="https://doi.org/${esc(doi)}" target="_blank" rel="noopener">${esc(doi)}</a>` : ''}</div>
+      <div class="meta">${esc((b.journal || {}).title)}${citation(b) ? ', ' + esc(citation(b)) : ''}${doi ? `, <a href="https://doi.org/${esc(doi)}" target="_blank" rel="noopener">${esc(doi)}</a>` : ''}</div>
       <div>${issues.map(v => `<span class="badge ${v.lvl}">${esc(v.msg)}</span>`).join('')}</div></div>
       <div><button class="b sm" data-edit="${i}">Изменить</button></div></div>`;
   }).join('');
@@ -1201,7 +1207,7 @@ async function selectAllFound() {
       (r.results || []).forEach(x => S.sel.set(x.id, x));
     }
     renderResults();
-    toast(`Выделено: ${S.sel.size}` + (S.total > 1000 ? '. API отдаёт только первые 1000 — для полной выборки используйте «Экспорт и сверка»' : ''), S.total > 1000 ? '' : 'ok', 6000);
+    toast(`Выделено: ${S.sel.size}` + (S.total > 1000 ? '. API отдаёт только первые 1000 – для полной выборки используйте «Экспорт и сверка»' : ''), S.total > 1000 ? '' : 'ok', 6000);
   } catch (e) { renderResults(); toast('Не удалось выделить все: ' + e.message, 'err'); }
 }
 $('#sSel').addEventListener('click', e => {
@@ -1303,7 +1309,7 @@ $('#tab-editor').addEventListener('input', e => { if (e.target.id !== 'eJson' &&
 function editorLoadRecord(rec, isNew = false) {
   edBase = isNew ? null : JSON.parse(JSON.stringify(rec));
   recordToForm(rec);
-  $('#eMode').textContent = edBase?.id ? 'Редактирование · ' + edBase.id : 'Новая статья';
+  $('#eMode').textContent = edBase?.id ? 'Редактирование, ' + edBase.id : 'Новая статья';
   $('#eMode').className = 'badge ' + (edBase?.id ? 'warn' : '');
   $('#eLoadId').value = edBase?.id || '';
   edChanged();
@@ -1429,7 +1435,7 @@ function articlesToCSV(recs, d) {
 let bItems = [];
 const SRC_HINT = {
   json: 'Массив объектов статей в формате DOAJ (как в «JSON для повторной загрузки» или в ответе API). Записи с полем id обновят существующие статьи.',
-  csv: 'Столбцы: ' + CSV_COLS.join(', ') + '. Авторы — каждый с новой строки внутри ячейки (или через «;»), внутри автора: ФИО | аффилиация | ORCID. Разделитель (; , табуляция) определяется автоматически. Если заполнен id — статья будет обновлена.',
+  csv: 'Столбцы: ' + CSV_COLS.join(', ') + '. Авторы – каждый с новой строки внутри ячейки (или через «;»), внутри автора: ФИО | аффилиация | ORCID. Разделитель (; , табуляция) определяется автоматически. Если заполнен id – статья будет обновлена.',
 };
 seg($('#bSrc'), v => { $('#bSrcHint').textContent = SRC_HINT[v]; $('#bText').placeholder = v === 'csv' ? CSV_COLS.join(';') : '[{"bibjson": {…}}]'; });
 $('#bSrcHint').textContent = SRC_HINT.json;
@@ -1469,7 +1475,7 @@ function renderBulkPreview() {
   const bad = bItems.filter(x => x.v.some(v => v.lvl === 'err')).length;
   const toSend = $('#bSkipBad').checked ? bItems.length - bad : (bad ? 0 : bItems.length);
   $('#bSend').disabled = !toSend; $('#bSend').textContent = `Отправить в DOAJ (${toSend})`;
-  box.innerHTML = `<div class="small" style="margin-bottom:8px">Записей: <b>${bItems.length}</b> · с ошибками: <b style="color:${bad ? 'var(--err)' : 'inherit'}">${bad}</b> · обновлений (есть id): ${bItems.filter(x => x.rec.id).length}${bad && !$('#bSkipBad').checked ? ' — исправьте ошибки или включите «пропускать записи с ошибками»' : ''}</div>
+  box.innerHTML = `<div class="small" style="margin-bottom:8px">Записей: <b>${bItems.length}</b>, с ошибками: <b style="color:${bad ? 'var(--err)' : 'inherit'}">${bad}</b>, обновлений (есть id): ${bItems.filter(x => x.rec.id).length}${bad && !$('#bSkipBad').checked ? ' – исправьте ошибки или включите «пропускать записи с ошибками»' : ''}</div>
   <div class="tw" style="max-height:360px"><table><tr><th>#</th><th>Название</th><th>DOI</th><th>Выходные данные</th><th>Замечания</th></tr>
   ${bItems.map((x, i) => `<tr><td>${i + 1}</td><td class="t">${esc(x.rec.bibjson.title)}</td><td class="mono small">${esc(ident(x.rec, 'doi'))}</td><td class="small">${esc(citation(x.rec.bibjson))}</td>
    <td>${x.v.map(v => `<span class="badge ${v.lvl}">${esc(v.msg)}</span>`).join('') || '<span class="badge ok">ок</span>'}</td></tr>`).join('')}</table></div>`;
@@ -1477,7 +1483,7 @@ function renderBulkPreview() {
 $('#bSend').onclick = () => busy($('#bSend'), async () => {
   const items = bItems.filter(x => !x.v.some(v => v.lvl === 'err')).map(x => x.rec);
   const chunks = chunkBySize(items, BULK_MAX_BYTES);
-  if (!confirm(`Отправить в DOAJ ${items.length} статей?` + (chunks.length > 1 ? `\n(${chunks.length} пакетов до 600 КБ — так рекомендует DOAJ)` : ''))) return;
+  if (!confirm(`Отправить в DOAJ ${items.length} статей?` + (chunks.length > 1 ? `\n(${chunks.length} пакетов до 600 КБ – так рекомендует DOAJ)` : ''))) return;
   let sent = 0, last = null;
   for (const [i, chunk] of chunks.entries()) {
     try {
@@ -1511,7 +1517,7 @@ function addUpload(id, n) { const l = store.get('uploads', []); l.unshift({ id, 
 function renderUploads() {
   const l = store.get('uploads', []);
   $('#bUploads').innerHTML = l.length ? '<div class="small muted" style="margin-bottom:4px">Недавние загрузки:</div>' + l.map(u =>
-    `<div class="row small" style="margin-bottom:4px"><button class="link mono" data-up="${esc(u.id)}">${esc(u.id)}</button><span class="muted">${esc(u.n)} ст. · ${esc(new Date(u.at).toLocaleString('ru'))}</span></div>`).join('') : '';
+    `<div class="row small" style="margin-bottom:4px"><button class="link mono" data-up="${esc(u.id)}">${esc(u.id)}</button><span class="muted">${esc(u.n)} ст., ${esc(new Date(u.at).toLocaleString('ru'))}</span></div>`).join('') : '';
 }
 $('#bUploads').addEventListener('click', e => { const b = e.target.closest('[data-up]'); if (b) { $('#bUpId').value = b.dataset.up; checkUpload(b.dataset.up); } });
 $('#bCheck').onclick = () => { const id = $('#bUpId').value.trim(); if (id) busy($('#bCheck'), () => checkUpload(id)); };
@@ -1532,7 +1538,7 @@ $('#dGo').onclick = () => busy($('#dGo'), async () => {
   if (!ids.length) return toast('Нет ни одного DOAJ ID', 'err');
   const ans = prompt(`Будет безвозвратно удалено статей: ${ids.length}.\nДля подтверждения введите это число:`);
   if (ans === null) return;
-  if (ans.trim() !== String(ids.length)) return toast('Число не совпало — удаление отменено', 'err');
+  if (ans.trim() !== String(ids.length)) return toast('Число не совпало – удаление отменено', 'err');
   try {
     const r = await doaj.bulkDelete(ids);
     toast(`Удалено: ${ids.length}`, 'ok', 7000);
@@ -1596,7 +1602,7 @@ async function fetchAll(q) {
     for (let p = 2; p <= last && !X.stop; p++) { const r = await doaj.search('articles', qq, p, 100); take(r.results); }
   }
   if (total <= 1000) { await pages(q, first, total); return { recs: [...got.values()], total, limited }; }
-  xlog('Больше 1000 — делю выборку по дате создания записи…');
+  xlog('Больше 1000 – делю выборку по дате создания записи…');
   const iso = d => new Date(d).toISOString().replace(/\.\d{3}Z$/, 'Z');
   async function split(from, to) {
     if (X.stop) return;
@@ -1604,7 +1610,7 @@ async function fetchAll(q) {
     const r = await doaj.search('articles', qq, 1, 100);
     if (!r.total) return;
     if (r.total <= 1000) { xlog(`  ${iso(from).slice(0, 10)} … ${iso(to).slice(0, 10)}: ${r.total}`); return pages(qq, r, r.total); }
-    if (to - from <= 2000) { limited = true; xlog(`  ⚠ ${r.total} записей созданы одновременно (${iso(from)}) — доступны только 1000`); return pages(qq, r, 1000); }
+    if (to - from <= 2000) { limited = true; xlog(`  ⚠ ${r.total} записей созданы одновременно (${iso(from)}) – доступны только 1000`); return pages(qq, r, 1000); }
     const mid = from + Math.floor((to - from) / 2);
     await split(from, mid); await split(mid, to);
   }
@@ -1630,7 +1636,7 @@ function filtered() {
   const t = X.text.toLowerCase();
   return X.recs.filter(r => {
     if (X.filter !== 'all' && !flags[X.filter].has(r.id)) return false;
-    if (X.year && ((r.bibjson || {}).year || '—') !== X.year) return false;
+    if (X.year && ((r.bibjson || {}).year || '–') !== X.year) return false;
     if (t) {
       const b = r.bibjson || {};
       const hay = [b.title, ident(r, 'doi'), r.id, ...(b.author || []).map(a => a.name), ...(b.keywords || [])].join(' ').toLowerCase();
@@ -1649,7 +1655,7 @@ function renderExport() {
     return `<div class="stat ${k === 'all' ? '' : n ? 'bad' : 'good'} ${X.filter === k ? 'on' : ''}" data-f="${k}"><div class="n">${n.toLocaleString('ru')}</div><div class="l">${esc(l)}</div></div>`;
   }).join('');
   const years = {};
-  for (const r of X.recs) { const y = (r.bibjson || {}).year || '—'; years[y] = (years[y] || 0) + 1; }
+  for (const r of X.recs) { const y = (r.bibjson || {}).year || '–'; years[y] = (years[y] || 0) + 1; }
   const max = Math.max(...Object.values(years), 1);
   $('#xYears').innerHTML = Object.entries(years).sort((a, b) => b[0].localeCompare(a[0])).map(([y, c]) =>
     `<div class="yr ${X.year === y ? 'on' : ''}" data-y="${esc(y)}"><span>${esc(y)}</span><div><div class="bar2" style="width:${(100 * c / max).toFixed(1)}%"></div></div><span class="c">${c}</span></div>`).join('');
@@ -1661,7 +1667,7 @@ function renderTable() {
   $('#xFN').textContent = rows.length;
   const pages = Math.max(1, Math.ceil(rows.length / PER)); X.page = Math.min(X.page, pages);
   const slice = rows.slice((X.page - 1) * PER, X.page * PER);
-  $('#xShown').textContent = `Показано ${rows.length} из ${X.recs.length}` + (X.year ? ` · год ${X.year}` : '') + (X.filter !== 'all' ? ` · ${CHECK_LABEL[X.filter]}` : '');
+  $('#xShown').textContent = `Показано ${rows.length} из ${X.recs.length}` + (X.year ? `, год ${X.year}` : '') + (X.filter !== 'all' ? `, ${CHECK_LABEL[X.filter]}` : '');
   const allOn = slice.length && slice.every(r => X.sel.has(r.id));
   $('#xTable').innerHTML = `<tr><th><input type="checkbox" id="xAll" ${allOn ? 'checked' : ''}></th><th>Год</th><th>Т.(№)</th><th>Стр.</th><th>Название</th><th>Авторы</th><th>DOI</th><th>Замечания</th></tr>` +
     (slice.length ? slice.map(r => {
@@ -1726,9 +1732,9 @@ $('#rGo').onclick = () => busy($('#rGo'), async () => {
     <div style="margin-bottom:14px"><div class="row" style="margin-bottom:4px"><span class="badge ${cls}">${arr.length}</span><b>${esc(title)}</b>
     <button class="link small" data-copy="${esc(arr.join('\n'))}">копировать</button></div>
     <div class="mono small" style="max-height:180px;overflow:auto;line-height:1.7">${arr.map(render).join('<br>')}</div></div>` : '';
-  $('#rOut').innerHTML = `<div class="small muted" style="margin-bottom:10px">DOI в списке: ${list.length}${X.recs.length ? ` · сверено с загруженными статьями (${X.recs.length})` : ' · статьи журнала не загружены — сверка только по всему DOAJ'}</div>` +
+  $('#rOut').innerHTML = `<div class="small muted" style="margin-bottom:10px">DOI в списке: ${list.length}${X.recs.length ? `, сверено с загруженными статьями (${X.recs.length})` : ', статьи журнала не загружены – сверка только по всему DOAJ'}</div>` +
     block('Есть в загруженных статьях', found, 'ok') +
-    block('Есть в DOAJ, но в другой выборке', [...elsewhere.keys()], 'warn', d => `${esc(d)} <span class="muted">— ${esc((elsewhere.get(d).bibjson.journal || {}).title || '')}</span>`) +
+    block('Есть в DOAJ, но в другой выборке', [...elsewhere.keys()], 'warn', d => `${esc(d)} <span class="muted">– ${esc((elsewhere.get(d).bibjson.journal || {}).title || '')}</span>`) +
     block($('#rRemote').checked ? 'Нет в DOAJ' : 'Нет в загруженных статьях', notInDoaj, 'err') +
     (X.recs.length ? block('В DOAJ есть, а в вашем списке нет', extra, 'warn') : '');
 });
@@ -1761,7 +1767,7 @@ seg($('#sTheme'), v => { store.set('theme', v); applyTheme(v); });
 setSorts(); fillFieldList(); renderRef(); addQRow(); updKeyPill(); renderResults(); renderUploads(); updDCount();
 try {
   const d = JSON.parse(sessionStorage.getItem('doajs.draft') || 'null');
-  if (d && d.rec) { edBase = d.base; recordToForm(d.rec); $('#eMode').textContent = edBase?.id ? 'Редактирование · ' + edBase.id : 'Новая статья'; $('#eMode').className = 'badge ' + (edBase?.id ? 'warn' : ''); }
+  if (d && d.rec) { edBase = d.base; recordToForm(d.rec); $('#eMode').textContent = edBase?.id ? 'Редактирование, ' + edBase.id : 'Новая статья'; $('#eMode').className = 'badge ' + (edBase?.id ? 'warn' : ''); }
   else editorLoadRecord({ bibjson: {} }, true);
 } catch { editorLoadRecord({ bibjson: {} }, true); }
 edChanged();

@@ -35,7 +35,7 @@ LANGS = {
         'home': 'DOAJ Metadata Studio', 'other': 'Другие инструкции', 'updated': 'Обновлено',
         'index_title': 'Инструкции по работе с DOAJ',
         'index_desc': 'Пошаговые инструкции для редакторов журналов: загрузка статей в DOAJ, массовая загрузка из Excel, поиск пропусков в метаданных, экспорт и поиск через DOAJ API.',
-        'index_lead': 'Практические инструкции для редакторов и издателей журналов открытого доступа. Каждая инструкция проверена на живом DOAJ API и ведёт в DOAJ Metadata Studio — бесплатный инструмент, где описанное можно сделать в пару кликов.',
+        'index_lead': 'Практические инструкции для редакторов и издателей журналов открытого доступа. Каждая инструкция проверена на живом DOAJ API и ведёт в DOAJ Metadata Studio – бесплатный инструмент, где описанное можно сделать в пару кликов.',
         'switch': ('EN', 'English version'),
         'disclaimer': 'Неофициальный инструмент, не связан с <a href="https://doaj.org" rel="noopener">DOAJ</a> (Directory of Open Access Journals).',
         'source': 'Исходный код', 'license': 'Лицензия MIT',
@@ -46,7 +46,7 @@ LANGS = {
         'home': 'DOAJ Metadata Studio', 'other': 'Other guides', 'updated': 'Updated',
         'index_title': 'Guides to working with DOAJ',
         'index_desc': 'Step-by-step guides for journal editors: uploading articles to DOAJ, bulk upload from Excel, finding metadata gaps, exporting and searching with the DOAJ API.',
-        'index_lead': 'Practical guides for editors and publishers of open access journals. Every guide was checked against the live DOAJ API and links to DOAJ Metadata Studio — a free tool where you can do what is described in a couple of clicks.',
+        'index_lead': 'Practical guides for editors and publishers of open access journals. Every guide was checked against the live DOAJ API and links to DOAJ Metadata Studio – a free tool where you can do what is described in a couple of clicks.',
         'switch': ('RU', 'Русская версия'),
         'disclaimer': 'Unofficial tool, not affiliated with <a href="https://doaj.org" rel="noopener">DOAJ</a> (Directory of Open Access Journals).',
         'source': 'Source code', 'license': 'MIT License',
@@ -101,8 +101,11 @@ def page(lang, path, alt_path, title, description, h1, body, crumbs, json_ld, up
     esc = html.escape
     switch_label, switch_title = L['switch']
     path_ru, path_en = (path, alt_path) if lang == 'ru' else (alt_path, path)
-    crumb_html = ' <span aria-hidden="true">›</span> '.join(
-        f'<a href="{href}">{esc(name)}</a>' if href else f'<span>{esc(name)}</span>' for name, href in crumbs)
+    crumb_items = [('EditorStudio', '__EDITORSTUDIO_HOME__'), *crumbs]
+    crumb_html = ''.join(
+        f'<li><a href="{href or path}"' + (' aria-current="page"' if not href else '') + f'>{esc(name)}</a></li>'
+        for name, href in crumb_items)
+    crumb_label = 'Хлебные крошки' if lang == 'ru' else 'Breadcrumbs'
     updated_html = f'<p class="updated">{L["updated"]}: <time datetime="{updated}">{fmt_date(lang, updated)}</time></p>' if updated else ''
     return f'''<!doctype html>
 <html lang="{lang}">
@@ -127,6 +130,8 @@ def page(lang, path, alt_path, title, description, h1, body, crumbs, json_ld, up
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
 <link rel="stylesheet" href="/assets/guides.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="__EDITORSTUDIO_THEME__">
 <link rel="stylesheet" href="/editorstudio.css">
 <script>try{{const t=JSON.parse(localStorage.getItem('doajs.theme'));if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}}catch(e){{}}</script>
 <script type="application/ld+json">
@@ -136,7 +141,7 @@ def page(lang, path, alt_path, title, description, h1, body, crumbs, json_ld, up
 <body>
 <header class="top">
   <div class="bar">
-    <a class="brand" href="{L["prefix"]}"><img width="24" height="24" src="/favicon.svg" alt="">EditorStudio · DOAJ</a>
+    <a class="brand" href="{L["prefix"]}"><img width="24" height="24" src="/favicon.svg" alt="">EditorStudio / DOAJ</a>
     <nav>
       <a href="{guides_path(lang)}">{L["guides"]}</a>
       <a class="cta" href="{L["prefix"]}">{L["app"]}</a>
@@ -145,13 +150,14 @@ def page(lang, path, alt_path, title, description, h1, body, crumbs, json_ld, up
   </div>
 </header>
 <main class="guide">
-  <nav class="crumbs" aria-label="breadcrumbs">{crumb_html}</nav>
+  <nav class="breadcrumbs" aria-label="{crumb_label}"><ol>{crumb_html}</ol></nav>
   <h1>{esc(h1)}</h1>{chr(10) + "  " + updated_html if updated_html else ""}
   {body}
 </main>
 <footer>
-  {L["disclaimer"]}
-  · <a href="https://github.com/tsentavta/editorstudio" rel="noopener">{L["source"]}</a> · {L["license"]}
+  <span>{L["disclaimer"]}</span>
+  <a href="https://github.com/tsentavta/editorstudio" rel="noopener">{L["source"]}</a>
+  <span>{L["license"]}</span>
 </footer>
 </body>
 </html>
@@ -182,7 +188,7 @@ def build_guide(slug, lang, src, all_src):
         breadcrumb_ld([(L['home'], L['prefix']), (L['guides'], guides_path(lang)), (src['title'], path)]),
     ]}
     # Search results cut titles at about 65 characters: add the site name only when it fits
-    title = src['title'] + (' — DOAJ Metadata Studio' if len(src['title']) <= 42 else '')
+    title = src['title'] + (' – DOAJ Metadata Studio' if len(src['title']) <= 42 else '')
     return path, page(lang, path, alt, title, src['description'], src['title'], body, crumbs, json_ld, src['updated'])
 
 
@@ -198,7 +204,7 @@ def build_index(lang, all_src):
         {'@type': 'CollectionPage', 'name': L['index_title'], 'description': L['index_desc'], 'inLanguage': lang, 'url': SITE + path},
         breadcrumb_ld([(L['home'], L['prefix']), (L['guides'], path)]),
     ]}
-    return path, page(lang, path, alt, f'{L["index_title"]} — DOAJ Metadata Studio', L['index_desc'],
+    return path, page(lang, path, alt, f'{L["index_title"]} – DOAJ Metadata Studio', L['index_desc'],
                       L['index_title'], body, crumbs, json_ld)
 
 
@@ -219,7 +225,7 @@ def sitemap(pairs):
 def write(path, content):
     target = ROOT / path.lstrip('/') / 'index.html'
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(re.sub(r'((?:href|src)=")/(?!/)', lambda m: m[0] if content[m.end():].startswith("favicon.svg") and m[1] == 'src="' else m[1] + "/doaj/", content), encoding='utf-8', newline='\n')
+    target.write_text(re.sub(r'((?:href|src)=")/(?!/)', lambda m: m[0] if content[m.end():].startswith("favicon.svg") and m[1] == 'src="' else m[1] + "/doaj/", content).replace('__EDITORSTUDIO_HOME__', '/').replace('__EDITORSTUDIO_THEME__', '/theme.css'), encoding='utf-8', newline='\n')
 
 
 def main():

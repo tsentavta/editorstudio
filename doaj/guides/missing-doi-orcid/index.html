@@ -23,6 +23,8 @@
 <link rel="apple-touch-icon" href="/doaj/apple-touch-icon.png">
 <link rel="manifest" href="/doaj/site.webmanifest">
 <link rel="stylesheet" href="/doaj/assets/guides.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/theme.css">
 <link rel="stylesheet" href="/doaj/editorstudio.css">
 <script>try{const t=JSON.parse(localStorage.getItem('doajs.theme'));if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 <script type="application/ld+json">
@@ -83,7 +85,7 @@
 <body>
 <header class="top">
   <div class="bar">
-    <a class="brand" href="/doaj/"><img width="24" height="24" src="/favicon.svg" alt="">EditorStudio · DOAJ</a>
+    <a class="brand" href="/doaj/"><img width="24" height="24" src="/favicon.svg" alt="">EditorStudio / DOAJ</a>
     <nav>
       <a href="/doaj/guides/">Инструкции</a>
       <a class="cta" href="/doaj/">Открыть приложение</a>
@@ -92,7 +94,7 @@
   </div>
 </header>
 <main class="guide">
-  <nav class="crumbs" aria-label="breadcrumbs"><a href="/doaj/">DOAJ Metadata Studio</a> <span aria-hidden="true">›</span> <a href="/doaj/guides/">Инструкции</a> <span aria-hidden="true">›</span> <span>Как найти статьи без DOI, ORCID и аннотаций в DOAJ</span></nav>
+  <nav class="breadcrumbs" aria-label="Хлебные крошки"><ol><li><a href="/">EditorStudio</a></li><li><a href="/doaj/">DOAJ Metadata Studio</a></li><li><a href="/doaj/guides/">Инструкции</a></li><li><a href="/doaj/guides/missing-doi-orcid/" aria-current="page">Как найти статьи без DOI, ORCID и аннотаций в DOAJ</a></li></ol></nav>
   <h1>Как найти статьи без DOI, ORCID и аннотаций в DOAJ</h1>
   <p class="updated">Обновлено: <time datetime="2026-10-28">28 октября 2026</time></p>
   <p class="lead">DOAJ не проверяет качество метаданных при загрузке: что издатель прислал, то и опубликовано. Поэтому у многих журналов в DOAJ есть статьи без DOI, без ORCID авторов или без аннотации. Их проще всего найти запросами к DOAJ API или одной проверкой всего журнала.</p>
@@ -111,7 +113,7 @@
 </table>
 
 <div class="note">
-  <p><b>Почему не работает <code>NOT _exists_:doi</code>.</b> <code>doi:</code> — это сокращение, которое DOAJ понимает только при поиске по значению (<code>doi:10.…</code>). Отдельного поля <code>doi</code> в индексе нет, поэтому <code>_exists_:doi</code> всегда ложно, а <code>NOT _exists_:doi</code> находит <i>все</i> статьи журнала. Для проверки наличия DOI используйте <code>index.doi</code>.</p>
+  <p><b>Почему не работает <code>NOT _exists_:doi</code>.</b> <code>doi:</code> – это сокращение, которое DOAJ понимает только при поиске по значению (<code>doi:10.…</code>). Отдельного поля <code>doi</code> в индексе нет, поэтому <code>_exists_:doi</code> всегда ложно, а <code>NOT _exists_:doi</code> находит <i>все</i> статьи журнала. Для проверки наличия DOI используйте <code>index.doi</code>.</p>
 </div>
 
 <div class="try">
@@ -120,35 +122,36 @@
 </div>
 
 <h2>Проверка всего журнала одной кнопкой</h2>
-<p>Запросы удобны для точечного поиска, но у них есть предел: «у одного из авторов нет аффилиации» запросом не найти — <code>_exists_</code> срабатывает, если поле заполнено хотя бы у одного автора. Полную картину даёт вкладка «Экспорт и сверка»:</p>
+<p>Запросы удобны для точечного поиска, но у них есть предел: «у одного из авторов нет аффилиации» запросом не найти – <code>_exists_</code> срабатывает, если поле заполнено хотя бы у одного автора. Полную картину даёт вкладка «Экспорт и сверка»:</p>
 <ol>
-  <li>Введите ISSN журнала и нажмите «Загрузить» — приложение выгрузит все статьи, даже если их больше 1000.</li>
+  <li>Введите ISSN журнала и нажмите «Загрузить» – приложение выгрузит все статьи, даже если их больше 1000.</li>
   <li>Посмотрите сводку: без DOI, дубли DOI и названий, без аннотации, ключевых слов, ссылки на полный текст, авторов, страниц, тома и года; «не у всех авторов аффилиация», «ни одного ORCID», некорректные ORCID.</li>
-  <li>Нажмите на карточку проблемы — таблица покажет только такие статьи, а экспорт выгрузит именно их.</li>
+  <li>Нажмите на карточку проблемы – таблица покажет только такие статьи, а экспорт выгрузит именно их.</li>
 </ol>
 
 <div class="try">
-  <p>Проверьте свой журнал — без регистрации и API-ключа.</p>
+  <p>Проверьте свой журнал – без регистрации и API-ключа.</p>
   <a class="btn" href="/doaj/?tab=export">Проверить журнал</a>
 </div>
 
 <h2>Как исправить найденное</h2>
 <ul>
-  <li><b>Одну-две статьи</b> — откройте статью в редакторе (кнопка «Изменить» в результатах поиска), добавьте DOI, ORCID или аннотацию и сохраните. Нужен API-ключ издателя.</li>
-  <li><b>Много статей</b> — отфильтруйте их на вкладке «Экспорт и сверка», выгрузите в CSV, дополните в Excel и загрузите обратно. Как это сделать, не создав дублей, — в инструкции <a href="/doaj/guides/bulk-upload-csv/">Массовая загрузка статей в DOAJ из Excel и CSV</a>.</li>
-  <li><b>DOI есть в Crossref, но нет в DOAJ</b> — вставьте список DOI журнала в «Сверку со списком DOI»: приложение покажет, каких статей нет в DOAJ и какие записи в DOAJ без DOI.</li>
+  <li><b>Одну-две статьи</b> – откройте статью в редакторе (кнопка «Изменить» в результатах поиска), добавьте DOI, ORCID или аннотацию и сохраните. Нужен API-ключ издателя.</li>
+  <li><b>Много статей</b> – отфильтруйте их на вкладке «Экспорт и сверка», выгрузите в CSV, дополните в Excel и загрузите обратно. Как это сделать, не создав дублей, – в инструкции <a href="/doaj/guides/bulk-upload-csv/">Массовая загрузка статей в DOAJ из Excel и CSV</a>.</li>
+  <li><b>DOI есть в Crossref, но нет в DOAJ</b> – вставьте список DOI журнала в «Сверку со списком DOI»: приложение покажет, каких статей нет в DOAJ и какие записи в DOAJ без DOI.</li>
 </ul>
 
 <h2>Зачем это нужно</h2>
-<p>Метаданные DOAJ свободно распространяются и попадают в библиотечные каталоги, поисковые системы и сервисы для исследователей. Статья без DOI хуже связывается с цитированиями, без ORCID — с профилями авторов, без аннотации — хуже находится. Исправленная запись в DOAJ исправляется и во всех сервисах, которые её забирают.</p>
+<p>Метаданные DOAJ свободно распространяются и попадают в библиотечные каталоги, поисковые системы и сервисы для исследователей. Статья без DOI хуже связывается с цитированиями, без ORCID – с профилями авторов, без аннотации – хуже находится. Исправленная запись в DOAJ исправляется и во всех сервисах, которые её забирают.</p>
   <section class="related">
     <h2>Другие инструкции</h2>
     <ul><li><a href="/doaj/guides/upload-articles/">Как загрузить статьи в DOAJ: вручную, XML, CSV и API</a></li><li><a href="/doaj/guides/bulk-upload-csv/">Массовая загрузка статей в DOAJ из Excel и CSV</a></li><li><a href="/doaj/guides/export-articles/">Как выгрузить все статьи журнала из DOAJ</a></li><li><a href="/doaj/guides/api-search-syntax/">Поиск в DOAJ API: синтаксис запросов и поля</a></li></ul>
   </section>
 </main>
 <footer>
-  Неофициальный инструмент, не связан с <a href="https://doaj.org" rel="noopener">DOAJ</a> (Directory of Open Access Journals).
-  · <a href="https://github.com/tsentavta/editorstudio" rel="noopener">Исходный код</a> · Лицензия MIT
+  <span>Неофициальный инструмент, не связан с <a href="https://doaj.org" rel="noopener">DOAJ</a> (Directory of Open Access Journals).</span>
+  <a href="https://github.com/tsentavta/editorstudio" rel="noopener">Исходный код</a>
+  <span>Лицензия MIT</span>
 </footer>
 </body>
 </html>

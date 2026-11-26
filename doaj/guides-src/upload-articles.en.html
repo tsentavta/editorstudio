@@ -2,7 +2,7 @@ title: How to upload articles to DOAJ: manual entry, XML, CSV and API
 description: Four ways to upload article metadata to DOAJ: the web form, XML (DOAJ and Crossref), CSV via the API, and the DOAJ API. Requirements, duplicates and common errors.
 updated: 2026-10-28
 ---
-<p class="lead">Your journal is in DOAJ — now its articles need to be there too. DOAJ does not harvest them: the publisher uploads the metadata of every article. Here are all the options, the data requirements, and the mistakes that lead to duplicates or rejected uploads.</p>
+<p class="lead">Your journal is in DOAJ – now its articles need to be there too. DOAJ does not harvest them: the publisher uploads the metadata of every article. Here are all the options, the data requirements, and the mistakes that lead to duplicates or rejected uploads.</p>
 
 <h2>Before you start</h2>
 <ul>
@@ -17,11 +17,11 @@ updated: 2026-10-28
 <h2>Option 2. XML file</h2>
 <p>The most common way to upload a whole issue. DOAJ accepts three formats:</p>
 <ul>
-  <li><b>DOAJ Native XML</b> — DOAJ’s own format;</li>
-  <li><b>Crossref XML 4.4.2</b> and <b>Crossref XML 5.3.1</b> — if you register DOIs with Crossref, the same file works for DOAJ.</li>
+  <li><b>DOAJ Native XML</b> – DOAJ’s own format;</li>
+  <li><b>Crossref XML 4.4.2</b> and <b>Crossref XML 5.3.1</b> – if you register DOIs with Crossref, the same file works for DOAJ.</li>
 </ul>
 <p>If your journal runs on OJS, a plugin can export DOAJ XML that you can upload straight away. A hand-made file is worth validating against the DOAJ XML schema before upload.</p>
-<p>Required DOAJ XML elements: journal title, at least one ISSN, publication date, article title and full-text URL. Everything else — authors, ORCID, affiliations, abstract, keywords, DOI, volume, issue, pages — is optional, but without it the DOAJ record is incomplete and harder to discover.</p>
+<p>Required DOAJ XML elements: journal title, at least one ISSN, publication date, article title and full-text URL. Everything else – authors, ORCID, affiliations, abstract, keywords, DOI, volume, issue, pages – is optional, but without it the DOAJ record is incomplete and harder to discover.</p>
 
 <h2>Option 3. DOAJ API</h2>
 <p>Use the API when a program uploads the articles: the journal website, an editorial system or a script. API keys are issued to publishers; you will find yours in your DOAJ account settings. With the API you can:</p>
@@ -35,14 +35,14 @@ updated: 2026-10-28
 <p>DOAJ itself has no Excel upload, but you can build one on top of the API. In DOAJ Metadata Studio you fill in a spreadsheet template, the app validates every row and sends the articles to DOAJ in 600 KB batches. Details: <a href="/en/guides/bulk-upload-csv/">Bulk upload articles to DOAJ from Excel and CSV</a>.</p>
 
 <div class="try">
-  <p>Upload a single article through a form that checks ISSN, ORCID and DOI — or a whole issue from Excel.</p>
+  <p>Upload a single article through a form that checks ISSN, ORCID and DOI – or a whole issue from Excel.</p>
   <a class="btn" href="/en/?tab=editor">Open the article editor</a>
 </div>
 
 <h2>How DOAJ detects duplicates</h2>
 <p>This is the key thing to know before re-uploading. If you upload an article with the same <b>DOI</b> or the same <b>full-text URL</b> as an article already in your account, DOAJ treats it as a duplicate and <b>overwrites</b> the old record with the new data. The web form, XML and the API all work this way.</p>
 <div class="note">
-  <p><b>The trap: articles without DOIs and a website move.</b> If an article has no DOI, DOAJ recognises it only by its full-text URL. Move the journal to a new domain and re-upload the back catalogue, and DOAJ ends up with two copies of every such article: one with the old link and one with the new. We saw this on a real journal — almost three hundred duplicates from a single upload.</p>
+  <p><b>The trap: articles without DOIs and a website move.</b> If an article has no DOI, DOAJ recognises it only by its full-text URL. Move the journal to a new domain and re-upload the back catalogue, and DOAJ ends up with two copies of every such article: one with the old link and one with the new. We saw this on a real journal – almost three hundred duplicates from a single upload.</p>
   <p>Before re-uploading a back catalogue, check the journal for duplicates on the “Export &amp; audit” tab.</p>
 </div>
 
@@ -51,9 +51,9 @@ updated: 2026-10-28
   <tr><th>Problem</th><th>What to do</th></tr>
   <tr><td>Article rejected because of ISSN</td><td>Use the ISSNs exactly as in the journal’s DOAJ record, and the same number of them: both if the journal has two.</td></tr>
   <tr><td>No full-text link</td><td>Add a link of type <code>fulltext</code> to the article page or PDF.</td></tr>
-  <tr><td>More than six keywords</td><td>DOAJ keeps only the first 6 — pick the most important ones.</td></tr>
+  <tr><td>More than six keywords</td><td>DOAJ keeps only the first 6 – pick the most important ones.</td></tr>
   <tr><td>ORCID as a bare number</td><td>Use the full URL: <code>https://orcid.org/0000-0002-1825-0097</code>.</td></tr>
-  <tr><td>Typos in names, DOIs, links</td><td>DOAJ does not check metadata quality on ingest — that is the publisher’s responsibility. You will have to fix errors yourself later.</td></tr>
+  <tr><td>Typos in names, DOIs, links</td><td>DOAJ does not check metadata quality on ingest – that is the publisher’s responsibility. You will have to fix errors yourself later.</td></tr>
 </table>
 
 <h2>How to check the result</h2>

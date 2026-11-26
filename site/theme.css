@@ -1,0 +1,19 @@
+:root {
+  --cream:#fafaf8; --white:#fff; --pebble:#f0f0ef; --linen:#e4e5e1; --ash:#d9d9d9;
+  --ink:#141415; --graphite:#2e2e2c; --carbon:#454542; --slate:#6e6f6c; --stone:#8c8c89; --fog:#b7b7b4;
+  --orange:#f35b22; --action:#b53c10; --action-hover:#9d320a; --ember:#ff5e24; --persimmon:#d14200;
+  --teal:#88d2c3; --sky:#8bc5f3; --orchid:#c678dd; --punct:#abb2bf;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono","IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --sh-nav:rgba(24,25,22,.02) 0 2px 1px 0, rgba(24,25,22,.1) 0 -1px 0 0 inset;
+  --sh-card:rgba(228,229,225,.3) 0 1px 0 0 inset, rgba(110,111,109,.1) 0 -1px 0 0 inset;
+  --sh-btn:rgba(255,255,255,.2) 0 1px 0 0 inset, rgba(24,25,22,.06) 0 1px 2px 0, rgba(24,25,22,.1) 0 -1px 0 0 inset;
+}
+
+.breadcrumbs { margin: 0 0 20px; color: var(--breadcrumb-color, var(--carbon)); font: 400 13px/1.5 var(--sans); }
+.breadcrumbs > ol { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; list-style: none; margin: 0; padding: 0; }
+.breadcrumbs > ol > li { margin: 0; max-width: none; }
+.breadcrumbs > ol > li + li::before { content: "›" / ""; margin-inline-end: 10px; }
+.breadcrumbs a { color: inherit; text-decoration: underline; text-underline-offset: .2em; }
+.breadcrumbs [aria-current="page"] { font-weight: 600; }
+:focus-visible { outline: 2px solid var(--focus-color, var(--action)); outline-offset: 3px; }

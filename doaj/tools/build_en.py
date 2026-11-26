@@ -26,6 +26,7 @@ KEEP_CYRILLIC = ['да|yes|true|1', 'нет|no|false|0']
 
 # (old, new, expected minimum number of occurrences)
 LOCALE_FIXES = [
+    ('href="/doaj/" aria-current="page"', 'href="/doaj/en/" aria-current="page"', 1),
     ('<html lang="ru">', '<html lang="en">', 1),
     ('<link rel="canonical" href="https://editorstudio.ru/doaj/">', '<link rel="canonical" href="https://editorstudio.ru/doaj/en/">', 1),
     ('<meta property="og:url" content="https://editorstudio.ru/doaj/">', '<meta property="og:url" content="https://editorstudio.ru/doaj/en/">', 1),

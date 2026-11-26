@@ -1,14 +1,14 @@
 "use strict";
 /* =========================================================
    Пакетная загрузка.
-   API «Метафоры» принимает один XML за запрос, поэтому пакет —
+   API «Метафоры» принимает один XML за запрос, поэтому пакет –
    это очередь: файлы уходят по одному, затем статусы
    опрашиваются, пока все не будут обработаны.
 
-   jats    — много JATS XML + PDF, пары по имени файла
+   jats    – много JATS XML + PDF, пары по имени файла
              (719667.xml ↔ 719667.pdf), запасные ключи: DOI,
              publisher-id. Каждая пара: POST files/jats/xml_pdf/.
-   journal — один Journal XML выпуска + PDF. После обработки
+   journal – один Journal XML выпуска + PDF. После обработки
              PDF раскладываются по статьям (подсказка по DOI
              и страницам в имени файла), затем
              POST publications/{uid}/pdf/ для каждой.
@@ -33,8 +33,8 @@ const isPdf = (f) => /\.pdf$/i.test(f.name) || f.type === "application/pdf";
 
 /* =========================================================
    Чтение PDF (PDF.js) и сверка с XML.
-   Из первой страницы (при необходимости — второй) берётся текст;
-   в нём ищется DOI статьи, а если его нет — заголовок.
+   Из первой страницы (при необходимости – второй) берётся текст;
+   в нём ищется DOI статьи, а если его нет – заголовок.
    Библиотека грузится с CDN только когда выбраны PDF.
    ========================================================= */
 const PDFJS = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/";
@@ -86,14 +86,16 @@ async function readAllPdfs() {
         const compact = text.toLowerCase().replace(/\s+/g, "");
         pdfMeta.set(p.name, {
           file: p, state: "ok", pages, compact, norm: normTitle(text),
-          // для показа — из текста с пробелами, чтобы DOI не слипся со следующим словом
+          // для показа – из текста с пробелами, чтобы DOI не слипся со следующим словом
           dois: [...new Set((text.match(/10\.\d{4,9}\/[^\s"'<>,;()\[\]]+/g) || []).map((d) => d.replace(/[.\-]+$/, "").slice(0, 80)))],
         });
       } catch (e) {
         pdfMeta.set(p.name, { file: p, state: "error", error: e.message });
-        if (/модуль чтения/.test(e.message)) { bNote(`<div class="note err"><b>Сверка по тексту PDF недоступна:</b> ${esc(e.message)}. Пары подобраны по именам файлов — проверьте их в просмотре.</div>`); break; }
+        if (/модуль чтения/.test(e.message)) { bNote(`<div class="note err"><b>Сверка по тексту PDF недоступна:</b> ${esc(e.message)}. Пары подобраны по именам файлов – проверьте их в просмотре.</div>`); break; }
       }
-      if (B.mode === "jats") pairJats(); else suggestJournalPdfs();
+      if (!B.running) {
+        if (B.mode === "jats") pairJats(); else suggestJournalPdfs();
+      }
       renderBatch();
     }
   } finally {
@@ -167,7 +169,7 @@ function jatsInfo(text) {
   const d = new DOMParser().parseFromString(text, "application/xml");
   if (d.getElementsByTagName("parsererror").length) return { error: "XML не разбирается" };
   const root = d.documentElement;
-  if (root.nodeName !== "article") return { error: `Корень <${root.nodeName}>, а не <article> — это не JATS` };
+  if (root.nodeName !== "article") return { error: `Корень <${root.nodeName}>, а не <article> – это не JATS` };
   const meta = root.getElementsByTagName("article-meta")[0];
   if (!meta) return { error: "Нет <article-meta>" };
   const ids = [...meta.getElementsByTagName("article-id")];
@@ -201,6 +203,7 @@ function jatsInfo(text) {
 async function addFiles(list) {
   const selected = [...list];
   await MODE.ready;
+  if (B.running) return;
   const files = selected.filter((f) => f.size > 0 && (isXml(f) || isPdf(f)));
   const skipped = selected.length - files.length;
   const newPdfs = files.filter(isPdf);
@@ -216,6 +219,7 @@ async function addFiles(list) {
   } else {
     for (const x of newXml) {
       const info = jatsInfo(await x.text());
+      if (B.running) return;
       const old = B.rows.find((r) => r.xml.name === x.name);
       const row = old || { id: Math.random().toString(36).slice(2), state: "ready" };
       Object.assign(row, { xml: x, info, state: info.error ? "invalid" : (old?.state === "done" ? old.state : "ready"),
@@ -247,7 +251,7 @@ function pairJats() {
     const p = free().find((x) => pdfHasDoi(pdfMeta.get(x.name), r.info?.doi));
     if (p) take(r, p);
   }
-  // 2. имя файла — только для PDF, у которых в тексте нет DOI другой статьи
+  // 2. имя файла – только для PDF, у которых в тексте нет DOI другой статьи
   const foreignByText = (p) => B.rows.some((x) => pdfHasDoi(pdfMeta.get(p.name), x.info?.doi));
   for (const r of open.filter((x) => !x.pdf)) {
     const keys = [baseName(r.xml.name), (r.info.pid || "").toLowerCase()].filter(Boolean);
@@ -276,10 +280,14 @@ function stBadge(r) {
   const [t, c] = STATE[key] || [key, ""];
   return `<span class="badge ${c}"><span class="dot"></span>${t}</span>`;
 }
+function rowPdfLocked(r) {
+  return B.running || r.pdfDone || r.pdfSent || r.state === "signed"
+    || B.mode === "jats" && ["uploading", "processing", "pdf", "done", "signing"].includes(r.state);
+}
 function pdfSelect(r, i) {
-  const opts = [`<option value="">— без PDF —</option>`].concat(
+  const opts = [`<option value="">– без PDF –</option>`].concat(
     B.pdfs.map((p, k) => `<option value="${k}" ${r.pdf === p ? "selected" : ""}>${esc(p.name)}</option>`));
-  const locked = B.running || ["uploading", "processing", "pdf", "done", "signing", "signed"].includes(r.state) && (B.mode === "jats" || r.pdfDone);
+  const locked = rowPdfLocked(r);
   return `<select data-row="${i}" class="${r.pdf ? "" : "warn"}" ${locked ? "disabled" : ""}>${opts.join("")}</select>`;
 }
 
@@ -296,7 +304,7 @@ function renderBatch() {
   const jats = B.mode === "jats";
   $("#bHint").textContent = jats
     ? "Выберите сразу все JATS XML и PDF номера. Пары подбираются по DOI на первой странице PDF, затем по имени файла (719667.xml ↔ 719667.pdf) и по заголовку. Нажмите на статью, чтобы сверить её с PDF в панели справа."
-    : "Выберите XML выпуска (journal3) и PDF всех статей. Сначала загружается XML; после обработки появится список статей, PDF разложатся по ним по DOI или страницам в имени файла — проверьте и загрузите.";
+    : "Выберите XML выпуска (journal3) и PDF всех статей. Сначала загружается XML; после обработки появится список статей, PDF разложатся по ним по DOI или страницам в имени файла – проверьте и загрузите.";
   $("#bDropTitle").textContent = jats ? "Все XML и PDF разом" : "XML выпуска и все PDF";
 
   const dups = new Map();
@@ -352,9 +360,9 @@ function renderBatch() {
       const cls = [["error", "failed", "invalid"].includes(r.state) ? "row-err" : "", V.row === i ? "sel" : ""].join(" ");
       return `<tr class="${cls}" data-i="${i}">
         <td class="num">${i + 1}</td>
-        <td><button type="button" class="t t-btn" data-view="${i}" title="Открыть в просмотре">${esc((r.info?.title || "").slice(0, 140) || "—")}</button>
-          <div class="sub-m">${esc(r.info?.doi || "без DOI")}${r.xml ? " · " + esc(r.xml.name) : ""}</div></td>
-        <td class="num">${esc(r.info?.pages || "—")}</td>
+        <td><button type="button" class="t t-btn" data-view="${i}" title="Открыть в просмотре">${esc((r.info?.title || "").slice(0, 140) || "–")}</button>
+          <div class="sub-m">${esc(r.info?.doi || "без DOI")}${r.xml ? " (" + esc(r.xml.name) + ")" : ""}</div></td>
+        <td class="num">${esc(r.info?.pages || "–")}</td>
         <td>${pdfSelect(r, i)}
           <div class="pdf-tools">${verifyHtml(r, B.rows)}<button type="button" class="link" data-view="${i}">смотреть</button></div></td>
         <td>${stBadge(r)} ${link}
@@ -380,6 +388,7 @@ function renderBatch() {
   $("#bSign").textContent = `Подписать обработанные (${signable})`;
   $("#bCsv").hidden = !B.rows.some((r) => r.fileUid || r.articleUid || r.state !== "ready");
   $("#bClear").disabled = B.running;
+  $("#bFiles").disabled = B.running;
   $$("#bModeSeg .seg-btn").forEach((b) => (b.disabled = B.running));
 }
 const plural = (n, one, few, many) => {
@@ -399,7 +408,24 @@ function errText(res) {
 }
 
 /* ---------- JATS: загрузка очереди ---------- */
+async function checkBatchPdfs(queue) {
+  try {
+    const duplicates = await batchPdfConflicts(B.rows.filter((row) => row.state !== "invalid"), (row) => row.pdf);
+    const conflicts = queue.filter((row) => duplicates.has(row));
+    if (!conflicts.length) return true;
+    const numbers = conflicts.map((row) => B.rows.indexOf(row) + 1).join(", ");
+    bNote(`<div class="note err"><b>Одинаковый PDF выбран для нескольких статей.</b> Проверьте строки ${numbers} и поменяйте файлы.</div>`);
+  } catch {
+    bNote('<div class="note err"><b>Не удалось проверить PDF на дубликаты. Откройте сайт по HTTPS или на localhost и попробуйте снова.</b></div>');
+  }
+  B.running = false;
+  renderBatch();
+  renderViewer();
+  return false;
+}
+
 async function runJats(onlyRetry) {
+  if (B.running) return;
   const queue = B.rows.filter((r) => onlyRetry ? r.state === "error" : ["ready", "stopped"].includes(r.state));
   if (!queue.length) return;
   const wrong = queue.filter((r) => ["other", "foreign"].includes(verifyRow(r)?.k));
@@ -407,6 +433,8 @@ async function runJats(onlyRetry) {
   const noPdf = queue.filter((r) => !r.pdf).length;
   if (noPdf && !confirm(`${noPdf} ${plural(noPdf, "статья уйдёт", "статьи уйдут", "статей уйдут")} без PDF. PDF можно будет догрузить позже. Продолжить?`)) return;
   B.running = true; B.stop = false; renderBatch();
+  renderViewer();
+  if (!await checkBatchPdfs(queue)) return;
   for (const r of queue) {
     if (B.stop) { r.state = "stopped"; continue; }
     r.state = "uploading"; r.msg = ""; r.msgInfo = false; renderBatch(); renderViewer();
@@ -458,11 +486,12 @@ async function pollRows(rows) {
     pending = pending.filter((r) => r.state === "processing");
     if (pending.length) await sleep(POLL_MS);
   }
-  for (const r of pending) { r.msg = B.stop ? "опрос остановлен — проверьте статус позже" : "обработка идёт дольше 15 минут — проверьте статус позже"; r.msgInfo = true; }
+  for (const r of pending) { r.msg = B.stop ? "опрос остановлен – проверьте статус позже" : "обработка идёт дольше 15 минут – проверьте статус позже"; r.msgInfo = true; }
 }
 
 /* ---------- Journal: выпуск ---------- */
 async function runJournalXml() {
+  if (B.running) return;
   B.running = true; B.stop = false; B.rows = [];
   B.issue = { state: "uploading" }; renderBatch();
   const res = await call("POST", "/api/v2/files/journal/", { form: { xml: B.issueXml } });
@@ -526,9 +555,12 @@ function suggestJournalPdfs() {
 }
 
 async function runJournalPdfs(onlyRetry) {
+  if (B.running) return;
   const queue = B.rows.filter((r) => r.pdf && !r.pdfDone && (onlyRetry ? r.state === "error" : r.state !== "signed"));
   if (!queue.length) return;
   B.running = true; B.stop = false; renderBatch();
+  renderViewer();
+  if (!await checkBatchPdfs(queue)) return;
   for (const r of queue) {
     if (B.stop) break;
     r.state = "pdf"; r.msg = ""; renderBatch();
@@ -542,6 +574,7 @@ async function runJournalPdfs(onlyRetry) {
 
 /* ---------- подписание всех ---------- */
 async function signAll() {
+  if (B.running) return;
   const list = B.rows.filter((r) => r.state === "done" && r.articleUid);
   if (!list.length) return;
   const noPdf = B.mode === "jats" ? list.filter((r) => !r.pdf).length : list.filter((r) => !r.pdfDone).length;
@@ -586,7 +619,7 @@ function exportCsv() {
 
 /* =========================================================
    Панель просмотра: PDF выбранной статьи справа от таблицы,
-   сверху — данные статьи из XML и результат сверки.
+   сверху – данные статьи из XML и результат сверки.
    PDF показывает встроенный просмотрщик браузера.
    ========================================================= */
 const V = { row: null, shown: null };
@@ -614,7 +647,7 @@ function openViewer(i) {
   if (V.row == null) V.shown = null;
   V.row = i;
   $(".viewer-nav").hidden = false;
-  $(".viewer-keys").textContent = "← → листать · Esc закрыть";
+  $(".viewer-keys").textContent = "← → листать, Esc закрыть";
   $("#vSelect").hidden = false;
   document.body.classList.add("viewer-open");
   $("#viewer").hidden = false;
@@ -650,25 +683,26 @@ function renderViewer() {
   const r = B.rows[V.row], i = V.row, n = B.rows.length;
   const v = verifyRow(r);
   const info = r.info || {};
-  $("#vPos").textContent = `СВЕРКА · СТАТЬЯ ${i + 1} ИЗ ${n}`;
+  $("#vPos").textContent = `СВЕРКА СТАТЬИ ${i + 1} ИЗ ${n}`;
 
   // кто ещё претендует: PDF, в тексте которого DOI этой статьи
   const ownPdf = B.pdfs.find((p) => p !== r.pdf && pdfHasDoi(pdfMeta.get(p.name), info.doi));
   const ownHolder = ownPdf ? B.rows.find((x) => x.pdf === ownPdf) : null;
   let fix = "";
-  if (v?.k === "other") {
+  if (v?.k === "other" && !rowPdfLocked(v.other)) {
     fix += `<button type="button" class="btn btn-ghost btn-sm" data-fix="give">Отдать этот PDF статье #${B.rows.indexOf(v.other) + 1}${ownPdf && v.other.pdf === ownPdf ? " (обмен)" : ""}</button>`;
   }
-  if (ownPdf && !(v?.k === "other" && v.other.pdf === ownPdf)) {
+  if (ownPdf && (!ownHolder || !rowPdfLocked(ownHolder))
+    && !(v?.k === "other" && v.other.pdf === ownPdf)) {
     fix += `<button type="button" class="btn btn-ghost btn-sm" data-fix="take" data-pdf="${esc(ownPdf.name)}">Взять ${esc(ownPdf.name)}${ownHolder ? ` (сейчас у #${B.rows.indexOf(ownHolder) + 1})` : ""}</button>`;
   }
-  const locked = $(`#bTable select[data-row="${i}"]`)?.disabled;
+  const locked = rowPdfLocked(r);
 
   $("#vMeta").innerHTML = `
-    <div class="v-title">${esc(info.title || "—")}</div>
+    <div class="v-title">${esc(info.title || "–")}</div>
     <dl class="kv v-kv">
-      <dt>DOI</dt><dd>${esc(info.doi || "—")}</dd>
-      <dt>Страницы</dt><dd>${esc(info.pages || "—")}${pdfMeta.get(r.pdf?.name)?.pages ? ` <span class="muted">· в PDF ${pdfMeta.get(r.pdf.name).pages} стр.</span>` : ""}</dd>
+      <dt>DOI</dt><dd>${esc(info.doi || "–")}</dd>
+      <dt>Страницы</dt><dd>${esc(info.pages || "–")}${pdfMeta.get(r.pdf?.name)?.pages ? ` <span class="muted">(в PDF ${pdfMeta.get(r.pdf.name).pages} стр.)</span>` : ""}</dd>
       ${info.authors ? `<dt>Авторы</dt><dd class="sans">${esc(info.authors)}</dd>` : ""}
       ${r.xml ? `<dt>XML</dt><dd>${esc(r.xml.name)}</dd>` : ""}
     </dl>
@@ -677,10 +711,10 @@ function renderViewer() {
 
   const sel = $("#vSelect");
   sel.disabled = !!locked;
-  sel.innerHTML = [`<option value="">— без PDF —</option>`].concat(B.pdfs.map((p, k) => {
+  sel.innerHTML = [`<option value="">– без PDF –</option>`].concat(B.pdfs.map((p, k) => {
     const mark = pdfHasDoi(pdfMeta.get(p.name), info.doi) ? "✓ " : "";
     const holder = B.rows.find((x) => x !== r && x.pdf === p);
-    return `<option value="${k}" ${r.pdf === p ? "selected" : ""}>${mark}${esc(p.name)}${holder ? `  · у #${B.rows.indexOf(holder) + 1}` : ""}</option>`;
+    return `<option value="${k}" ${r.pdf === p ? "selected" : ""}>${mark}${esc(p.name)}${holder ? ` (у статьи №${B.rows.indexOf(holder) + 1})` : ""}</option>`;
   })).join("");
 
   // PDF перерисовываем, только если сменился файл
@@ -698,8 +732,8 @@ function renderViewer() {
   $("#vHint").textContent = "";
 }
 
-/* Страницы PDF рисуются PDF.js на canvas по ширине панели — одинаково
-   во всех браузерах, включая телефоны. Если PDF.js недоступен —
+/* Страницы PDF рисуются PDF.js на canvas по ширине панели – одинаково
+   во всех браузерах, включая телефоны. Если PDF.js недоступен –
    встроенный просмотрщик браузера в iframe. */
 V.task = 0;
 async function showPdf(file) {
@@ -749,10 +783,12 @@ function setRowPdf(r, pdf) {
   renderBatch(); renderViewer();
 }
 $("#vSelect").addEventListener("change", (e) => {
+  if (B.running) return;
   const r = B.rows[V.row]; if (!r) return;
   setRowPdf(r, e.target.value === "" ? null : B.pdfs[+e.target.value]);
 });
 $("#vMeta").addEventListener("click", (e) => {
+  if (B.running) return;
   const b = e.target.closest("[data-fix]"); if (!b) return;
   const r = B.rows[V.row];
   if (b.dataset.fix === "give") {
@@ -803,6 +839,7 @@ const bDrop = $("#bDrop");
 bDrop.addEventListener("drop", (e) => { e.preventDefault(); if (!B.running) addFiles(e.dataTransfer.files); });
 
 $("#bTable").addEventListener("change", (e) => {
+  if (B.running) return;
   const s = e.target.closest("select[data-row]"); if (!s) return;
   const r = B.rows[+s.dataset.row];
   r.pdf = s.value === "" ? null : B.pdfs[+s.value];

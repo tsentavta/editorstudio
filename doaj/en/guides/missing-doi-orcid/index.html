@@ -23,6 +23,8 @@
 <link rel="apple-touch-icon" href="/doaj/apple-touch-icon.png">
 <link rel="manifest" href="/doaj/site.webmanifest">
 <link rel="stylesheet" href="/doaj/assets/guides.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/theme.css">
 <link rel="stylesheet" href="/doaj/editorstudio.css">
 <script>try{const t=JSON.parse(localStorage.getItem('doajs.theme'));if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 <script type="application/ld+json">
@@ -83,7 +85,7 @@
 <body>
 <header class="top">
   <div class="bar">
-    <a class="brand" href="/doaj/en/"><img width="24" height="24" src="/favicon.svg" alt="">EditorStudio · DOAJ</a>
+    <a class="brand" href="/doaj/en/"><img width="24" height="24" src="/favicon.svg" alt="">EditorStudio / DOAJ</a>
     <nav>
       <a href="/doaj/en/guides/">Guides</a>
       <a class="cta" href="/doaj/en/">Open the app</a>
@@ -92,7 +94,7 @@
   </div>
 </header>
 <main class="guide">
-  <nav class="crumbs" aria-label="breadcrumbs"><a href="/doaj/en/">DOAJ Metadata Studio</a> <span aria-hidden="true">›</span> <a href="/doaj/en/guides/">Guides</a> <span aria-hidden="true">›</span> <span>How to find DOAJ articles without DOI, ORCID or abstracts</span></nav>
+  <nav class="breadcrumbs" aria-label="Breadcrumbs"><ol><li><a href="/">EditorStudio</a></li><li><a href="/doaj/en/">DOAJ Metadata Studio</a></li><li><a href="/doaj/en/guides/">Guides</a></li><li><a href="/doaj/en/guides/missing-doi-orcid/" aria-current="page">How to find DOAJ articles without DOI, ORCID or abstracts</a></li></ol></nav>
   <h1>How to find DOAJ articles without DOI, ORCID or abstracts</h1>
   <p class="updated">Updated: <time datetime="2026-10-28">October 28, 2026</time></p>
   <p class="lead">DOAJ does not check metadata quality on ingest: what the publisher sends is what gets published. That is why many journals in DOAJ have articles without a DOI, without author ORCIDs or without an abstract. The easiest way to find them is with DOAJ API queries or a single audit of the whole journal.</p>
@@ -120,23 +122,23 @@
 </div>
 
 <h2>Audit the whole journal in one click</h2>
-<p>Queries are good for targeted searches, but they have a limit: you cannot query for “one of the authors has no affiliation” — <code>_exists_</code> is true if the field is filled for at least one author. The “Export &amp; audit” tab gives the full picture:</p>
+<p>Queries are good for targeted searches, but they have a limit: you cannot query for “one of the authors has no affiliation” – <code>_exists_</code> is true if the field is filled for at least one author. The “Export &amp; audit” tab gives the full picture:</p>
 <ol>
-  <li>Enter the journal ISSN and click “Load” — the app fetches every article, even if there are more than 1000.</li>
+  <li>Enter the journal ISSN and click “Load” – the app fetches every article, even if there are more than 1000.</li>
   <li>Read the summary: no DOI, duplicate DOIs and titles, no abstract, keywords, full-text link, authors, pages, volume or year; “not all authors have affiliation”, “no ORCID at all”, invalid ORCIDs.</li>
-  <li>Click a problem card — the table shows only those articles, and the export downloads exactly them.</li>
+  <li>Click a problem card – the table shows only those articles, and the export downloads exactly them.</li>
 </ol>
 
 <div class="try">
-  <p>Audit your journal — no sign-up or API key needed.</p>
+  <p>Audit your journal – no sign-up or API key needed.</p>
   <a class="btn" href="/doaj/en/?tab=export">Audit a journal</a>
 </div>
 
 <h2>How to fix what you find</h2>
 <ul>
-  <li><b>One or two articles</b> — open the article in the editor (the “Edit” button in search results), add the DOI, ORCID or abstract and save. A publisher API key is required.</li>
-  <li><b>Many articles</b> — filter them on the “Export &amp; audit” tab, export to CSV, complete the data in Excel and upload it back. How to do that without creating duplicates: <a href="/doaj/en/guides/bulk-upload-csv/">Bulk upload articles to DOAJ from Excel and CSV</a>.</li>
-  <li><b>DOIs are in Crossref but not in DOAJ</b> — paste the journal’s DOI list into “Reconciliation against a DOI list” on the “Export &amp; audit” tab: the app shows which articles are missing from DOAJ and which DOAJ records have no DOI.</li>
+  <li><b>One or two articles</b> – open the article in the editor (the “Edit” button in search results), add the DOI, ORCID or abstract and save. A publisher API key is required.</li>
+  <li><b>Many articles</b> – filter them on the “Export &amp; audit” tab, export to CSV, complete the data in Excel and upload it back. How to do that without creating duplicates: <a href="/doaj/en/guides/bulk-upload-csv/">Bulk upload articles to DOAJ from Excel and CSV</a>.</li>
+  <li><b>DOIs are in Crossref but not in DOAJ</b> – paste the journal’s DOI list into “Reconciliation against a DOI list” on the “Export &amp; audit” tab: the app shows which articles are missing from DOAJ and which DOAJ records have no DOI.</li>
 </ul>
 
 <h2>Why it matters</h2>
@@ -147,8 +149,9 @@
   </section>
 </main>
 <footer>
-  Unofficial tool, not affiliated with <a href="https://doaj.org" rel="noopener">DOAJ</a> (Directory of Open Access Journals).
-  · <a href="https://github.com/tsentavta/editorstudio" rel="noopener">Source code</a> · MIT License
+  <span>Unofficial tool, not affiliated with <a href="https://doaj.org" rel="noopener">DOAJ</a> (Directory of Open Access Journals).</span>
+  <a href="https://github.com/tsentavta/editorstudio" rel="noopener">Source code</a>
+  <span>MIT License</span>
 </footer>
 </body>
 </html>
