@@ -229,6 +229,7 @@ const HERO = {
   signing: ["<em>Подписание</em>", "Проверьте статус публикаций, подпишите их или отзовите подпись."],
 };
 const tabs = $$(".tab");
+const consoleTitle = document.title;
 function setTab(name, updateHash = true) {
   if (document.body.dataset.tab !== name && !$("#viewer").hidden) closeViewer();
   document.body.dataset.tab = name;
@@ -243,7 +244,7 @@ function setTab(name, updateHash = true) {
   const label = tabs.find((tab) => tab.dataset.tab === name).textContent;
   $("#sectionCrumb").textContent = label;
   $("#sectionCrumb").href = `#${name}`;
-  document.title = `${label} – Метафора`;
+  document.title = name === "upload" ? consoleTitle : `${label} – Метафора`;
   if (updateHash && location.hash !== `#${name}`) location.hash = name;
 }
 for (const tab of tabs) {

@@ -1,0 +1,16 @@
+.guide.page { max-width: 880px; }
+.guide article { font-size: 16px; line-height: 1.6; overflow-wrap: anywhere; }
+.guide section, .guide-footer { margin-block-start: 32px; }
+.guide h1 { font-size: clamp(2rem, 5vw, 3rem); line-height: 1.15; font-weight: 600; letter-spacing: -.035em; margin: 0 0 16px; }
+.guide h1 em { color: var(--orange); font-style: normal; }
+.guide h2 { font-size: 23px; line-height: 1.3; margin: 0 0 12px; }
+.guide article p, .guide article ol, .guide article ul { margin: 0 0 12px; }
+.guide article ol, .guide article ul { padding-inline-start: 24px; }
+.guide article li + li { margin-block-start: 8px; }
+.guide a:not(.btn, .brand) { color: var(--action); text-underline-offset: .15em; }
+.guide .btn { text-decoration: none; white-space: normal; }
+.guide .btn:focus-visible { outline-offset: 4px; }
+.guide code { font-family: var(--mono); font-size: .9em; }
+.guide .example { padding: 16px 20px; border: 1px solid var(--linen); border-radius: 12px; background: var(--white); }
+.guide .example p { margin: 0; }
+.guide-footer { padding-block-start: 16px; border-top: 1px solid var(--linen); }

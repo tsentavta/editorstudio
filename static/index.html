@@ -3,11 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Консоль API «Метафоры»</title>
+<title>Загрузка XML и PDF статей в ИС «Метафора» | EditorStudio</title>
+<meta name="description" content="Загрузите выпуск журнала в формате Journal XML и прикрепите PDF к статьям. Проверяйте метаданные по DOI, EDN или ID и управляйте подписями публикаций в ИС «Метафора».">
+<link rel="canonical" href="https://editorstudio.ru/metafora/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="app.css?v=20261126-publications">
+<link rel="stylesheet" href="app.css?v=20261127-guides">
 </head>
 <body>
 
@@ -68,6 +70,10 @@
   <section class="hero">
     <h1 id="heroTitle">Загрузка статей в <em>Метафору</em></h1>
     <p class="lead" id="heroLead">Journal XML, PDF к статьям, статус обработки и подписание через официальный API.</p>
+    <ul class="guide-links">
+      <li><a href="guides/upload-issue/">Как загрузить выпуск с PDF</a></li>
+      <li><a href="guides/sign-publications/">Как проверить и отозвать подпись</a></li>
+    </ul>
   </section>
 
   <div class="layout">
@@ -274,7 +280,7 @@
   <div class="hint mono" id="vHint"></div>
 </aside>
 
-<script src="app.js?v=20261126-download"></script>
+<script src="app.js?v=20261127-guides"></script>
 <script src="publications.js?v=20261126"></script>
 <script src="batch.js?v=20261126-publications"></script>
 <script src="pdf-issue.js?v=20261126-publications"></script>

@@ -111,6 +111,8 @@ button.key-badge { border: 0; background: none; padding: 6px 4px; cursor: defaul
 }
 .hero h1 em { font-style: normal; color: var(--orange); }
 .lead { margin: 0; font-size: 16px; color: var(--slate); letter-spacing: .016px; max-width: 640px; }
+.guide-links { display: flex; flex-wrap: wrap; gap: 6px 20px; padding: 0; margin: 12px 0 0; list-style: none; }
+.guide-links a { color: var(--action); text-underline-offset: .15em; }
 
 .layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 460px); gap: 24px; align-items: start; }
 .work { display: flex; flex-direction: column; gap: 24px; min-width: 0; }

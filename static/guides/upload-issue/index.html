@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Как загрузить выпуск Journal XML и PDF в ИС «Метафора» | EditorStudio</title>
+<meta name="description" content="Как загрузить XML выпуска научного журнала в ИС «Метафора», сопоставить PDF со статьями по DOI и проверить файлы перед отправкой.">
+<link rel="canonical" href="https://editorstudio.ru/metafora/guides/upload-issue/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="../../app.css?v=20261127-guides">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header class="nav">
+  <div class="nav-inner"><a class="brand" href="../../../">EditorStudio</a></div>
+</header>
+<main class="guide page">
+  <nav class="breadcrumbs" aria-label="Хлебные крошки">
+    <ol>
+      <li><a href="../../../">EditorStudio</a></li>
+      <li><a href="../../">Метафора</a></li>
+      <li><a href="./" aria-current="page">Загрузка выпуска</a></li>
+    </ol>
+  </nav>
+  <article>
+    <h1>Как загрузить выпуск <em>Journal XML и PDF</em> в ИС «Метафора»</h1>
+    <p class="lead">Сначала отправьте XML выпуска. После обработки сопоставьте PDF с созданными статьями и проверьте пары перед загрузкой.</p>
+    <a class="btn btn-primary" href="../../#upload">Открыть загрузку</a>
+
+    <section>
+      <h2>Подготовьте XML выпуска и PDF статей</h2>
+      <ul>
+        <li>Возьмите один файл Journal XML в формате РИНЦ по схеме <code>journal3.xsd</code>. Корневой элемент файла – <code>&lt;journal&gt;</code>.</li>
+        <li>Подготовьте отдельный PDF для каждой статьи. Сверьте DOI в метаданных XML и на первой странице PDF.</li>
+        <li>В консоли «Метафоры» введите API-ключ вашей организации и нажмите <strong>«Сохранить и проверить»</strong>.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Загрузите выпуск и проверьте пары</h2>
+      <ol>
+        <li>На вкладке <strong>«Загрузка»</strong> выберите <strong>«Выпуск с PDF»</strong> и добавьте XML выпуска и PDF статей.</li>
+        <li>Нажмите <strong>«Загрузить XML выпуска»</strong> и дождитесь окончания обработки. В таблице появятся статьи, созданные из XML.</li>
+        <li>Проверьте предложенные пары по DOI и заголовкам. Нажмите на название статьи, чтобы сверить метаданные с PDF. При необходимости выберите другой файл в таблице.</li>
+        <li>Нажмите <strong>«Загрузить PDF к … статьям»</strong> и проверьте результаты в таблице. Если один PDF назначен нескольким статьям, консоль остановит отправку и покажет строки с конфликтом.</li>
+      </ol>
+      <div class="example">
+        <p><strong>Пример.</strong> В выпуске 16 статей. У них общий <code>file_uid</code> исходного XML, а у каждой статьи свой <code>article_uid</code>. PDF прикрепляется к статье по её <code>article_uid</code>.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Если XML выпуска уже загружен</h2>
+      <p>Откройте <a href="../../#pdf">вкладку «PDF»</a>, вставьте DOI статей по одному на строку и нажмите <strong>«Найти статьи»</strong>. Добавьте PDF, проверьте пары и нажмите <strong>«Прикрепить PDF»</strong>. Этот способ подходит для публикаций без PDF, которые ещё не подписаны.</p>
+      <p>Чтобы проверить один результат, найдите статью на вкладке <strong>«Публикации»</strong> и нажмите <strong>«Скачать PDF»</strong> в её карточке.</p>
+    </section>
+  </article>
+  <footer class="guide-footer">
+    <ul class="guide-links">
+      <li><a href="../sign-publications/">Как проверить или отозвать подпись</a></li>
+      <li><a href="https://metafora.rcsi.science/api_doc">Документация API «Метафоры»</a></li>
+    </ul>
+  </footer>
+</main>
+</body>
+</html>

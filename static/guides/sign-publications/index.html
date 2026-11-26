@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Как проверить, поставить и отозвать подпись в ИС «Метафора» | EditorStudio</title>
+<meta name="description" content="Проверьте статус подписания до 100 публикаций в ИС «Метафора». Узнайте, как подписать статью, отозвать подпись и прикрепить PDF после отзыва.">
+<link rel="canonical" href="https://editorstudio.ru/metafora/guides/sign-publications/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap">
+<link rel="stylesheet" href="../../app.css?v=20261127-guides">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header class="nav">
+  <div class="nav-inner"><a class="brand" href="../../../">EditorStudio</a></div>
+</header>
+<main class="guide page">
+  <nav class="breadcrumbs" aria-label="Хлебные крошки">
+    <ol>
+      <li><a href="../../../">EditorStudio</a></li>
+      <li><a href="../../">Метафора</a></li>
+      <li><a href="./" aria-current="page">Подписание публикаций</a></li>
+    </ol>
+  </nav>
+  <article>
+    <h1>Как проверить или отозвать <em>подпись публикации</em> в ИС «Метафора»</h1>
+    <p class="lead">На вкладке «Подписание» можно проверить до 100 публикаций за раз, подписать выбранную статью или снять её подпись.</p>
+    <a class="btn btn-primary" href="../../#signing">Открыть подписание</a>
+
+    <section>
+      <h2>Проверьте статус подписания</h2>
+      <ol>
+        <li>Найдите статью на вкладке <strong>«Публикации»</strong> по DOI, EDN или ID. В карточке нажмите <strong>«Открыть подписание»</strong>. Консоль подставит <code>article_uid</code> и проверит статус.</li>
+        <li>Для проверки нескольких статей откройте <strong>«Подписание»</strong>, вставьте до 100 <code>article_uid</code> по одному на строку или через запятую и нажмите <strong>«Проверить статусы»</strong>.</li>
+        <li>В таблице проверьте статус и доступное действие для каждой публикации. Подписывать и отзывать подписи можно у публикаций своей организации.</li>
+      </ol>
+      <div class="example">
+        <p><strong>Пример.</strong> Для сверки выпуска откройте исходный XML во вкладке <strong>«Файлы»</strong> и возьмите из карточки ID статей. В форму проверки вставляйте <code>article_uid</code> каждой статьи. <code>file_uid</code> пригодится для поиска XML.</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Подпишите публикацию</h2>
+      <p>Убедитесь, что метаданные верны и прикреплён нужный PDF. В строке публикации нажмите <strong>«Подписать»</strong> и подтвердите действие. Консоль обновит статус. После подписания загрузка PDF доступна только после отзыва подписи.</p>
+    </section>
+
+    <section>
+      <h2>Отзовите подпись</h2>
+      <p>В строке подписанной статьи нажмите <strong>«Отозвать подпись»</strong> и подтвердите действие. Убедитесь, что в таблице появился статус отзыва. Затем можно открыть карточку статьи и прикрепить недостающий PDF. После проверки метаданных и файла подпишите статью снова, если она готова к отправке.</p>
+    </section>
+  </article>
+  <footer class="guide-footer">
+    <ul class="guide-links">
+      <li><a href="../upload-issue/">Как загрузить выпуск Journal XML и PDF</a></li>
+      <li><a href="https://metafora.rcsi.science/api_doc">Документация API «Метафоры»</a></li>
+    </ul>
+  </footer>
+</main>
+</body>
+</html>
