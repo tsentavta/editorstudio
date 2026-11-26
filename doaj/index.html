@@ -60,6 +60,7 @@
 <link rel="icon" href="/doaj/favicon-96.png" type="image/png" sizes="96x96">
 <link rel="apple-touch-icon" href="/doaj/apple-touch-icon.png">
 <link rel="manifest" href="/doaj/site.webmanifest">
+<script>try{const t=JSON.parse(localStorage.getItem('doajs.theme'));if(t==='dark'||t==='auto')document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 :root{
   --bg:#f6f7f9; --panel:#fff; --panel2:#f1f3f6; --text:#1c2230; --muted:#5e6878; --border:#dde1e8;
@@ -69,7 +70,7 @@
   --mono:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;
 }
 @media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
+  :root[data-theme="auto"]{
     --bg:#14171d; --panel:#1c2028; --panel2:#232833; --text:#e6e9ef; --muted:#9aa3b2; --border:#2f3542;
     --accent:#ff6a47; --accent-ink:#1a0d08; --accent-soft:#3a221b;
     --ok:#4cc483; --ok-soft:#173326; --warn:#e3a94a; --warn-soft:#3a2e17; --err:#ff7a7a; --err-soft:#3d1e20;
@@ -231,7 +232,7 @@ details.help code{font-family:var(--mono);font-size:12px;background:var(--panel2
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="/theme.css">
-<link rel="stylesheet" href="/doaj/editorstudio.css">
+<link rel="stylesheet" href="/doaj/editorstudio.css?v=20261127-light">
 </head>
 <body>
 <header>
@@ -529,7 +530,7 @@ details.help code{font-family:var(--mono);font-size:12px;background:var(--panel2
     <label class="f" style="max-width:320px">Пауза между запросами, мс<input id="sDelay" type="number" min="0" step="50"></label>
     <div class="hint">DOAJ ограничивает частоту запросов (около 2 в секунду). При ответе 429 приложение повторяет запрос автоматически.</div>
     <h3>Тема</h3>
-    <div class="seg" id="sTheme"><button data-v="auto">Как в системе</button><button data-v="light">Светлая</button><button data-v="dark">Тёмная</button></div>
+    <div class="seg" id="sTheme"><button data-v="light">Светлая</button><button data-v="dark">Тёмная</button><button data-v="auto">Как в системе</button></div>
   </div>
 </section>
 
@@ -1759,8 +1760,8 @@ $('#kTest').onclick = () => busy($('#kTest'), async () => {
 });
 $('#sDelay').value = delay;
 $('#sDelay').onchange = e => { delay = Math.max(0, +e.target.value || 0); store.set('delay', delay); };
-function applyTheme(t) { if (t === 'auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', t); }
-const theme = store.get('theme', 'auto'); setSeg($('#sTheme'), theme); applyTheme(theme);
+function applyTheme(t) { document.documentElement.dataset.theme = t; }
+setSeg($('#sTheme'), document.documentElement.dataset.theme || 'light');
 seg($('#sTheme'), v => { store.set('theme', v); applyTheme(v); });
 
 /* ---------------- init ---------------- */

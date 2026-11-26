@@ -6,7 +6,7 @@
   --mono:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",monospace;
 }
 @media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
+  :root[data-theme="auto"]{
     --bg:#14171d; --panel:#1c2028; --panel2:#232833; --text:#e6e9ef; --muted:#9aa3b2; --border:#2f3542;
     --accent:#ff6a47; --accent-ink:#1a0d08; --accent-soft:#3a221b; --link:#7ea6ff;
     --warn:#e3a94a; --warn-soft:#3a2e17;

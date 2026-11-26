@@ -129,11 +129,11 @@ def page(lang, path, alt_path, title, description, h1, body, crumbs, json_ld, up
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
-<link rel="stylesheet" href="/assets/guides.css">
+<script>try{{const t=JSON.parse(localStorage.getItem('doajs.theme'));if(t==='dark'||t==='auto')document.documentElement.dataset.theme=t}}catch(e){{}}</script>
+<link rel="stylesheet" href="/assets/guides.css?v=20261127-light">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="__EDITORSTUDIO_THEME__">
-<link rel="stylesheet" href="/editorstudio.css">
-<script>try{{const t=JSON.parse(localStorage.getItem('doajs.theme'));if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}}catch(e){{}}</script>
+<link rel="stylesheet" href="/editorstudio.css?v=20261127-light">
 <script type="application/ld+json">
 {json.dumps(json_ld, ensure_ascii=False, indent=1)}
 </script>

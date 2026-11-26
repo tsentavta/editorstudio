@@ -1,4 +1,5 @@
 :root {
+  color-scheme: light;
   --bg: var(--cream);
   --panel: var(--white);
   --panel2: var(--pebble);
@@ -14,9 +15,9 @@
   --focus-color: var(--link);
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) { --bg: #141415; --panel: #1f1f20; --panel2: #2e2e2c; --border: #454542; --text: #e6e6e2; --muted: #b7b7b4; --accent: #ffad8f; --accent-ink: #141415; --accent-soft: #3a221b; --link: #ffad8f; }
+  :root[data-theme="auto"] { color-scheme: dark; --bg: #141415; --panel: #1f1f20; --panel2: #2e2e2c; --border: #454542; --text: #e6e6e2; --muted: #b7b7b4; --accent: #ffad8f; --accent-ink: #141415; --accent-soft: #3a221b; --link: #ffad8f; }
 }
-:root[data-theme="dark"] { --bg: #141415; --panel: #1f1f20; --panel2: #2e2e2c; --border: #454542; --text: #e6e6e2; --muted: #b7b7b4; --accent: #ffad8f; --accent-ink: #141415; --accent-soft: #3a221b; --link: #ffad8f; }
+:root[data-theme="dark"] { color-scheme: dark; --bg: #141415; --panel: #1f1f20; --panel2: #2e2e2c; --border: #454542; --text: #e6e6e2; --muted: #b7b7b4; --accent: #ffad8f; --accent-ink: #141415; --accent-soft: #3a221b; --link: #ffad8f; }
 body { font-family: var(--sans); font-size: 14px; letter-spacing: .14px; }
 .bar, main, footer { max-width: 1200px; }
 .bar { min-height: 64px; }
